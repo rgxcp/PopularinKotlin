@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorBackground"
+    android:orientation="vertical"
+    android:paddingVertical="8dp">
+
+    <TextView
+        android:id="@+id/text_mf_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/jost_medium"
+        android:maxLines="1"
+        android:textColor="@color/colorOnBackground"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/text_mf_year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/jost_regular"
+        android:textSize="15sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorSurface" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/image_mf_review"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_centerHorizontal="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_outline_eye"
+                android:tint="@color/colorAccent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/image_mf_review"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/jost_regular"
+                android:text="@string/review"
+                android:textColor="@color/colorOnBackground"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/image_mf_favorite"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_centerHorizontal="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_outline_heart"
+                android:tint="@color/colorAccent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/image_mf_favorite"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/jost_regular"
+                android:text="@string/favorite"
+                android:textColor="@color/colorOnBackground"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/image_mf_watchlist"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_centerHorizontal="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_outline_watchlist"
+                android:tint="@color/colorAccent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/image_mf_watchlist"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/jost_regular"
+                android:text="@string/watchlist"
+                android:textColor="@color/colorOnBackground"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorSurface" />
+
+    <RatingBar
+        android:id="@+id/rbr_mf_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="12dp"
+        android:numStars="5"
+        android:stepSize="0.5" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/jost_regular"
+        android:text="@string/rating"
+        android:textColor="@color/colorOnBackground"
+        android:textSize="15sp" />
+
+</LinearLayout>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="8dp">
+
+    <com.github.florent37.shapeofview.shapes.CircleView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/image_ru_profile"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="@color/colorSurface"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop" />
+    </com.github.florent37.shapeofview.shapes.CircleView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/text_ru_full_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/jost_medium"
+            android:maxLines="1"
+            android:textColor="@color/colorOnBackground"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/text_ru_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/jost_regular"
+            android:maxLines="1"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+</LinearLayout>

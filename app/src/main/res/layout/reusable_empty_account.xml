@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:contentDescription="@null"
+        android:src="@drawable/vc_empty_account" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/jost_regular"
+        android:text="@string/empty_account"
+        android:textAlignment="center"
+        android:textColor="@color/colorOnBackground"
+        android:textSize="17sp" />
+
+    <Button
+        android:id="@+id/button_rea_sign_in"
+        style="@style/ButtonPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="64dp"
+        android:text="@string/sign_in" />
+
+    <Button
+        android:id="@+id/button_rea_sign_up"
+        style="@style/ButtonOutlinedPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/sign_up" />
+
+</LinearLayout>

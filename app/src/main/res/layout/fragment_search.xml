@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.MainActivity">
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/search_fs_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_circle_gray"
+        app:queryBackground="@android:color/transparent"
+        app:queryHint="@string/search_hint" />
+
+    <LinearLayout
+        android:id="@+id/layout_fs_search_in"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/search_fs_layout"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_fs_in_film"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorOnBackground"
+            android:textSize="15sp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_fs_in_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorOnBackground"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pbr_fs_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/search_fs_layout"
+        android:layout_marginTop="8dp"
+        android:padding="170dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/text_fs_message"
+        style="@style/TextMessagePrimary"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/search_fs_layout"
+        android:layout_marginTop="8dp"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_fs_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/search_fs_layout"
+        android:layout_marginTop="8dp"
+        android:visibility="gone" />
+
+</RelativeLayout>
