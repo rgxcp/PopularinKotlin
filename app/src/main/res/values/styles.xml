@@ -1,10 +1,75 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorSurface">@color/colorSurface</item>
+        <item name="colorOnBackground">@color/colorOnBackground</item>
+        <item name="colorOnSurface">@color/colorOnSurface</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="android:statusBarColor">@color/colorBackgroundDark</item>
+        <item name="android:navigationBarColor">@color/colorBackground</item>
+        <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox
+        </item>
     </style>
 
+    <!-- Custom application theme. -->
+    <style name="ButtonPrimary" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/background_purple</item>
+        <item name="cornerRadius">5dp</item>
+        <item name="android:fontFamily">@font/jost_medium</item>
+        <item name="android:textColor">@color/colorOnBackground</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="ButtonOutlinedPrimary" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">5dp</item>
+        <item name="strokeColor">@color/colorPrimary</item>
+        <item name="android:fontFamily">@font/jost_medium</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="ButtonOutlinedDanger" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">5dp</item>
+        <item name="rippleColor">@color/ripple_red</item>
+        <item name="strokeColor">@color/redPrimary</item>
+        <item name="android:fontFamily">@font/jost_medium</item>
+        <item name="android:textColor">@color/redPrimary</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="ButtonTextDanger" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="rippleColor">@null</item>
+        <item name="android:fontFamily">@font/jost_medium</item>
+        <item name="android:textColor">@color/redPrimary</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="CollapsingToolbarPrimary">
+        <item name="expandedTitleMarginStart">16dp</item>
+        <item name="expandedTitleMarginEnd">16dp</item>
+        <item name="expandedTitleTextAppearance">@style/TextAppearance.AppCompat.Large</item>
+    </style>
+
+    <style name="FABPrimary" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="backgroundTint">@color/colorPrimary</item>
+        <item name="fabSize">mini</item>
+        <item name="tint">@color/colorOnBackground</item>
+    </style>
+
+    <style name="TextMessagePrimary">
+        <item name="android:fontFamily">@font/jost_medium</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">48dp</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="TextWelcomePrimary">
+        <item name="android:fontFamily">@font/monument_extended_regular</item>
+        <item name="android:lineSpacingExtra">8dp</item>
+        <item name="android:textColor">@color/colorOnBackground</item>
+        <item name="android:textSize">20sp</item>
+    </style>
 </resources>
