@@ -51,12 +51,10 @@ class CommentRequest(private val context: Context, private val reviewID: Int) {
             }
         }, Response.ErrorListener { error ->
             error.printStackTrace()
-            if (error is NetworkError || error is TimeoutError) {
-                callback.onError(context.getString(R.string.network_error))
-            } else if (error is ServerError) {
-                callback.onError(context.getString(R.string.server_error))
-            } else {
-                callback.onError(context.getString(R.string.general_error))
+            when (error) {
+                is NetworkError, is TimeoutError -> callback.onError(context.getString(R.string.network_error))
+                is ServerError -> callback.onError(context.getString(R.string.server_error))
+                else -> callback.onError(context.getString(R.string.general_error))
             }
         }) {
             override fun getHeaders(): MutableMap<String, String> {
