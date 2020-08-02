@@ -29,7 +29,7 @@ class FilmReviewAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmReviewViewHolder {
-        return FilmReviewViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_film_review, parent, false), onClickListener)
+        return FilmReviewViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_film_review, parent, false))
     }
 
     override fun onBindViewHolder(holder: FilmReviewViewHolder, position: Int) {
@@ -66,7 +66,7 @@ class FilmReviewAdapter(
         return filmReviewList.size
     }
 
-    class FilmReviewViewHolder(itemView: View, onClickListener: OnClickListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    inner class FilmReviewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val imageUserProfile: ImageView = itemView.image_rfr_profile
         val imageReviewStar: ImageView = itemView.image_rfr_star
         val imageLike: ImageView = itemView.image_rfr_like
@@ -77,14 +77,20 @@ class FilmReviewAdapter(
         val textReviewTimestamp: TextView = itemView.text_rfr_timestamp
         val border: View = itemView.border_rfr_layout
         private val imageComment: ImageView = itemView.image_rfr_comment
-        private val mOnClickListener = onClickListener
+
+        init {
+            itemView.setOnClickListener(this)
+            imageUserProfile.setOnClickListener(this)
+            imageLike.setOnClickListener(this)
+            imageComment.setOnClickListener(this)
+        }
 
         override fun onClick(v: View?) {
             when (v) {
-                itemView -> mOnClickListener.onFilmReviewItemClick(adapterPosition)
-                imageUserProfile -> mOnClickListener.onFilmReviewUserProfileClick(adapterPosition)
-                imageLike -> mOnClickListener.onFilmReviewLikeClick(adapterPosition)
-                imageComment -> mOnClickListener.onFilmReviewCommentClick(adapterPosition)
+                itemView -> onClickListener.onFilmReviewItemClick(adapterPosition)
+                imageUserProfile -> onClickListener.onFilmReviewUserProfileClick(adapterPosition)
+                imageLike -> onClickListener.onFilmReviewLikeClick(adapterPosition)
+                imageComment -> onClickListener.onFilmReviewCommentClick(adapterPosition)
             }
         }
     }

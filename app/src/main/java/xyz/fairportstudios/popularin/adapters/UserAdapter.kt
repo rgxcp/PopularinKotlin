@@ -22,7 +22,7 @@ class UserAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-        return UserViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_user, parent, false), onClickListener)
+        return UserViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_user, parent, false))
     }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
@@ -39,15 +39,18 @@ class UserAdapter(
         return userList.size
     }
 
-    class UserViewHolder(itemView: View, onClickListener: OnClickListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val imageProfile: ImageView = itemView.image_ru_profile
         val textFullName: TextView = itemView.text_ru_full_name
         val textUsername: TextView = itemView.text_ru_username
-        private val mOnClickListener = onClickListener
+
+        init {
+            itemView.setOnClickListener(this)
+        }
 
         override fun onClick(v: View?) {
             if (v == itemView) {
-                mOnClickListener.onUserItemClick(adapterPosition)
+                onClickListener.onUserItemClick(adapterPosition)
             }
         }
     }

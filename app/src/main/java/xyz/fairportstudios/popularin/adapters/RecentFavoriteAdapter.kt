@@ -29,7 +29,7 @@ class RecentFavoriteAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentFavoriteViewHolder {
-        return RecentFavoriteViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_recent_favorite, parent, false), onClickListener)
+        return RecentFavoriteViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_recent_favorite, parent, false))
     }
 
     override fun onBindViewHolder(holder: RecentFavoriteViewHolder, position: Int) {
@@ -63,22 +63,23 @@ class RecentFavoriteAdapter(
         return recentFavoriteList.size
     }
 
-    class RecentFavoriteViewHolder(
-        itemView: View,
-        onClickListener: OnClickListener
-    ) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
+    inner class RecentFavoriteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
         val imagePoster: ImageView = itemView.image_rrf_poster
-        private val mOnClickListener = onClickListener
+
+        init {
+            itemView.setOnClickListener(this)
+            itemView.setOnLongClickListener(this)
+        }
 
         override fun onClick(v: View?) {
             if (v == itemView) {
-                mOnClickListener.onRecentFavoriteItemClick(adapterPosition)
+                onClickListener.onRecentFavoriteItemClick(adapterPosition)
             }
         }
 
         override fun onLongClick(v: View?): Boolean {
             if (v == itemView) {
-                mOnClickListener.onRecentFavoriteItemLongClick(adapterPosition)
+                onClickListener.onRecentFavoriteItemLongClick(adapterPosition)
             }
             return true
         }

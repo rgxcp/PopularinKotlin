@@ -29,7 +29,7 @@ class FilmAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmViewHolder {
-        return FilmViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_film, parent, false), onClickListener)
+        return FilmViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_film, parent, false))
     }
 
     override fun onBindViewHolder(holder: FilmViewHolder, position: Int) {
@@ -52,26 +52,28 @@ class FilmAdapter(
         return filmList.size
     }
 
-    class FilmViewHolder(
-        itemView: View,
-        onClickListener: OnClickListener
-    ) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
+    inner class FilmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
         val imagePoster: ImageView = itemView.image_rf_poster
         val textTitle: TextView = itemView.text_rf_title
         val textGenre: TextView = itemView.text_rf_genre
         val textReleaseDate: TextView = itemView.text_rf_release_date
-        private val mOnClickListener = onClickListener
+
+        init {
+            itemView.setOnClickListener(this)
+            imagePoster.setOnClickListener(this)
+            imagePoster.setOnLongClickListener(this)
+        }
 
         override fun onClick(v: View?) {
             when (v) {
-                itemView -> mOnClickListener.onFilmItemClick(adapterPosition)
-                imagePoster -> mOnClickListener.onFilmPosterClick(adapterPosition)
+                itemView -> onClickListener.onFilmItemClick(adapterPosition)
+                imagePoster -> onClickListener.onFilmPosterClick(adapterPosition)
             }
         }
 
         override fun onLongClick(v: View?): Boolean {
             if (v == imagePoster) {
-                mOnClickListener.onFilmPosterLongClick(adapterPosition)
+                onClickListener.onFilmPosterLongClick(adapterPosition)
             }
             return true
         }

@@ -28,7 +28,7 @@ class CastAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CastViewHolder {
-        return CastViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_credit, parent, false), onClickListener)
+        return CastViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_credit, parent, false))
     }
 
     override fun onBindViewHolder(holder: CastViewHolder, position: Int) {
@@ -64,15 +64,18 @@ class CastAdapter(
         return castList.size
     }
 
-    class CastViewHolder(itemView: View, onClickListener: OnClickListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    inner class CastViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val imageProfile: ImageView = itemView.image_rcr_profile
         val textName: TextView = itemView.text_rcr_name
         val textAs: TextView = itemView.text_rcr_as
-        private val mOnClickListener = onClickListener
+
+        init {
+            itemView.setOnClickListener(this)
+        }
 
         override fun onClick(v: View?) {
             if (v == itemView) {
-                mOnClickListener.onCastItemClick(adapterPosition)
+                onClickListener.onCastItemClick(adapterPosition)
             }
         }
     }

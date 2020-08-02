@@ -26,7 +26,7 @@ class GenreAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreViewHolder {
-        return GenreViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_genre, parent, false), onClickListener)
+        return GenreViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_genre, parent, false))
     }
 
     override fun onBindViewHolder(holder: GenreViewHolder, position: Int) {
@@ -67,14 +67,17 @@ class GenreAdapter(
         return genreList.size
     }
 
-    class GenreViewHolder(itemView: View, onClickListener: OnClickListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    inner class GenreViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val imageBackground: ImageView = itemView.image_rg_background
         val textTitle: TextView = itemView.text_rg_title
-        private val mOnClickListener = onClickListener
+
+        init {
+            itemView.setOnClickListener(this)
+        }
 
         override fun onClick(v: View?) {
             if (v == itemView) {
-                mOnClickListener.onGenreItemClick(adapterPosition)
+                onClickListener.onGenreItemClick(adapterPosition)
             }
         }
     }

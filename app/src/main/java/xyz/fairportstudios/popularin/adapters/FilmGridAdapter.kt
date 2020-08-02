@@ -24,7 +24,7 @@ class FilmGridAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmGridViewHolder {
-        return FilmGridViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_film_grid, parent, false), onClickListener)
+        return FilmGridViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_film_grid, parent, false))
     }
 
     override fun onBindViewHolder(holder: FilmGridViewHolder, position: Int) {
@@ -42,22 +42,23 @@ class FilmGridAdapter(
         return filmList.size
     }
 
-    class FilmGridViewHolder(
-        itemView: View,
-        onClickListener: OnClickListener
-    ) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
+    inner class FilmGridViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
         val imagePoster: ImageView = itemView.image_rfg_poster
-        private val mOnClickListener = onClickListener
+
+        init {
+            itemView.setOnClickListener(this)
+            itemView.setOnLongClickListener(this)
+        }
 
         override fun onClick(v: View?) {
             if (v == itemView) {
-                mOnClickListener.onFilmGridItemClick(adapterPosition)
+                onClickListener.onFilmGridItemClick(adapterPosition)
             }
         }
 
         override fun onLongClick(v: View?): Boolean {
             if (v == itemView) {
-                mOnClickListener.onFilmGridItemLongClick(adapterPosition)
+                onClickListener.onFilmGridItemLongClick(adapterPosition)
             }
             return true
         }

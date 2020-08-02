@@ -30,7 +30,7 @@ class RecentReviewAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentReviewViewHolder {
-        return RecentReviewViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_recent_review, parent, false), onClickListener)
+        return RecentReviewViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_recent_review, parent, false))
     }
 
     override fun onBindViewHolder(holder: RecentReviewViewHolder, position: Int) {
@@ -66,23 +66,24 @@ class RecentReviewAdapter(
         return recentReviewList.size
     }
 
-    class RecentReviewViewHolder(
-        itemView: View,
-        onClickListener: OnClickListener
-    ) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
+    inner class RecentReviewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
         val imageFilmPoster: ImageView = itemView.image_rrr_poster
         val imageReviewStar: ImageView = itemView.image_rrr_star
-        private val mOnClickListener = onClickListener
+
+        init {
+            itemView.setOnClickListener(this)
+            itemView.setOnLongClickListener(this)
+        }
 
         override fun onClick(v: View?) {
             if (v == itemView) {
-                mOnClickListener.onRecentReviewItemClick(adapterPosition)
+                onClickListener.onRecentReviewItemClick(adapterPosition)
             }
         }
 
         override fun onLongClick(v: View?): Boolean {
             if (v == itemView) {
-                mOnClickListener.onRecentReviewItemLongClick(adapterPosition)
+                onClickListener.onRecentReviewItemLongClick(adapterPosition)
             }
             return true
         }

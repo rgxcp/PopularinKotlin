@@ -25,7 +25,7 @@ class CommentAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
-        return CommentViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_comment, parent, false), onClickListener)
+        return CommentViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_comment, parent, false))
     }
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
@@ -49,18 +49,22 @@ class CommentAdapter(
         return commentList.size
     }
 
-    class CommentViewHolder(itemView: View, onClickListener: OnClickListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    inner class CommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val imageProfile: ImageView = itemView.image_rc_profile
         val imageDelete: ImageView = itemView.image_rc_delete
         val textUsername: TextView = itemView.text_rc_username
         val textCommentTimestamp: TextView = itemView.text_rc_timestamp
         val textCommentDetail: TextView = itemView.text_rc_comment
-        private val mOnClickListener = onClickListener
+
+        init {
+            imageProfile.setOnClickListener(this)
+            imageDelete.setOnClickListener(this)
+        }
 
         override fun onClick(v: View?) {
             when (v) {
-                imageProfile -> mOnClickListener.onCommentProfileClick(adapterPosition)
-                imageDelete -> mOnClickListener.onCommentDeleteClick(adapterPosition)
+                imageProfile -> onClickListener.onCommentProfileClick(adapterPosition)
+                imageDelete -> onClickListener.onCommentDeleteClick(adapterPosition)
             }
         }
     }
