@@ -150,7 +150,7 @@ class TimelineFragment : Fragment(), ReviewAdapter.OnClickListener {
                         val insertIndex = mReviewList.size
                         mReviewList.addAll(insertIndex, reviewList)
                         mReviewAdapter.notifyItemChanged(insertIndex - 1)
-                        mReviewAdapter.notifyItemRangeChanged(insertIndex, reviewList.size)
+                        mReviewAdapter.notifyItemRangeInserted(insertIndex, reviewList.size)
                         mRecyclerTimeline.scrollToPosition(insertIndex)
                     }
                     false -> {
