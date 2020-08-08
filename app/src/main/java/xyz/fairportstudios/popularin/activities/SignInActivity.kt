@@ -70,13 +70,13 @@ class SignInActivity : AppCompatActivity() {
         }
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            mUsername = mInputUsername.text.toString()
-            mPassword = mInputPassword.text.toString()
-            mButtonSignIn.isEnabled = mUsername.isNotEmpty() && mPassword.isNotEmpty()
+            // Tidak digunakan
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            // Tidak digunakan
+            mUsername = mInputUsername.text.toString()
+            mPassword = mInputPassword.text.toString()
+            mButtonSignIn.isEnabled = mUsername.isNotEmpty() && mPassword.isNotEmpty()
         }
     }
 
@@ -91,8 +91,8 @@ class SignInActivity : AppCompatActivity() {
     private fun setSignInButtonState(state: Boolean) {
         mButtonSignIn.isEnabled = state
         when (state) {
-            true -> mButtonSignIn.text = R.string.sign_up.toString()
-            false -> mButtonSignIn.text = R.string.sign_in.toString()
+            true -> mButtonSignIn.text = R.string.sign_in.toString()
+            false -> mButtonSignIn.text = R.string.loading.toString()
         }
     }
 

@@ -79,15 +79,15 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            // Tidak digunakan
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             mFullName = mInputFullName.text.toString()
             mUsername = mInputUsername.text.toString()
             mEmail = mInputEmail.text.toString()
             mPassword = mInputPassword.text.toString()
             mButtonSignUp.isEnabled = mFullName.isNotEmpty() && mUsername.isNotEmpty() && mEmail.isNotEmpty() && mPassword.isNotEmpty()
-        }
-
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            // Tidak digunakan
         }
     }
 
@@ -141,7 +141,7 @@ class SignUpActivity : AppCompatActivity() {
         mButtonSignUp.isEnabled = state
         when (state) {
             true -> mButtonSignUp.text = R.string.sign_up.toString()
-            false -> mButtonSignUp.text = R.string.sign_in.toString()
+            false -> mButtonSignUp.text = R.string.loading.toString()
         }
     }
 
