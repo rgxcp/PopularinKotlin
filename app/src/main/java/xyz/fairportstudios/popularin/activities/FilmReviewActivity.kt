@@ -64,10 +64,11 @@ class FilmReviewActivity : AppCompatActivity(), FilmReviewAdapter.OnClickListene
 
         // Auth
         val auth = Auth(mContext)
+        mIsAuth = auth.isAuth()
         mAuthID = auth.getAuthID()
 
         // Menampilkan layout berdasarkan kondisi
-        when (auth.isAuth()) {
+        when (mIsAuth) {
             true -> {
                 setContentView(R.layout.reusable_toolbar_pager)
 
