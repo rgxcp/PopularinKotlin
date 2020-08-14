@@ -7,15 +7,15 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.recycler_genre.view.*
+import kotlinx.android.synthetic.main.recycler_genre_horizontal.view.*
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.models.Genre
 
-class GenreAdapter(
+class GenreHorizontalAdapter(
     private val context: Context,
     private val genreList: ArrayList<Genre>,
     private val onClickListener: OnClickListener
-) : RecyclerView.Adapter<GenreAdapter.GenreViewHolder>() {
+) : RecyclerView.Adapter<GenreHorizontalAdapter.GenreHorizontalViewHolder>() {
     interface OnClickListener {
         fun onGenreItemClick(position: Int)
     }
@@ -25,11 +25,11 @@ class GenreAdapter(
         return dp.toInt()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreViewHolder {
-        return GenreViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_genre, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreHorizontalViewHolder {
+        return GenreHorizontalViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_genre_horizontal, parent, false))
     }
 
-    override fun onBindViewHolder(holder: GenreViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: GenreHorizontalViewHolder, position: Int) {
         // Posisi
         val currentItem = genreList[position]
 
@@ -38,28 +38,19 @@ class GenreAdapter(
         holder.imageBackground.setImageResource(currentItem.background)
 
         // Margin
-        var left = getDensity(4)
-        var top = getDensity(4)
-        var right = getDensity(4)
-        var bottom = getDensity(4)
-        val isEdgeLeft = (position % 2) == 0
-        val isEdgeTop = position < 2
-        val isEdgeRight = (position % 2) == 1
-        val isEdgeBottom = position >= (itemCount - 2)
+        var left = getDensity(6)
+        var right = getDensity(6)
+        val isEdgeLeft = position == 0
+        val isEdgeRight = position == itemCount - 1
         if (isEdgeLeft) {
             left = getDensity(16)
-        }
-        if (isEdgeTop) {
-            top = getDensity(16)
         }
         if (isEdgeRight) {
             right = getDensity(16)
         }
-        if (isEdgeBottom) {
-            bottom = getDensity(16)
-        }
         val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParams.setMargins(left, top, right, bottom)
+        layoutParams.marginStart = left
+        layoutParams.marginEnd = right
         holder.itemView.layoutParams = layoutParams
     }
 
@@ -67,9 +58,9 @@ class GenreAdapter(
         return genreList.size
     }
 
-    inner class GenreViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        val imageBackground: ImageView = itemView.image_rg_background
-        val textTitle: TextView = itemView.text_rg_title
+    inner class GenreHorizontalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+        val imageBackground: ImageView = itemView.image_rgh_background
+        val textTitle: TextView = itemView.text_rgh_title
 
         init {
             itemView.setOnClickListener(this)

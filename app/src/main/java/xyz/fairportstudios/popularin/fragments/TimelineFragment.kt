@@ -16,20 +16,23 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.activities.DiscoverFilmActivity
 import xyz.fairportstudios.popularin.activities.FilmDetailActivity
 import xyz.fairportstudios.popularin.activities.ReviewActivity
 import xyz.fairportstudios.popularin.activities.UserDetailActivity
+import xyz.fairportstudios.popularin.adapters.GenreHorizontalAdapter
 import xyz.fairportstudios.popularin.adapters.ReviewAdapter
 import xyz.fairportstudios.popularin.apis.popularin.delete.UnlikeReviewRequest
 import xyz.fairportstudios.popularin.apis.popularin.get.TimelineRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.LikeReviewRequest
 import xyz.fairportstudios.popularin.modals.FilmModal
+import xyz.fairportstudios.popularin.models.Genre
 import xyz.fairportstudios.popularin.models.Review
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class TimelineFragment : Fragment(), ReviewAdapter.OnClickListener {
+class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, ReviewAdapter.OnClickListener {
     // Variable untuk fitur load more
     private var mIsLoading: Boolean = true
     private var mIsLoadFirstTimeSuccess: Boolean = false
@@ -41,9 +44,11 @@ class TimelineFragment : Fragment(), ReviewAdapter.OnClickListener {
     private var mAuthID: Int = 0
     private var mTotalLike: Int = 0
     private lateinit var mContext: Context
+    private lateinit var mGenreList: ArrayList<Genre>
     private lateinit var mReviewList: ArrayList<Review>
     private lateinit var mAnchorLayout: CoordinatorLayout
     private lateinit var mProgressBar: ProgressBar
+    private lateinit var mRecyclerGenre: RecyclerView
     private lateinit var mRecyclerTimeline: RecyclerView
     private lateinit var mReviewAdapter: ReviewAdapter
     private lateinit var mSwipeRefresh: SwipeRefreshLayout
@@ -51,22 +56,26 @@ class TimelineFragment : Fragment(), ReviewAdapter.OnClickListener {
     private lateinit var mTimelineRequest: TimelineRequest
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view: View = inflater.inflate(R.layout.reusable_recycler, container, false)
+        val view: View = inflater.inflate(R.layout.fragment_timeline, container, false)
 
         // Context
         mContext = requireActivity()
 
         // Binding
-        mAnchorLayout = view.findViewById(R.id.anchor_rr_layout)
-        mProgressBar = view.findViewById(R.id.pbr_rr_layout)
-        mRecyclerTimeline = view.findViewById(R.id.recycler_rr_layout)
-        mSwipeRefresh = view.findViewById(R.id.swipe_refresh_rr_layout)
-        mTextMessage = view.findViewById(R.id.text_rr_message)
+        mAnchorLayout = view.findViewById(R.id.anchor_ft_layout)
+        mProgressBar = view.findViewById(R.id.pbr_ft_layout)
+        mRecyclerGenre = view.findViewById(R.id.recycler_ft_genre)
+        mRecyclerTimeline = view.findViewById(R.id.recycler_ft_timeline)
+        mSwipeRefresh = view.findViewById(R.id.swipe_refresh_ft_layout)
+        mTextMessage = view.findViewById(R.id.text_ft_message)
 
         // Auth
         mAuthID = Auth(mContext).getAuthID()
 
-        // Mendapatkan data awal
+        // Menampilkan genre
+        showGenre()
+
+        // Mendapatkan data awal timeline
         mTimelineRequest = TimelineRequest(mContext)
         getTimeline(mStartPage, false)
 
@@ -96,6 +105,11 @@ class TimelineFragment : Fragment(), ReviewAdapter.OnClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         resetState()
+    }
+
+    override fun onGenreItemClick(position: Int) {
+        val currentItem = mGenreList[position]
+        gotoDiscoverFilm(currentItem.id, currentItem.title)
     }
 
     override fun onReviewItemClick(position: Int) {
@@ -137,6 +151,34 @@ class TimelineFragment : Fragment(), ReviewAdapter.OnClickListener {
         gotoReviewComment(currentItem.id, isSelf)
     }
 
+    private fun showGenre() {
+        mGenreList = ArrayList()
+        mGenreList.add(Genre(28, R.drawable.img_action, getString(R.string.genre_action)))
+        mGenreList.add(Genre(16, R.drawable.img_animation, getString(R.string.genre_animation)))
+        mGenreList.add(Genre(99, R.drawable.img_documentary, getString(R.string.genre_documentary)))
+        mGenreList.add(Genre(18, R.drawable.img_drama, getString(R.string.genre_drama)))
+        mGenreList.add(Genre(14, R.drawable.img_fantasy, getString(R.string.genre_fantasy)))
+        mGenreList.add(Genre(878, R.drawable.img_fiction, getString(R.string.genre_fiction)))
+        mGenreList.add(Genre(27, R.drawable.img_horror, getString(R.string.genre_horror)))
+        mGenreList.add(Genre(80, R.drawable.img_crime, getString(R.string.genre_crime)))
+        mGenreList.add(Genre(10751, R.drawable.img_family, getString(R.string.genre_family)))
+        mGenreList.add(Genre(35, R.drawable.img_comedy, getString(R.string.genre_comedy)))
+        mGenreList.add(Genre(9648, R.drawable.img_mystery, getString(R.string.genre_mystery)))
+        mGenreList.add(Genre(10752, R.drawable.img_war, getString(R.string.genre_war)))
+        mGenreList.add(Genre(12, R.drawable.img_adventure, getString(R.string.genre_adventure)))
+        mGenreList.add(Genre(10749, R.drawable.img_romance, getString(R.string.genre_romance)))
+        mGenreList.add(Genre(36, R.drawable.img_history, getString(R.string.genre_history)))
+        mGenreList.add(Genre(53, R.drawable.img_thriller, getString(R.string.genre_thriller)))
+
+        val genreHorizontalAdapter = GenreHorizontalAdapter(mContext, mGenreList, this)
+        mRecyclerGenre.adapter = genreHorizontalAdapter
+        mRecyclerGenre.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
+        mRecyclerGenre.hasFixedSize()
+        mRecyclerGenre.isNestedScrollingEnabled = false
+        mRecyclerGenre.visibility = View.VISIBLE
+        mProgressBar.visibility = View.GONE
+    }
+
     private fun getTimeline(page: Int, refreshPage: Boolean) {
         mTimelineRequest.sendRequest(page, object : TimelineRequest.Callback {
             override fun onSuccess(totalPage: Int, reviewList: ArrayList<Review>) {
@@ -160,6 +202,7 @@ class TimelineFragment : Fragment(), ReviewAdapter.OnClickListener {
                         mReviewAdapter = ReviewAdapter(mContext, mReviewList, this@TimelineFragment)
                         mRecyclerTimeline.adapter = mReviewAdapter
                         mRecyclerTimeline.layoutManager = LinearLayoutManager(mContext)
+                        mRecyclerTimeline.isNestedScrollingEnabled = false
                         mRecyclerTimeline.visibility = View.VISIBLE
                         mProgressBar.visibility = View.GONE
                         mTotalPage = totalPage
@@ -196,6 +239,13 @@ class TimelineFragment : Fragment(), ReviewAdapter.OnClickListener {
         // Memberhentikan loading
         mIsLoading = false
         mSwipeRefresh.isRefreshing = false
+    }
+
+    private fun gotoDiscoverFilm(id: Int, title: String) {
+        val intent = Intent(mContext, DiscoverFilmActivity::class.java)
+        intent.putExtra(Popularin.GENRE_ID, id)
+        intent.putExtra(Popularin.GENRE_TITLE, title)
+        startActivity(intent)
     }
 
     private fun gotoReviewDetail(id: Int, isSelf: Boolean) {

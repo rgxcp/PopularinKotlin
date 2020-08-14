@@ -13,11 +13,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.activities.DiscoverFilmActivity
-import xyz.fairportstudios.popularin.adapters.GenreAdapter
+import xyz.fairportstudios.popularin.adapters.GenreGridAdapter
 import xyz.fairportstudios.popularin.models.Genre
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class GenreFragment : Fragment(), GenreAdapter.OnClickListener {
+class GenreFragment : Fragment(), GenreGridAdapter.OnClickListener {
     private lateinit var mContext: Context
     private lateinit var mGenreList: ArrayList<Genre>
     private lateinit var mProgressBar: ProgressBar
@@ -67,8 +67,8 @@ class GenreFragment : Fragment(), GenreAdapter.OnClickListener {
         mGenreList.add(Genre(36, R.drawable.img_history, getString(R.string.genre_history)))
         mGenreList.add(Genre(53, R.drawable.img_thriller, getString(R.string.genre_thriller)))
 
-        val genreAdapter = GenreAdapter(mContext, mGenreList, this)
-        mRecyclerGenre.adapter = genreAdapter
+        val genreGridAdapter = GenreGridAdapter(mContext, mGenreList, this)
+        mRecyclerGenre.adapter = genreGridAdapter
         mRecyclerGenre.layoutManager = GridLayoutManager(mContext, 2)
         mRecyclerGenre.hasFixedSize()
         mRecyclerGenre.visibility = View.VISIBLE
