@@ -2,7 +2,7 @@ package xyz.fairportstudios.popularin.services
 
 object ConvertGenre {
     fun getGenreForHumans(id: Int): String? {
-        val genres: HashMap<Int, String> = HashMap()
+        val genres = HashMap<Int, String>()
         genres[0] = "Tanpa Genre"
         genres[12] = "Petualangan"
         genres[14] = "Fantasi"
@@ -23,7 +23,6 @@ object ConvertGenre {
         genres[10751] = "Keluarga"
         genres[10752] = "Perang"
         genres[10770] = "Serial TV"
-
         return genres[id]
     }
 }

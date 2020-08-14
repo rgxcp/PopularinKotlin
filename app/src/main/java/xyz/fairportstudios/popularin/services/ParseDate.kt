@@ -2,7 +2,7 @@ package xyz.fairportstudios.popularin.services
 
 object ParseDate {
     fun getDateForHumans(date: String): String {
-        val months: HashMap<String, String> = HashMap()
+        val months = HashMap<String, String>()
         months["01"] = "Januari"
         months["02"] = "Februari"
         months["03"] = "Maret"
@@ -15,11 +15,10 @@ object ParseDate {
         months["10"] = "Oktober"
         months["11"] = "November"
         months["12"] = "Desember"
-
         return try {
-            val day: String = date.substring(8, 10)
-            val month: String = date.substring(5, 7)
-            val year: String = date.substring(0, 4)
+            val day = date.substring(8, 10)
+            val month = date.substring(5, 7)
+            val year = date.substring(0, 4)
             "$day ${months[month]} $year"
         } catch (exception: StringIndexOutOfBoundsException) {
             "Tanpa Tahun"
