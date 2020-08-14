@@ -48,8 +48,8 @@ class SocialActivity : AppCompatActivity() {
 
         // Tab pager
         val pagerAdapter = PagerAdapter(supportFragmentManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
-        pagerAdapter.addFragment(FollowerFragment(userID), R.string.follower.toString())
-        pagerAdapter.addFragment(FollowingFragment(userID), R.string.following.toString())
+        pagerAdapter.addFragment(FollowerFragment(userID, isSelf), R.string.follower.toString())
+        pagerAdapter.addFragment(FollowingFragment(userID, isSelf), R.string.following.toString())
         if (isAuth && !isSelf) {
             pagerAdapter.addFragment(MutualFragment(userID), R.string.mutual.toString())
         }
