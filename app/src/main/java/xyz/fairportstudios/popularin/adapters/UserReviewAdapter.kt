@@ -22,13 +22,9 @@ class UserReviewAdapter(
 ) : RecyclerView.Adapter<UserReviewAdapter.UserReviewViewHolder>() {
     interface OnClickListener {
         fun onUserReviewItemClick(position: Int)
-
         fun onUserReviewFilmPosterClick(position: Int)
-
         fun onUserReviewFilmPosterLongClick(position: Int)
-
         fun onUserReviewLikeClick(position: Int)
-
         fun onUserReviewCommentClick(position: Int)
     }
 
@@ -42,69 +38,65 @@ class UserReviewAdapter(
 
         // Like status
         when (currentItem.isLiked) {
-            true -> holder.imageLike.setImageResource(R.drawable.ic_fill_heart)
-            false -> holder.imageLike.setImageResource(R.drawable.ic_outline_heart)
+            true -> holder.mImageLike.setImageResource(R.drawable.ic_fill_heart)
+            false -> holder.mImageLike.setImageResource(R.drawable.ic_outline_heart)
         }
 
         // Border
-        if (position == itemCount - 1) {
-            holder.border.visibility = View.INVISIBLE
-        } else {
-            holder.border.visibility = View.VISIBLE
+        holder.mBorder.visibility = when (position == itemCount - 1) {
+            true -> View.INVISIBLE
+            false -> View.VISIBLE
         }
 
         // Parsing
         val reviewStar = ConvertRating.getStar(currentItem.rating)
         val filmYear = ParseDate.getYear(currentItem.releaseDate)
         val filmPoster = "${TMDbAPI.BASE_SMALL_IMAGE_URL}${currentItem.poster}"
+        val filmTitleYear = String.format("%s (%s)", currentItem.title, filmYear)
 
         // Isi
-        holder.textFilmTitleYear.text = String.format("%s (%s)", currentItem.title, filmYear)
-        holder.textReviewDetail.text = currentItem.reviewDetail
-        holder.textTotalLike.text = currentItem.totalLike.toString()
-        holder.textTotalComment.text = currentItem.totalComment.toString()
-        holder.textReviewTimestamp.text = currentItem.timestamp
-        holder.imageReviewStar.setImageResource(reviewStar!!)
-        Glide.with(context).load(filmPoster).into(holder.imageFilmPoster)
+        holder.mTextFilmTitleYear.text = filmTitleYear
+        holder.mTextReviewDetail.text = currentItem.reviewDetail
+        holder.mTextTotalLike.text = currentItem.totalLike.toString()
+        holder.mTextTotalComment.text = currentItem.totalComment.toString()
+        holder.mTextReviewTimestamp.text = currentItem.timestamp
+        reviewStar?.let { holder.mImageReviewStar.setImageResource(it) }
+        Glide.with(context).load(filmPoster).into(holder.mImageFilmPoster)
     }
 
-    override fun getItemCount(): Int {
-        return userReviewList.size
-    }
+    override fun getItemCount() = userReviewList.size
 
     inner class UserReviewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
-        val imageReviewStar: ImageView = itemView.image_rur_star
-        val imageFilmPoster: ImageView = itemView.image_rur_poster
-        val imageLike: ImageView = itemView.image_rur_like
-        val textFilmTitleYear: TextView = itemView.text_rur_title_year
-        val textReviewDetail: TextView = itemView.text_rur_review
-        val textTotalLike: TextView = itemView.text_rur_total_like
-        val textTotalComment: TextView = itemView.text_rur_total_comment
-        val textReviewTimestamp: TextView = itemView.text_rur_timestamp
-        val border: View = itemView.border_rur_layout
-        private val imageComment: ImageView = itemView.image_rur_comment
+        val mImageReviewStar: ImageView = itemView.image_rur_star
+        val mImageFilmPoster: ImageView = itemView.image_rur_poster
+        val mImageLike: ImageView = itemView.image_rur_like
+        val mTextFilmTitleYear: TextView = itemView.text_rur_title_year
+        val mTextReviewDetail: TextView = itemView.text_rur_review
+        val mTextTotalLike: TextView = itemView.text_rur_total_like
+        val mTextTotalComment: TextView = itemView.text_rur_total_comment
+        val mTextReviewTimestamp: TextView = itemView.text_rur_timestamp
+        val mBorder: View = itemView.border_rur_layout
+        private val mImageComment: ImageView = itemView.image_rur_comment
 
         init {
             itemView.setOnClickListener(this)
-            imageFilmPoster.setOnClickListener(this)
-            imageFilmPoster.setOnLongClickListener(this)
-            imageLike.setOnClickListener(this)
-            imageComment.setOnClickListener(this)
+            mImageFilmPoster.setOnClickListener(this)
+            mImageFilmPoster.setOnLongClickListener(this)
+            mImageLike.setOnClickListener(this)
+            mImageComment.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {
             when (v) {
                 itemView -> onClickListener.onUserReviewItemClick(adapterPosition)
-                imageFilmPoster -> onClickListener.onUserReviewFilmPosterClick(adapterPosition)
-                imageLike -> onClickListener.onUserReviewLikeClick(adapterPosition)
-                imageComment -> onClickListener.onUserReviewCommentClick(adapterPosition)
+                mImageFilmPoster -> onClickListener.onUserReviewFilmPosterClick(adapterPosition)
+                mImageLike -> onClickListener.onUserReviewLikeClick(adapterPosition)
+                mImageComment -> onClickListener.onUserReviewCommentClick(adapterPosition)
             }
         }
 
         override fun onLongClick(v: View?): Boolean {
-            if (v == imageFilmPoster) {
-                onClickListener.onUserReviewFilmPosterLongClick(adapterPosition)
-            }
+            if (v == mImageFilmPoster) onClickListener.onUserReviewFilmPosterLongClick(adapterPosition)
             return true
         }
     }

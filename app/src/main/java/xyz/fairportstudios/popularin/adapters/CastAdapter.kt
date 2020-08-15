@@ -39,20 +39,18 @@ class CastAdapter(
         val profile = "${TMDbAPI.BASE_SMALL_IMAGE_URL}${currentItem.profilePath}"
 
         // Isi
-        holder.textName.text = currentItem.name
-        holder.textAs.text = currentItem.character
-        Glide.with(context).load(profile).into(holder.imageProfile)
+        holder.mTextName.text = currentItem.name
+        holder.mTextAs.text = currentItem.character
+        Glide.with(context).load(profile).into(holder.mImageProfile)
 
         // Margin
-        var left = getDensity(6)
-        var right = getDensity(6)
-        val isEdgeLeft = position == 0
-        val isEdgeRight = position == itemCount - 1
-        if (isEdgeLeft) {
-            left = getDensity(16)
+        val left = when (position == 0) {
+            true -> getDensity(16)
+            false -> getDensity(6)
         }
-        if (isEdgeRight) {
-            right = getDensity(16)
+        val right = when (position == itemCount - 1) {
+            true -> getDensity(16)
+            false -> getDensity(6)
         }
         val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.marginStart = left
@@ -60,23 +58,19 @@ class CastAdapter(
         holder.itemView.layoutParams = layoutParams
     }
 
-    override fun getItemCount(): Int {
-        return castList.size
-    }
+    override fun getItemCount() = castList.size
 
     inner class CastViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        val imageProfile: ImageView = itemView.image_rcr_profile
-        val textName: TextView = itemView.text_rcr_name
-        val textAs: TextView = itemView.text_rcr_as
+        val mImageProfile: ImageView = itemView.image_rcr_profile
+        val mTextName: TextView = itemView.text_rcr_name
+        val mTextAs: TextView = itemView.text_rcr_as
 
         init {
             itemView.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {
-            if (v == itemView) {
-                onClickListener.onCastItemClick(adapterPosition)
-            }
+            if (v == itemView) onClickListener.onCastItemClick(adapterPosition)
         }
     }
 }

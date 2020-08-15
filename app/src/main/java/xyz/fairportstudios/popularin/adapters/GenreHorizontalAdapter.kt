@@ -34,19 +34,17 @@ class GenreHorizontalAdapter(
         val currentItem = genreList[position]
 
         // Isi
-        holder.textTitle.text = currentItem.title
-        holder.imageBackground.setImageResource(currentItem.background)
+        holder.mTextTitle.text = currentItem.title
+        holder.mImageBackground.setImageResource(currentItem.background)
 
         // Margin
-        var left = getDensity(6)
-        var right = getDensity(6)
-        val isEdgeLeft = position == 0
-        val isEdgeRight = position == itemCount - 1
-        if (isEdgeLeft) {
-            left = getDensity(16)
+        val left = when (position == 0) {
+            true -> getDensity(16)
+            false -> getDensity(6)
         }
-        if (isEdgeRight) {
-            right = getDensity(16)
+        val right = when (position == itemCount - 1) {
+            true -> getDensity(16)
+            false -> getDensity(6)
         }
         val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.marginStart = left
@@ -54,22 +52,18 @@ class GenreHorizontalAdapter(
         holder.itemView.layoutParams = layoutParams
     }
 
-    override fun getItemCount(): Int {
-        return genreList.size
-    }
+    override fun getItemCount() = genreList.size
 
     inner class GenreHorizontalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        val imageBackground: ImageView = itemView.image_rgh_background
-        val textTitle: TextView = itemView.text_rgh_title
+        val mImageBackground: ImageView = itemView.image_rgh_background
+        val mTextTitle: TextView = itemView.text_rgh_title
 
         init {
             itemView.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {
-            if (v == itemView) {
-                onClickListener.onGenreItemClick(adapterPosition)
-            }
+            if (v == itemView) onClickListener.onGenreItemClick(adapterPosition)
         }
     }
 }

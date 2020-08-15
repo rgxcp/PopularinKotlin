@@ -20,11 +20,8 @@ class FilmReviewAdapter(
 ) : RecyclerView.Adapter<FilmReviewAdapter.FilmReviewViewHolder>() {
     interface OnClickListener {
         fun onFilmReviewItemClick(position: Int)
-
         fun onFilmReviewUserProfileClick(position: Int)
-
         fun onFilmReviewLikeClick(position: Int)
-
         fun onFilmReviewCommentClick(position: Int)
     }
 
@@ -38,59 +35,56 @@ class FilmReviewAdapter(
 
         // Like status
         when (currentItem.isLiked) {
-            true -> holder.imageLike.setImageResource(R.drawable.ic_fill_heart)
-            false -> holder.imageLike.setImageResource(R.drawable.ic_outline_heart)
+            true -> holder.mImageLike.setImageResource(R.drawable.ic_fill_heart)
+            false -> holder.mImageLike.setImageResource(R.drawable.ic_outline_heart)
         }
 
         // Border
-        if (position == itemCount - 1) {
-            holder.border.visibility = View.INVISIBLE
-        } else {
-            holder.border.visibility = View.VISIBLE
+        holder.mBorder.visibility = when (position == itemCount - 1) {
+            true -> View.INVISIBLE
+            false -> View.VISIBLE
         }
 
         // Parsing
         val reviewStar = ConvertRating.getStar(currentItem.rating)
 
         // Isi
-        holder.textUsername.text = currentItem.username
-        holder.textReviewDetail.text = currentItem.reviewDetail
-        holder.textTotalLike.text = currentItem.totalLike.toString()
-        holder.textTotalComment.text = currentItem.totalComment.toString()
-        holder.textReviewTimestamp.text = currentItem.timestamp
-        holder.imageReviewStar.setImageResource(reviewStar!!)
-        Glide.with(context).load(currentItem.profilePicture).into(holder.imageUserProfile)
+        holder.mTextUsername.text = currentItem.username
+        holder.mTextReviewDetail.text = currentItem.reviewDetail
+        holder.mTextTotalLike.text = currentItem.totalLike.toString()
+        holder.mTextTotalComment.text = currentItem.totalComment.toString()
+        holder.mTextReviewTimestamp.text = currentItem.timestamp
+        reviewStar?.let { holder.mImageReviewStar.setImageResource(it) }
+        Glide.with(context).load(currentItem.profilePicture).into(holder.mImageUserProfile)
     }
 
-    override fun getItemCount(): Int {
-        return filmReviewList.size
-    }
+    override fun getItemCount() = filmReviewList.size
 
     inner class FilmReviewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        val imageUserProfile: ImageView = itemView.image_rfr_profile
-        val imageReviewStar: ImageView = itemView.image_rfr_star
-        val imageLike: ImageView = itemView.image_rfr_like
-        val textUsername: TextView = itemView.text_rfr_username
-        val textReviewDetail: TextView = itemView.text_rfr_review
-        val textTotalLike: TextView = itemView.text_rfr_total_like
-        val textTotalComment: TextView = itemView.text_rfr_total_comment
-        val textReviewTimestamp: TextView = itemView.text_rfr_timestamp
-        val border: View = itemView.border_rfr_layout
-        private val imageComment: ImageView = itemView.image_rfr_comment
+        val mImageUserProfile: ImageView = itemView.image_rfr_profile
+        val mImageReviewStar: ImageView = itemView.image_rfr_star
+        val mImageLike: ImageView = itemView.image_rfr_like
+        val mTextUsername: TextView = itemView.text_rfr_username
+        val mTextReviewDetail: TextView = itemView.text_rfr_review
+        val mTextTotalLike: TextView = itemView.text_rfr_total_like
+        val mTextTotalComment: TextView = itemView.text_rfr_total_comment
+        val mTextReviewTimestamp: TextView = itemView.text_rfr_timestamp
+        val mBorder: View = itemView.border_rfr_layout
+        private val mImageComment: ImageView = itemView.image_rfr_comment
 
         init {
             itemView.setOnClickListener(this)
-            imageUserProfile.setOnClickListener(this)
-            imageLike.setOnClickListener(this)
-            imageComment.setOnClickListener(this)
+            mImageUserProfile.setOnClickListener(this)
+            mImageLike.setOnClickListener(this)
+            mImageComment.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {
             when (v) {
                 itemView -> onClickListener.onFilmReviewItemClick(adapterPosition)
-                imageUserProfile -> onClickListener.onFilmReviewUserProfileClick(adapterPosition)
-                imageLike -> onClickListener.onFilmReviewLikeClick(adapterPosition)
-                imageComment -> onClickListener.onFilmReviewCommentClick(adapterPosition)
+                mImageUserProfile -> onClickListener.onFilmReviewUserProfileClick(adapterPosition)
+                mImageLike -> onClickListener.onFilmReviewLikeClick(adapterPosition)
+                mImageComment -> onClickListener.onFilmReviewCommentClick(adapterPosition)
             }
         }
     }

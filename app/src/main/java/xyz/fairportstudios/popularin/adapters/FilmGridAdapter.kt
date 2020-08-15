@@ -19,7 +19,6 @@ class FilmGridAdapter(
 ) : RecyclerView.Adapter<FilmGridAdapter.FilmGridViewHolder>() {
     interface OnClickListener {
         fun onFilmGridItemClick(position: Int)
-
         fun onFilmGridItemLongClick(position: Int)
     }
 
@@ -35,15 +34,13 @@ class FilmGridAdapter(
         val poster = "${TMDbAPI.BASE_SMALL_IMAGE_URL}${currentItem.posterPath}"
 
         // Isi
-        Glide.with(context).load(poster).into(holder.imagePoster)
+        Glide.with(context).load(poster).into(holder.mImagePoster)
     }
 
-    override fun getItemCount(): Int {
-        return filmList.size
-    }
+    override fun getItemCount() = filmList.size
 
     inner class FilmGridViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
-        val imagePoster: ImageView = itemView.image_rfg_poster
+        val mImagePoster: ImageView = itemView.image_rfg_poster
 
         init {
             itemView.setOnClickListener(this)
@@ -51,15 +48,11 @@ class FilmGridAdapter(
         }
 
         override fun onClick(v: View?) {
-            if (v == itemView) {
-                onClickListener.onFilmGridItemClick(adapterPosition)
-            }
+            if (v == itemView) onClickListener.onFilmGridItemClick(adapterPosition)
         }
 
         override fun onLongClick(v: View?): Boolean {
-            if (v == itemView) {
-                onClickListener.onFilmGridItemLongClick(adapterPosition)
-            }
+            if (v == itemView) onClickListener.onFilmGridItemLongClick(adapterPosition)
             return true
         }
     }

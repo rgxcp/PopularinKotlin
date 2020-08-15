@@ -29,29 +29,28 @@ class UserAdapter(
         // Posisi
         val currentItem = userList[position]
 
+        // Parsing
+        val username = String.format("@%s", currentItem.username)
+
         // Isi
-        holder.textFullName.text = currentItem.fullName
-        holder.textUsername.text = String.format("@%s", currentItem.username)
-        Glide.with(context).load(currentItem.profilePicture).into(holder.imageProfile)
+        holder.mTextFullName.text = currentItem.fullName
+        holder.mTextUsername.text = username
+        Glide.with(context).load(currentItem.profilePicture).into(holder.mImageProfile)
     }
 
-    override fun getItemCount(): Int {
-        return userList.size
-    }
+    override fun getItemCount() = userList.size
 
     inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        val imageProfile: ImageView = itemView.image_ru_profile
-        val textFullName: TextView = itemView.text_ru_full_name
-        val textUsername: TextView = itemView.text_ru_username
+        val mImageProfile: ImageView = itemView.image_ru_profile
+        val mTextFullName: TextView = itemView.text_ru_full_name
+        val mTextUsername: TextView = itemView.text_ru_username
 
         init {
             itemView.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {
-            if (v == itemView) {
-                onClickListener.onUserItemClick(adapterPosition)
-            }
+            if (v == itemView) onClickListener.onUserItemClick(adapterPosition)
         }
     }
 }

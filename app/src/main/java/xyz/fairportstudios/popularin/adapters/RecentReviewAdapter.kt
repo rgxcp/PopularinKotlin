@@ -20,7 +20,6 @@ class RecentReviewAdapter(
 ) : RecyclerView.Adapter<RecentReviewAdapter.RecentReviewViewHolder>() {
     interface OnClickListener {
         fun onRecentReviewItemClick(position: Int)
-
         fun onRecentReviewItemLongClick(position: Int)
     }
 
@@ -42,19 +41,17 @@ class RecentReviewAdapter(
         val filmPoster = "${TMDbAPI.BASE_SMALL_IMAGE_URL}${currentItem.poster}"
 
         // Isi
-        holder.imageReviewStar.setImageResource(reviewStar!!)
-        Glide.with(context).load(filmPoster).into(holder.imageFilmPoster)
+        reviewStar?.let { holder.mImageReviewStar.setImageResource(it) }
+        Glide.with(context).load(filmPoster).into(holder.mImageFilmPoster)
 
         // Margin
-        var left = getDensity(4)
-        var right = getDensity(4)
-        val isEdgeLeft = position == 0
-        val isEdgeRight = position == itemCount - 1
-        if (isEdgeLeft) {
-            left = getDensity(16)
+        val left = when (position == 0) {
+            true -> getDensity(16)
+            false -> getDensity(4)
         }
-        if (isEdgeRight) {
-            right = getDensity(16)
+        val right = when (position == itemCount - 1) {
+            true -> getDensity(16)
+            false -> getDensity(4)
         }
         val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.marginStart = left
@@ -62,13 +59,11 @@ class RecentReviewAdapter(
         holder.itemView.layoutParams = layoutParams
     }
 
-    override fun getItemCount(): Int {
-        return recentReviewList.size
-    }
+    override fun getItemCount() = recentReviewList.size
 
     inner class RecentReviewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
-        val imageFilmPoster: ImageView = itemView.image_rrr_poster
-        val imageReviewStar: ImageView = itemView.image_rrr_star
+        val mImageFilmPoster: ImageView = itemView.image_rrr_poster
+        val mImageReviewStar: ImageView = itemView.image_rrr_star
 
         init {
             itemView.setOnClickListener(this)
@@ -76,15 +71,11 @@ class RecentReviewAdapter(
         }
 
         override fun onClick(v: View?) {
-            if (v == itemView) {
-                onClickListener.onRecentReviewItemClick(adapterPosition)
-            }
+            if (v == itemView) onClickListener.onRecentReviewItemClick(adapterPosition)
         }
 
         override fun onLongClick(v: View?): Boolean {
-            if (v == itemView) {
-                onClickListener.onRecentReviewItemLongClick(adapterPosition)
-            }
+            if (v == itemView) onClickListener.onRecentReviewItemLongClick(adapterPosition)
             return true
         }
     }

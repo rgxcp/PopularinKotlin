@@ -22,9 +22,7 @@ class FilmAdapter(
 ) : RecyclerView.Adapter<FilmAdapter.FilmViewHolder>() {
     interface OnClickListener {
         fun onFilmItemClick(position: Int)
-
         fun onFilmPosterClick(position: Int)
-
         fun onFilmPosterLongClick(position: Int)
     }
 
@@ -42,39 +40,35 @@ class FilmAdapter(
         val poster = "${TMDbAPI.BASE_SMALL_IMAGE_URL}${currentItem.posterPath}"
 
         // Isi
-        holder.textTitle.text = currentItem.originalTitle
-        holder.textGenre.text = genre
-        holder.textReleaseDate.text = releaseDate
-        Glide.with(context).load(poster).into(holder.imagePoster)
+        holder.mTextTitle.text = currentItem.originalTitle
+        holder.mTextGenre.text = genre
+        holder.mTextReleaseDate.text = releaseDate
+        Glide.with(context).load(poster).into(holder.mImagePoster)
     }
 
-    override fun getItemCount(): Int {
-        return filmList.size
-    }
+    override fun getItemCount() = filmList.size
 
     inner class FilmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
-        val imagePoster: ImageView = itemView.image_rf_poster
-        val textTitle: TextView = itemView.text_rf_title
-        val textGenre: TextView = itemView.text_rf_genre
-        val textReleaseDate: TextView = itemView.text_rf_release_date
+        val mImagePoster: ImageView = itemView.image_rf_poster
+        val mTextTitle: TextView = itemView.text_rf_title
+        val mTextGenre: TextView = itemView.text_rf_genre
+        val mTextReleaseDate: TextView = itemView.text_rf_release_date
 
         init {
             itemView.setOnClickListener(this)
-            imagePoster.setOnClickListener(this)
-            imagePoster.setOnLongClickListener(this)
+            mImagePoster.setOnClickListener(this)
+            mImagePoster.setOnLongClickListener(this)
         }
 
         override fun onClick(v: View?) {
             when (v) {
                 itemView -> onClickListener.onFilmItemClick(adapterPosition)
-                imagePoster -> onClickListener.onFilmPosterClick(adapterPosition)
+                mImagePoster -> onClickListener.onFilmPosterClick(adapterPosition)
             }
         }
 
         override fun onLongClick(v: View?): Boolean {
-            if (v == imagePoster) {
-                onClickListener.onFilmPosterLongClick(adapterPosition)
-            }
+            if (v == mImagePoster) onClickListener.onFilmPosterLongClick(adapterPosition)
             return true
         }
     }

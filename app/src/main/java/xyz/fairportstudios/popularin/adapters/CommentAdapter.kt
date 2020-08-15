@@ -20,7 +20,6 @@ class CommentAdapter(
 ) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
     interface OnClickListener {
         fun onCommentProfileClick(position: Int)
-
         fun onCommentDeleteClick(position: Int)
     }
 
@@ -33,38 +32,36 @@ class CommentAdapter(
         val currentItem = commentList[position]
 
         // Auth
-        when (currentItem.userID == authID) {
-            true -> holder.imageDelete.visibility = View.VISIBLE
-            false -> holder.imageDelete.visibility = View.GONE
+        holder.mImageDelete.visibility = when (currentItem.userID == authID) {
+            true -> View.VISIBLE
+            false -> View.GONE
         }
 
         // Isi
-        holder.textUsername.text = currentItem.username
-        holder.textCommentTimestamp.text = currentItem.timestamp
-        holder.textCommentDetail.text = currentItem.commentDetail
-        Glide.with(context).load(currentItem.profilePicture).into(holder.imageProfile)
+        holder.mTextUsername.text = currentItem.username
+        holder.mTextCommentTimestamp.text = currentItem.timestamp
+        holder.mTextCommentDetail.text = currentItem.commentDetail
+        Glide.with(context).load(currentItem.profilePicture).into(holder.mImageProfile)
     }
 
-    override fun getItemCount(): Int {
-        return commentList.size
-    }
+    override fun getItemCount() = commentList.size
 
     inner class CommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        val imageProfile: ImageView = itemView.image_rc_profile
-        val imageDelete: ImageView = itemView.image_rc_delete
-        val textUsername: TextView = itemView.text_rc_username
-        val textCommentTimestamp: TextView = itemView.text_rc_timestamp
-        val textCommentDetail: TextView = itemView.text_rc_comment
+        val mImageProfile: ImageView = itemView.image_rc_profile
+        val mImageDelete: ImageView = itemView.image_rc_delete
+        val mTextUsername: TextView = itemView.text_rc_username
+        val mTextCommentTimestamp: TextView = itemView.text_rc_timestamp
+        val mTextCommentDetail: TextView = itemView.text_rc_comment
 
         init {
-            imageProfile.setOnClickListener(this)
-            imageDelete.setOnClickListener(this)
+            mImageProfile.setOnClickListener(this)
+            mImageDelete.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {
             when (v) {
-                imageProfile -> onClickListener.onCommentProfileClick(adapterPosition)
-                imageDelete -> onClickListener.onCommentDeleteClick(adapterPosition)
+                mImageProfile -> onClickListener.onCommentProfileClick(adapterPosition)
+                mImageDelete -> onClickListener.onCommentDeleteClick(adapterPosition)
             }
         }
     }

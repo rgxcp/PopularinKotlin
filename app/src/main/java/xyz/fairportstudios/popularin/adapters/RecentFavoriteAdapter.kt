@@ -19,7 +19,6 @@ class RecentFavoriteAdapter(
 ) : RecyclerView.Adapter<RecentFavoriteAdapter.RecentFavoriteViewHolder>() {
     interface OnClickListener {
         fun onRecentFavoriteItemClick(position: Int)
-
         fun onRecentFavoriteItemLongClick(position: Int)
     }
 
@@ -40,18 +39,16 @@ class RecentFavoriteAdapter(
         val poster = "${TMDbAPI.BASE_SMALL_IMAGE_URL}${currentItem.poster}"
 
         // Isi
-        Glide.with(context).load(poster).into(holder.imagePoster)
+        Glide.with(context).load(poster).into(holder.mImagePoster)
 
         // Margin
-        var left = getDensity(4)
-        var right = getDensity(4)
-        val isEdgeLeft = position == 0
-        val isEdgeRight = position == itemCount - 1
-        if (isEdgeLeft) {
-            left = getDensity(16)
+        val left = when (position == 0) {
+            true -> getDensity(16)
+            false -> getDensity(4)
         }
-        if (isEdgeRight) {
-            right = getDensity(16)
+        val right = when (position == itemCount - 1) {
+            true -> getDensity(16)
+            false -> getDensity(4)
         }
         val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.marginStart = left
@@ -59,12 +56,10 @@ class RecentFavoriteAdapter(
         holder.itemView.layoutParams = layoutParams
     }
 
-    override fun getItemCount(): Int {
-        return recentFavoriteList.size
-    }
+    override fun getItemCount() = recentFavoriteList.size
 
     inner class RecentFavoriteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
-        val imagePoster: ImageView = itemView.image_rrf_poster
+        val mImagePoster: ImageView = itemView.image_rrf_poster
 
         init {
             itemView.setOnClickListener(this)
@@ -72,15 +67,11 @@ class RecentFavoriteAdapter(
         }
 
         override fun onClick(v: View?) {
-            if (v == itemView) {
-                onClickListener.onRecentFavoriteItemClick(adapterPosition)
-            }
+            if (v == itemView) onClickListener.onRecentFavoriteItemClick(adapterPosition)
         }
 
         override fun onLongClick(v: View?): Boolean {
-            if (v == itemView) {
-                onClickListener.onRecentFavoriteItemLongClick(adapterPosition)
-            }
+            if (v == itemView) onClickListener.onRecentFavoriteItemLongClick(adapterPosition)
             return true
         }
     }
