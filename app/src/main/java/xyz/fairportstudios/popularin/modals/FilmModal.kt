@@ -29,18 +29,20 @@ class FilmModal(
     private val filmYear: String,
     private val filmPoster: String
 ) : BottomSheetDialogFragment() {
-    // Variable member
-    private var mInReview: Boolean = false
-    private var mInFavorite: Boolean = false
-    private var mInWatchlist: Boolean = false
-    private var mLastRate: Float = 0.0f
+    // Primitive
+    private var mInReview = false
+    private var mInFavorite = false
+    private var mInWatchlist = false
+    private var mLastRate = 0.0f
+
+    // View
     private lateinit var mImageReview: ImageView
     private lateinit var mImageFavorite: ImageView
     private lateinit var mImageWatchlist: ImageView
     private lateinit var mRatingBar: RatingBar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view: View = inflater.inflate(R.layout.modal_film, container, false)
+        val view = inflater.inflate(R.layout.modal_film, container, false)
 
         // Context
         val context = requireActivity()
@@ -50,8 +52,8 @@ class FilmModal(
         mImageFavorite = view.findViewById(R.id.image_mf_favorite)
         mImageWatchlist = view.findViewById(R.id.image_mf_watchlist)
         mRatingBar = view.findViewById(R.id.rbr_mf_layout)
-        val textFilmTitle: TextView = view.findViewById(R.id.text_mf_title)
-        val textFilmYear: TextView = view.findViewById(R.id.text_mf_year)
+        val textFilmTitle = view.findViewById<TextView>(R.id.text_mf_title)
+        val textFilmYear = view.findViewById<TextView>(R.id.text_mf_year)
 
         // Auth
         val isAuth = Auth(context).isAuth()
@@ -68,7 +70,7 @@ class FilmModal(
         // Activity
         mImageReview.setOnClickListener {
             when (isAuth) {
-                true -> addReview(context)
+                true -> gotoAddReview(context)
                 false -> gotoEmptyAccount(context)
             }
             dismiss()
@@ -90,7 +92,7 @@ class FilmModal(
         mImageWatchlist.setOnClickListener {
             when (isAuth) {
                 true -> {
-                    when (mInFavorite) {
+                    when (mInWatchlist) {
                         true -> removeFromWatchlist(context)
                         false -> addToWatchlist(context)
                     }
@@ -100,12 +102,12 @@ class FilmModal(
             dismiss()
         }
 
-        mRatingBar.setOnRatingBarChangeListener { _, rating, _ ->
+        mRatingBar.setOnRatingBarChangeListener { _, newRate, _ ->
             when (isAuth) {
                 true -> {
-                    if (mLastRate != rating) {
-                        mLastRate = rating
-                        addReview(context)
+                    if (mLastRate != newRate) {
+                        mLastRate = newRate
+                        gotoAddReview(context)
                         dismiss()
                     }
                 }
@@ -127,6 +129,7 @@ class FilmModal(
                 mInFavorite = filmSelf.inFavorite
                 mInWatchlist = filmSelf.inWatchlist
                 mLastRate = filmSelf.lastRate.toFloat()
+                mRatingBar.rating = mLastRate
 
                 if (mInReview) {
                     mImageReview.setImageResource(R.drawable.ic_fill_eye)
@@ -143,21 +146,6 @@ class FilmModal(
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
         })
-    }
-
-    private fun gotoEmptyAccount(context: Context) {
-        val intent = Intent(context, EmptyAccountActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun addReview(context: Context) {
-        val intent = Intent(context, AddReviewActivity::class.java)
-        intent.putExtra(Popularin.FILM_ID, filmID)
-        intent.putExtra(Popularin.FILM_TITLE, filmTitle)
-        intent.putExtra(Popularin.FILM_YEAR, filmYear)
-        intent.putExtra(Popularin.FILM_POSTER, filmPoster)
-        intent.putExtra(Popularin.RATING, mLastRate)
-        startActivity(intent)
     }
 
     private fun addToFavorite(context: Context) {
@@ -210,5 +198,20 @@ class FilmModal(
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun gotoAddReview(context: Context) {
+        val intent = Intent(context, AddReviewActivity::class.java)
+        intent.putExtra(Popularin.FILM_ID, filmID)
+        intent.putExtra(Popularin.FILM_TITLE, filmTitle)
+        intent.putExtra(Popularin.FILM_YEAR, filmYear)
+        intent.putExtra(Popularin.FILM_POSTER, filmPoster)
+        intent.putExtra(Popularin.RATING, mLastRate)
+        startActivity(intent)
+    }
+
+    private fun gotoEmptyAccount(context: Context) {
+        val intent = Intent(context, EmptyAccountActivity::class.java)
+        startActivity(intent)
     }
 }
