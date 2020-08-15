@@ -7,5 +7,5 @@ data class FilmDetail(
     val releaseDate: String,
     val overview: String,
     val posterPath: String,
-    val video_key: String
+    val videoKey: String
 )
