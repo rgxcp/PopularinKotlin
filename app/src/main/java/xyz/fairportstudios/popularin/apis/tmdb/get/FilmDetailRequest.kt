@@ -15,7 +15,6 @@ import xyz.fairportstudios.popularin.statics.TMDbAPI
 class FilmDetailRequest(private val context: Context, private val filmID: Int) {
     interface Callback {
         fun onSuccess(filmDetail: FilmDetail, castList: ArrayList<Cast>, crewList: ArrayList<Crew>)
-
         fun onError(message: String)
     }
 
@@ -29,18 +28,18 @@ class FilmDetailRequest(private val context: Context, private val filmID: Int) {
             val castArray = creditObject.getJSONArray("cast")
             val crewArray = creditObject.getJSONArray("crew")
             val videoArray = videoObject.getJSONArray("results")
-            var genreID = 0
-            var videoKey = ""
             val runtime = try {
                 response.getInt("runtime")
             } catch (nullRuntime: JSONException) {
                 0
             }
-            if (!genreArray.isNull(0)) {
-                genreID = genreArray.getJSONObject(0).getInt("id")
+            val genreID = when (!genreArray.isNull(0)) {
+                true -> genreArray.getJSONObject(0).getInt("id")
+                false -> 0
             }
-            if (!videoArray.isNull(0)) {
-                videoKey = videoArray.getJSONObject(0).getString("key")
+            val videoKey = when (!videoArray.isNull(0)) {
+                true -> videoArray.getJSONObject(0).getString("key")
+                false -> ""
             }
 
             // Detail
@@ -77,7 +76,7 @@ class FilmDetailRequest(private val context: Context, private val filmID: Int) {
                     val crew = Crew(
                         indexObject.getInt("id"),
                         indexObject.getString("name"),
-                        indexObject.getString("character"),
+                        indexObject.getString("job"),
                         indexObject.getString("profile_path")
                     )
                     crewList.add(crew)

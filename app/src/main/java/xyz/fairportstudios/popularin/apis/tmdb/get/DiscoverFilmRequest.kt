@@ -12,12 +12,11 @@ import xyz.fairportstudios.popularin.statics.TMDbAPI
 class DiscoverFilmRequest(private val context: Context, private val genreID: Int) {
     interface Callback {
         fun onSuccess(totalPage: Int, filmList: ArrayList<Film>)
-
         fun onError(message: String)
     }
 
     fun sendRequest(page: Int, callback: Callback) {
-        val requestURL = "${TMDbAPI.DISCOVER}?api_key=${APIKey.TMDB_API_KEY}&language=id&region=ID&sort_by=popularity.desc&page=$page&release_date.gte=2000-01-01&with_genres=$genreID&with_original_language=id"
+        val requestURL = "${TMDbAPI.DISCOVER}?api_key=${APIKey.TMDB_API_KEY}&language=id&region=ID&sort_by=popularity.desc&page=$page&with_genres=$genreID&with_original_language=id"
 
         val discoverFilm = JsonObjectRequest(Request.Method.GET, requestURL, null, Response.Listener { response ->
             val filmList = ArrayList<Film>()
@@ -27,9 +26,9 @@ class DiscoverFilmRequest(private val context: Context, private val genreID: Int
             for (index in 0 until resultArray.length()) {
                 val indexObject = resultArray.getJSONObject(index)
                 val genreArray = indexObject.getJSONArray("genre_ids")
-                var genreID = 0
-                if (!genreArray.isNull(0)) {
-                    genreID = genreArray.getInt(0)
+                val genreID = when (!genreArray.isNull(0)) {
+                    true -> genreArray.getInt(0)
+                    false -> 0
                 }
                 val film = Film(
                     indexObject.getInt("id"),

@@ -13,7 +13,6 @@ import xyz.fairportstudios.popularin.statics.TMDbAPI
 class CreditDetailRequest(private val context: Context, private val creditID: Int) {
     interface Callback {
         fun onSuccess(creditDetail: CreditDetail, filmAsCastList: ArrayList<Film>, filmAsCrewList: ArrayList<Film>)
-
         fun onError(message: String)
     }
 
@@ -42,9 +41,9 @@ class CreditDetailRequest(private val context: Context, private val creditID: In
                     val language = indexObject.getString("original_language")
                     if (language == "id") {
                         val genreArray = indexObject.getJSONArray("genre_ids")
-                        var genreID = 0
-                        if (!genreArray.isNull(0)) {
-                            genreID = genreArray.getInt(0)
+                        val genreID = when (!genreArray.isNull(0)) {
+                            true -> genreArray.getInt(0)
+                            false -> 0
                         }
                         val film = Film(
                             indexObject.getInt("id"),
@@ -66,9 +65,9 @@ class CreditDetailRequest(private val context: Context, private val creditID: In
                     val language = indexObject.getString("original_language")
                     if (language == "id") {
                         val genreArray = indexObject.getJSONArray("genre_ids")
-                        var genreID = 0
-                        if (!genreArray.isNull(0)) {
-                            genreID = genreArray.getInt(0)
+                        val genreID = when (!genreArray.isNull(0)) {
+                            true -> genreArray.getInt(0)
+                            false -> 0
                         }
                         val film = Film(
                             indexObject.getInt("id"),
