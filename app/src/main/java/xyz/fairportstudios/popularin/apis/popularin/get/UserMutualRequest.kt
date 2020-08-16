@@ -16,9 +16,7 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class UserMutualRequest(private val context: Context, private val userID: Int) {
     interface Callback {
         fun onSuccess(totalPage: Int, userList: ArrayList<User>)
-
         fun onNotFound()
-
         fun onError(message: String)
     }
 
@@ -32,6 +30,7 @@ class UserMutualRequest(private val context: Context, private val userID: Int) {
                     val resultObject = response.getJSONObject("result")
                     val dataArray = resultObject.getJSONArray("data")
                     val totalPage = resultObject.getInt("last_page")
+
                     for (index in 0 until dataArray.length()) {
                         val indexObject = dataArray.getJSONObject(index)
                         val user = User(
@@ -42,6 +41,7 @@ class UserMutualRequest(private val context: Context, private val userID: Int) {
                         )
                         userList.add(user)
                     }
+
                     callback.onSuccess(totalPage, userList)
                 }
                 606 -> callback.onNotFound()

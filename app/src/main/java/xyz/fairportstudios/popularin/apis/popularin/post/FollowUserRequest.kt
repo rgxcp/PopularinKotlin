@@ -15,7 +15,6 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class FollowUserRequest(private val context: Context, private val userID: Int) {
     interface Callback {
         fun onSuccess()
-
         fun onError(message: String)
     }
 

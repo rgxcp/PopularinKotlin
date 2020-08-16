@@ -15,7 +15,6 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class UnfollowUserRequest(private val context: Context, private val userID: Int) {
     interface Callback {
         fun onSuccess()
-
         fun onError(message: String)
     }
 
@@ -23,12 +22,9 @@ class UnfollowUserRequest(private val context: Context, private val userID: Int)
         val requestURL = "${PopularinAPI.USER}$userID/unfollow"
 
         val unfollowUser = object : JsonObjectRequest(Method.DELETE, requestURL, null, Response.Listener { response ->
-            val status = response.getInt("status")
-
-            if (status == 404) {
-                callback.onSuccess()
-            } else {
-                callback.onError(context.getString(R.string.general_error))
+            when (response.getInt("status")) {
+                404 -> callback.onSuccess()
+                else -> callback.onError(context.getString(R.string.general_error))
             }
         }, Response.ErrorListener { error ->
             error.printStackTrace()

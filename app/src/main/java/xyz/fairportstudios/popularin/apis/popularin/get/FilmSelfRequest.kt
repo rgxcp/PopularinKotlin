@@ -16,7 +16,6 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class FilmSelfRequest(private val context: Context, private val filmID: Int) {
     interface Callback {
         fun onSuccess(filmSelf: FilmSelf)
-
         fun onError(message: String)
     }
 

@@ -17,9 +17,7 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class AddCommentRequest(private val context: Context, private val reviewID: Int, private val commentDetail: String) {
     interface Callback {
         fun onSuccess(comment: Comment)
-
         fun onFailed(message: String)
-
         fun onError(message: String)
     }
 
@@ -43,11 +41,7 @@ class AddCommentRequest(private val context: Context, private val reviewID: Int,
                     )
                     callback.onSuccess(comment)
                 }
-                626 -> {
-                    val resultArray = responseObject.getJSONArray("result")
-                    val message = resultArray.getString(0)
-                    callback.onFailed(message)
-                }
+                626 -> callback.onFailed(responseObject.getJSONArray("result").getString(0))
                 else -> callback.onError(context.getString(R.string.general_error))
             }
         }, Response.ErrorListener { error ->

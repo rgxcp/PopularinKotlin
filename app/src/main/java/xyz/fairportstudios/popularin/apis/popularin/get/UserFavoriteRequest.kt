@@ -15,9 +15,7 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class UserFavoriteRequest(private val context: Context, private val userID: Int) {
     interface Callback {
         fun onSuccess(totalPage: Int, filmList: ArrayList<Film>)
-
         fun onNotFound()
-
         fun onError(message: String)
     }
 
@@ -31,6 +29,7 @@ class UserFavoriteRequest(private val context: Context, private val userID: Int)
                     val resultObject = response.getJSONObject("result")
                     val dataArray = resultObject.getJSONArray("data")
                     val totalPage = resultObject.getInt("last_page")
+
                     for (index in 0 until dataArray.length()) {
                         val indexObject = dataArray.getJSONObject(index)
                         val filmObject = indexObject.getJSONObject("film")
@@ -43,6 +42,7 @@ class UserFavoriteRequest(private val context: Context, private val userID: Int)
                         )
                         filmList.add(film)
                     }
+
                     callback.onSuccess(totalPage, filmList)
                 }
                 606 -> callback.onNotFound()

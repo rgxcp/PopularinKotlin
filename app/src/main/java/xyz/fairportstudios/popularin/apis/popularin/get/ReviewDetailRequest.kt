@@ -16,7 +16,6 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class ReviewDetailRequest(private val context: Context, private val reviewID: Int) {
     interface Callback {
         fun onSuccess(reviewDetail: ReviewDetail)
-
         fun onError(message: String)
     }
 

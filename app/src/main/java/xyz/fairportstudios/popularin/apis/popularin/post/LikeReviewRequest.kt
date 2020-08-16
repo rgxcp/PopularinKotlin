@@ -15,7 +15,6 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class LikeReviewRequest(private val context: Context, private val reviewID: Int) {
     interface Callback {
         fun onSuccess()
-
         fun onError(message: String)
     }
 

@@ -21,9 +21,7 @@ class SignUpRequest(
 ) {
     interface Callback {
         fun onSuccess(authID: Int, authToken: String)
-
         fun onFailed(message: String)
-
         fun onError(message: String)
     }
 
@@ -40,11 +38,7 @@ class SignUpRequest(
                     val authToken = resultObject.getString("api_token")
                     callback.onSuccess(authID, authToken)
                 }
-                626 -> {
-                    val resultArray = responseObject.getJSONArray("result")
-                    val message = resultArray.getString(0)
-                    callback.onFailed(message)
-                }
+                626 -> callback.onFailed(responseObject.getJSONArray("result").getString(0))
                 else -> callback.onError(context.getString(R.string.general_error))
             }
         }, Response.ErrorListener { error ->
@@ -64,8 +58,8 @@ class SignUpRequest(
                 return params
             }
 
-            override fun getHeaders(): MutableMap<String, String?> {
-                val headers = HashMap<String, String?>()
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
                 headers["API-Key"] = APIKey.POPULARIN_API_KEY
                 headers["Content-Type"] = "application/x-www-form-urlencoded"
                 return headers

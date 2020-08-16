@@ -22,9 +22,7 @@ class UpdateReviewRequest(
 ) {
     interface Callback {
         fun onSuccess()
-
         fun onFailed(message: String)
-
         fun onError(message: String)
     }
 
@@ -36,11 +34,7 @@ class UpdateReviewRequest(
 
             when (responseObject.getInt("status")) {
                 303 -> callback.onSuccess()
-                626 -> {
-                    val resultArray = responseObject.getJSONArray("result")
-                    val message = resultArray.getString(0)
-                    callback.onFailed(message)
-                }
+                626 -> callback.onFailed(responseObject.getJSONArray("result").getString(0))
                 else -> callback.onError(context.getString(R.string.general_error))
             }
         }, Response.ErrorListener { error ->

@@ -16,9 +16,7 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class WatchlistFromFollowingRequest(private val context: Context, private val filmID: Int) {
     interface Callback {
         fun onSuccess(totalPage: Int, userList: ArrayList<User>)
-
         fun onNotFound()
-
         fun onError(message: String)
     }
 
@@ -32,6 +30,7 @@ class WatchlistFromFollowingRequest(private val context: Context, private val fi
                     val resultObject = response.getJSONObject("result")
                     val dataArray = resultObject.getJSONArray("data")
                     val totalPage = resultObject.getInt("last_page")
+
                     for (index in 0 until dataArray.length()) {
                         val indexObject = dataArray.getJSONObject(index)
                         val userObject = indexObject.getJSONObject("user")
@@ -43,6 +42,7 @@ class WatchlistFromFollowingRequest(private val context: Context, private val fi
                         )
                         userList.add(user)
                     }
+
                     callback.onSuccess(totalPage, userList)
                 }
                 606 -> callback.onNotFound()

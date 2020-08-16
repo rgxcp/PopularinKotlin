@@ -16,9 +16,7 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class ReviewRequest(private val context: Context) {
     interface Callback {
         fun onSuccess(totalPage: Int, reviewList: ArrayList<Review>)
-
         fun onNotFound()
-
         fun onError(message: String)
     }
 
@@ -32,6 +30,7 @@ class ReviewRequest(private val context: Context) {
                     val resultObject = response.getJSONObject("result")
                     val dataArray = resultObject.getJSONArray("data")
                     val totalPage = resultObject.getInt("last_page")
+
                     for (index in 0 until dataArray.length()) {
                         val indexObject = dataArray.getJSONObject(index)
                         val filmObject = indexObject.getJSONObject("film")
@@ -54,6 +53,7 @@ class ReviewRequest(private val context: Context) {
                         )
                         reviewList.add(review)
                     }
+
                     callback.onSuccess(totalPage, reviewList)
                 }
                 606 -> callback.onNotFound()

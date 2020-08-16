@@ -17,11 +17,8 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class AccountDetailRequest(private val context: Context, private val userID: Int) {
     interface Callback {
         fun onSuccess(accountDetail: AccountDetail)
-
         fun onHasRecentFavorite(recentFavoriteList: ArrayList<RecentFavorite>)
-
         fun onHasRecentReview(recentReviewList: ArrayList<RecentReview>)
-
         fun onError(message: String)
     }
 
@@ -55,6 +52,7 @@ class AccountDetailRequest(private val context: Context, private val userID: Int
                     if (totalFavorite > 0) {
                         val recentFavoriteList = ArrayList<RecentFavorite>()
                         val recentFavoriteArray = activityObject.getJSONArray("recent_favorites")
+
                         for (index in 0 until recentFavoriteArray.length()) {
                             val indexObject = recentFavoriteArray.getJSONObject(index)
                             val filmObject = indexObject.getJSONObject("film")
@@ -66,6 +64,7 @@ class AccountDetailRequest(private val context: Context, private val userID: Int
                             )
                             recentFavoriteList.add(recentFavorite)
                         }
+
                         callback.onHasRecentFavorite(recentFavoriteList)
                     }
 
@@ -73,6 +72,7 @@ class AccountDetailRequest(private val context: Context, private val userID: Int
                     if (totalReview > 0) {
                         val recentReviewList = ArrayList<RecentReview>()
                         val recentReviewArray = activityObject.getJSONArray("recent_reviews")
+
                         for (index in 0 until recentReviewArray.length()) {
                             val indexObject = recentReviewArray.getJSONObject(index)
                             val filmObject = indexObject.getJSONObject("film")
@@ -86,6 +86,7 @@ class AccountDetailRequest(private val context: Context, private val userID: Int
                             )
                             recentReviewList.add(recentReview)
                         }
+
                         callback.onHasRecentReview(recentReviewList)
                     }
                 }

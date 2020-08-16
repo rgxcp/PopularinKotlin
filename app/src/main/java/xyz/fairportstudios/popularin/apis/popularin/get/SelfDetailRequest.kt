@@ -16,7 +16,6 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class SelfDetailRequest(private val context: Context) {
     interface Callback {
         fun onSuccess(selfDetail: SelfDetail)
-
         fun onError(message: String)
     }
 

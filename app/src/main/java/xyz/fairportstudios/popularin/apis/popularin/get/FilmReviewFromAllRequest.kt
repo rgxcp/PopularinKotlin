@@ -16,9 +16,7 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class FilmReviewFromAllRequest(private val context: Context, private val filmID: Int) {
     interface Callback {
         fun onSuccess(totalPage: Int, filmReviewList: ArrayList<FilmReview>)
-
         fun onNotFound()
-
         fun onError(message: String)
     }
 
@@ -32,6 +30,7 @@ class FilmReviewFromAllRequest(private val context: Context, private val filmID:
                     val resultObject = response.getJSONObject("result")
                     val dataArray = resultObject.getJSONArray("data")
                     val totalPage = resultObject.getInt("last_page")
+
                     for (index in 0 until dataArray.length()) {
                         val indexObject = dataArray.getJSONObject(index)
                         val userObject = indexObject.getJSONObject("user")
@@ -49,6 +48,7 @@ class FilmReviewFromAllRequest(private val context: Context, private val filmID:
                         )
                         filmReviewList.add(filmReview)
                     }
+
                     callback.onSuccess(totalPage, filmReviewList)
                 }
                 606 -> callback.onNotFound()

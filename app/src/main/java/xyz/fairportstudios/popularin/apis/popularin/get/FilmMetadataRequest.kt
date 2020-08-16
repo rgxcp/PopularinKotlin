@@ -15,9 +15,7 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class FilmMetadataRequest(private val context: Context, private val filmID: Int) {
     interface Callback {
         fun onSuccess(filmMetadata: FilmMetadata)
-
         fun onNotFound()
-
         fun onError(message: String)
     }
 

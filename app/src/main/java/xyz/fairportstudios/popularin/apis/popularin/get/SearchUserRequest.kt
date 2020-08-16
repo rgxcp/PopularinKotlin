@@ -15,9 +15,7 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class SearchUserRequest(private val context: Context) {
     interface Callback {
         fun onSuccess(userList: ArrayList<User>)
-
         fun onNotFound()
-
         fun onError(message: String)
     }
 
@@ -30,6 +28,7 @@ class SearchUserRequest(private val context: Context) {
                     val userList = ArrayList<User>()
                     val resultObject = response.getJSONObject("result")
                     val dataArray = resultObject.getJSONArray("data")
+
                     for (index in 0 until dataArray.length()) {
                         val indexObject = dataArray.getJSONObject(index)
                         val user = User(
@@ -40,6 +39,7 @@ class SearchUserRequest(private val context: Context) {
                         )
                         userList.add(user)
                     }
+
                     callback.onSuccess(userList)
                 }
                 606 -> callback.onNotFound()

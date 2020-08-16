@@ -15,7 +15,6 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class AddFavoriteRequest(private val context: Context, private val filmID: Int) {
     interface Callback {
         fun onSuccess()
-
         fun onError(message: String)
     }
 

@@ -15,9 +15,7 @@ import xyz.fairportstudios.popularin.statics.PopularinAPI
 class CommentRequest(private val context: Context, private val reviewID: Int) {
     interface Callback {
         fun onSuccess(totalPage: Int, commentList: ArrayList<Comment>)
-
         fun onNotFound()
-
         fun onError(message: String)
     }
 
@@ -31,6 +29,7 @@ class CommentRequest(private val context: Context, private val reviewID: Int) {
                     val resultObject = response.getJSONObject("result")
                     val dataArray = resultObject.getJSONArray("data")
                     val totalPage = resultObject.getInt("last_page")
+
                     for (index in 0 until dataArray.length()) {
                         val indexObject = dataArray.getJSONObject(index)
                         val userObject = indexObject.getJSONObject("user")
@@ -44,6 +43,7 @@ class CommentRequest(private val context: Context, private val reviewID: Int) {
                         )
                         commentList.add(comment)
                     }
+
                     callback.onSuccess(totalPage, commentList)
                 }
                 606 -> callback.onNotFound()
