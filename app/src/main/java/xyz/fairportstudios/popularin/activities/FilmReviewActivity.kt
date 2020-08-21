@@ -223,7 +223,7 @@ class FilmReviewActivity : AppCompatActivity(), FilmReviewAdapter.OnClickListene
                     false -> {
                         mProgressBar.visibility = View.GONE
                         mTextMessage.visibility = View.VISIBLE
-                        mTextMessage.text = getString(R.string.empty_film_review)
+                        mTextMessage.text = message
                     }
                 }
             }

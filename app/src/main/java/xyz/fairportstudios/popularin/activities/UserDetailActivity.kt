@@ -241,10 +241,6 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
         mRecyclerRecentReview.visibility = View.VISIBLE
     }
 
-    private enum class FollowingState {
-        FOLLOWING, NOT_FOLLOWING, LOADING
-    }
-
     private fun setFollowingState(state: Boolean) {
         mIsFollowing = state
         when (mIsFollowing) {
@@ -261,6 +257,10 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
             FollowingState.NOT_FOLLOWING -> mButtonFollow.text = getString(R.string.follow)
             else -> mButtonFollow.text = getString(R.string.loading)
         }
+    }
+
+    private enum class FollowingState {
+        FOLLOWING, NOT_FOLLOWING, LOADING
     }
 
     private fun followUser(id: Int) {

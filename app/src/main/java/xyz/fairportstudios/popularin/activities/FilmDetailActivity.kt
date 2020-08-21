@@ -35,7 +35,7 @@ import xyz.fairportstudios.popularin.services.ConvertRuntime
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 import xyz.fairportstudios.popularin.statics.TMDbAPI
-import java.util.*
+import java.util.Locale
 import kotlin.collections.ArrayList
 
 class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, CrewAdapter.OnClickListener {

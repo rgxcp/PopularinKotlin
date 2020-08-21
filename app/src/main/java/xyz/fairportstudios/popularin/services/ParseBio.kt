@@ -1,7 +1,7 @@
 package xyz.fairportstudios.popularin.services
 
 import xyz.fairportstudios.popularin.models.CreditDetail
-import java.util.*
+import java.util.Locale
 
 object ParseBio {
     fun getBioForHumans(creditDetail: CreditDetail): String {

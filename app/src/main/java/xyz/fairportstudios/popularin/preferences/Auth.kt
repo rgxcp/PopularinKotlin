@@ -4,7 +4,6 @@ import android.content.Context
 import xyz.fairportstudios.popularin.statics.Popularin
 
 class Auth(context: Context) {
-    // Variable member
     private val mSharedPreferences = context.getSharedPreferences(Popularin.AUTH, Context.MODE_PRIVATE)
 
     fun isAuth(): Boolean {
@@ -32,7 +31,7 @@ class Auth(context: Context) {
         editor.apply()
     }
 
-    fun delAuh() {
+    fun delAuth() {
         val editor = mSharedPreferences.edit()
         editor.clear()
         editor.apply()

@@ -29,7 +29,7 @@ object ParseDate {
         return try {
             date.substring(8, 10)
         } catch (exception: StringIndexOutOfBoundsException) {
-            return "01"
+            "01"
         }
     }
 
@@ -37,7 +37,7 @@ object ParseDate {
         return try {
             date.substring(5, 7)
         } catch (exception: StringIndexOutOfBoundsException) {
-            return "01"
+            "01"
         }
     }
 
@@ -45,7 +45,7 @@ object ParseDate {
         return try {
             date.substring(0, 4)
         } catch (exception: StringIndexOutOfBoundsException) {
-            return "2020"
+            "2020"
         }
     }
 }
