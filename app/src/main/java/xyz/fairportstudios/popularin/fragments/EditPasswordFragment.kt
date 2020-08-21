@@ -21,18 +21,20 @@ import xyz.fairportstudios.popularin.activities.MainActivity
 import xyz.fairportstudios.popularin.apis.popularin.put.UpdatePasswordRequest
 
 class EditPasswordFragment : Fragment() {
-    // Variable member
-    private lateinit var mButtonSavePassword: Button
-    private lateinit var mAnchorLayout: LinearLayout
+    // Member
     private lateinit var mCurrentPassword: String
     private lateinit var mNewPassword: String
     private lateinit var mConfirmPassword: String
+
+    // View
+    private lateinit var mButtonSavePassword: Button
+    private lateinit var mAnchorLayout: LinearLayout
     private lateinit var mInputCurrentPassword: TextInputEditText
     private lateinit var mInputNewPassword: TextInputEditText
     private lateinit var mInputConfirmPassword: TextInputEditText
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view: View = inflater.inflate(R.layout.fragment_edit_password, container, false)
+        val view = inflater.inflate(R.layout.fragment_edit_password, container, false)
 
         // Context
         val context = requireActivity()
@@ -43,15 +45,15 @@ class EditPasswordFragment : Fragment() {
         mInputCurrentPassword = view.findViewById(R.id.input_fepw_current_password)
         mInputNewPassword = view.findViewById(R.id.input_fepw_new_password)
         mInputConfirmPassword = view.findViewById(R.id.input_fepw_confirm_password)
-        val textWelcome: TextView = view.findViewById(R.id.text_fepw_welcome)
+        val textWelcomeMessage = view.findViewById<TextView>(R.id.text_fepw_welcome)
 
         // Pesan
-        textWelcome.text = getWelcomeMessage()
+        textWelcomeMessage.text = getWelcomeMessage()
 
         // Text watcher
-        mInputCurrentPassword.addTextChangedListener(editPasswordWatcher)
-        mInputNewPassword.addTextChangedListener(editPasswordWatcher)
-        mInputConfirmPassword.addTextChangedListener(editPasswordWatcher)
+        mInputCurrentPassword.addTextChangedListener(mEditPasswordWatcher)
+        mInputNewPassword.addTextChangedListener(mEditPasswordWatcher)
+        mInputConfirmPassword.addTextChangedListener(mEditPasswordWatcher)
 
         // Activity
         mButtonSavePassword.setOnClickListener {
@@ -62,7 +64,7 @@ class EditPasswordFragment : Fragment() {
         return view
     }
 
-    private val editPasswordWatcher = object : TextWatcher {
+    private val mEditPasswordWatcher = object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
             // Tidak digunakan
         }
@@ -80,7 +82,7 @@ class EditPasswordFragment : Fragment() {
     }
 
     private fun getWelcomeMessage(): SpannableString {
-        val welcomeMessage = R.string.edit_password_welcome_message.toString()
+        val welcomeMessage = getString(R.string.edit_password_welcome_message)
         val spannableString = SpannableString(welcomeMessage)
         val relativeSizeSpan = RelativeSizeSpan(2f)
         spannableString.setSpan(relativeSizeSpan, 0, 4, 0)
@@ -108,8 +110,8 @@ class EditPasswordFragment : Fragment() {
     private fun setSavePasswordButtonState(state: Boolean) {
         mButtonSavePassword.isEnabled = state
         when (state) {
-            true -> mButtonSavePassword.text = R.string.save_password.toString()
-            false -> mButtonSavePassword.text = R.string.loading.toString()
+            true -> mButtonSavePassword.text = getString(R.string.save_password)
+            false -> mButtonSavePassword.text = getString(R.string.loading)
         }
     }
 

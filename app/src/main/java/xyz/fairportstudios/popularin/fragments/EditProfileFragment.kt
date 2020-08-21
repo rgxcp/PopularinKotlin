@@ -25,18 +25,20 @@ import xyz.fairportstudios.popularin.apis.popularin.put.UpdateProfileRequest
 import xyz.fairportstudios.popularin.models.SelfDetail
 
 class EditProfileFragment : Fragment() {
-    // Variable member
-    private lateinit var mButtonSaveProfile: Button
-    private lateinit var mAnchorLayout: LinearLayout
+    // Member
     private lateinit var mFullName: String
     private lateinit var mUsername: String
     private lateinit var mEmail: String
+
+    // View
+    private lateinit var mButtonSaveProfile: Button
+    private lateinit var mAnchorLayout: LinearLayout
     private lateinit var mInputFullName: TextInputEditText
     private lateinit var mInputUsername: TextInputEditText
     private lateinit var mInputEmail: TextInputEditText
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view: View = inflater.inflate(R.layout.fragment_edit_profile, container, false)
+        val view = inflater.inflate(R.layout.fragment_edit_profile, container, false)
 
         // Context
         val context = requireActivity()
@@ -47,19 +49,19 @@ class EditProfileFragment : Fragment() {
         mInputFullName = view.findViewById(R.id.input_fep_full_name)
         mInputUsername = view.findViewById(R.id.input_fep_username)
         mInputEmail = view.findViewById(R.id.input_fep_email)
-        val buttonEditPassword: Button = view.findViewById(R.id.button_fep_edit_password)
-        val textWelcome: TextView = view.findViewById(R.id.text_fep_welcome)
+        val buttonEditPassword = view.findViewById<Button>(R.id.button_fep_edit_password)
+        val textWelcomeMessage = view.findViewById<TextView>(R.id.text_fep_welcome)
 
         // Pesan
-        textWelcome.text = getWelcomeMessage()
+        textWelcomeMessage.text = getWelcomeMessage()
 
         // Menampilkan data diri awal
         getSelfDetail(context)
 
         // Text watcher
-        mInputFullName.addTextChangedListener(editProfileWatcher)
-        mInputUsername.addTextChangedListener(editProfileWatcher)
-        mInputEmail.addTextChangedListener(editProfileWatcher)
+        mInputFullName.addTextChangedListener(mEditProfileWatcher)
+        mInputUsername.addTextChangedListener(mEditProfileWatcher)
+        mInputEmail.addTextChangedListener(mEditProfileWatcher)
 
         // Activity
         mButtonSaveProfile.setOnClickListener {
@@ -72,7 +74,7 @@ class EditProfileFragment : Fragment() {
         return view
     }
 
-    private val editProfileWatcher = object : TextWatcher {
+    private val mEditProfileWatcher = object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
             // Tidak digunakan
         }
@@ -90,7 +92,7 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun getWelcomeMessage(): SpannableString {
-        val welcomeMessage = R.string.edit_profile_welcome_message.toString()
+        val welcomeMessage = getString(R.string.edit_profile_welcome_message)
         val spannableString = SpannableString(welcomeMessage)
         val relativeSizeSpan = RelativeSizeSpan(2f)
         spannableString.setSpan(relativeSizeSpan, 0, 4, 0)
@@ -127,20 +129,20 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun emailValidated(): Boolean {
-        return when {
-            !Patterns.EMAIL_ADDRESS.matcher(mEmail).matches() -> {
+        return when (!Patterns.EMAIL_ADDRESS.matcher(mEmail).matches()) {
+            true -> {
                 Snackbar.make(mAnchorLayout, R.string.validate_email_format, Snackbar.LENGTH_LONG).show()
                 false
             }
-            else -> true
+            false -> true
         }
     }
 
     private fun setSaveProfileButtonState(state: Boolean) {
         mButtonSaveProfile.isEnabled = state
-        when (state) {
-            true -> mButtonSaveProfile.text = R.string.save_profile.toString()
-            false -> mButtonSaveProfile.text = R.string.loading.toString()
+        mButtonSaveProfile.text = when (state) {
+            true -> getString(R.string.save_profile)
+            false -> getString(R.string.loading)
         }
     }
 

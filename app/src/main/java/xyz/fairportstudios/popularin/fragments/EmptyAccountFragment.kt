@@ -14,14 +14,14 @@ import xyz.fairportstudios.popularin.activities.SignUpActivity
 
 class EmptyAccountFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view: View = inflater.inflate(R.layout.reusable_empty_account, container, false)
+        val view = inflater.inflate(R.layout.reusable_empty_account, container, false)
 
         // Context
         val context = requireActivity()
 
         // Binding
-        val buttonSignIn: Button = view.findViewById(R.id.button_rea_sign_in)
-        val buttonSignUp: Button = view.findViewById(R.id.button_rea_sign_up)
+        val buttonSignIn = view.findViewById<Button>(R.id.button_rea_sign_in)
+        val buttonSignUp = view.findViewById<Button>(R.id.button_rea_sign_up)
 
         // Activity
         buttonSignIn.setOnClickListener { gotoSignIn(context) }

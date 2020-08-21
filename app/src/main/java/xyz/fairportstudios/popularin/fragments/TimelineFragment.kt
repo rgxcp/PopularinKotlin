@@ -3,14 +3,15 @@ package xyz.fairportstudios.popularin.fragments
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -28,35 +29,36 @@ import xyz.fairportstudios.popularin.apis.popularin.post.LikeReviewRequest
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.Genre
 import xyz.fairportstudios.popularin.models.Review
-import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
 class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, ReviewAdapter.OnClickListener {
-    // Variable untuk fitur load more
-    private var mIsLoading: Boolean = true
-    private var mIsLoadFirstTimeSuccess: Boolean = false
-    private val mStartPage: Int = 1
-    private var mCurrentPage: Int = 1
-    private var mTotalPage: Int = 0
+    // Primitive
+    private var mIsLoading = true
+    private var mIsLoadFirstTimeSuccess = false
+    private val mStartPage = 1
+    private var mCurrentPage = 1
+    private var mTotalPage = 0
+    private var mTotalLike = 0
 
-    // Variable member
-    private var mAuthID: Int = 0
-    private var mTotalLike: Int = 0
-    private lateinit var mContext: Context
+    // Member
     private lateinit var mGenreList: ArrayList<Genre>
     private lateinit var mReviewList: ArrayList<Review>
-    private lateinit var mAnchorLayout: CoordinatorLayout
-    private lateinit var mProgressBar: ProgressBar
-    private lateinit var mRecyclerGenre: RecyclerView
-    private lateinit var mRecyclerTimeline: RecyclerView
+    private lateinit var mContext: Context
     private lateinit var mReviewAdapter: ReviewAdapter
-    private lateinit var mSwipeRefresh: SwipeRefreshLayout
-    private lateinit var mTextMessage: TextView
     private lateinit var mTimelineRequest: TimelineRequest
 
+    // View
+    private lateinit var mAnchorLayout: CoordinatorLayout
+    private lateinit var mProgressBar: ProgressBar
+    private lateinit var mLoadMoreBar: ProgressBar
+    private lateinit var mRecyclerGenre: RecyclerView
+    private lateinit var mRecyclerTimeline: RecyclerView
+    private lateinit var mSwipeRefresh: SwipeRefreshLayout
+    private lateinit var mTextMessage: TextView
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view: View = inflater.inflate(R.layout.fragment_timeline, container, false)
+        val view = inflater.inflate(R.layout.fragment_timeline, container, false)
 
         // Context
         mContext = requireActivity()
@@ -64,13 +66,15 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
         // Binding
         mAnchorLayout = view.findViewById(R.id.anchor_ft_layout)
         mProgressBar = view.findViewById(R.id.pbr_ft_layout)
+        mLoadMoreBar = view.findViewById(R.id.lbr_ft_layout)
         mRecyclerGenre = view.findViewById(R.id.recycler_ft_genre)
         mRecyclerTimeline = view.findViewById(R.id.recycler_ft_timeline)
         mSwipeRefresh = view.findViewById(R.id.swipe_refresh_ft_layout)
         mTextMessage = view.findViewById(R.id.text_ft_message)
+        val nestedScrollView = view.findViewById<NestedScrollView>(R.id.nested_scroll_ft_layout)
 
-        // Auth
-        mAuthID = Auth(mContext).getAuthID()
+        // Handler
+        val handler = Handler()
 
         // Menampilkan genre
         showGenre()
@@ -80,18 +84,17 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
         getTimeline(mStartPage, false)
 
         // Activity
-        mRecyclerTimeline.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    if (!mIsLoading && mCurrentPage <= mTotalPage) {
-                        mIsLoading = true
-                        mSwipeRefresh.isRefreshing = true
+        nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+            if (scrollY > oldScrollY) {
+                if (!mIsLoading && mCurrentPage <= mTotalPage) {
+                    mIsLoading = true
+                    mLoadMoreBar.visibility = View.VISIBLE
+                    handler.postDelayed({
                         getTimeline(mCurrentPage, false)
-                    }
+                    }, 1000)
                 }
             }
-        })
+        }
 
         mSwipeRefresh.setOnRefreshListener {
             mIsLoading = true
@@ -114,13 +117,12 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
 
     override fun onReviewItemClick(position: Int) {
         val currentItem = mReviewList[position]
-        val isSelf = currentItem.userID == mAuthID
-        gotoReviewDetail(currentItem.id, isSelf)
+        gotoReviewDetail(currentItem.id)
     }
 
     override fun onReviewUserProfileClick(position: Int) {
         val currentItem = mReviewList[position]
-        gotoUserDetail(currentItem.id)
+        gotoUserDetail(currentItem.userID)
     }
 
     override fun onReviewFilmPosterClick(position: Int) {
@@ -136,6 +138,7 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
 
     override fun onReviewLikeClick(position: Int) {
         val currentItem = mReviewList[position]
+        mTotalLike = currentItem.totalLike
         if (!mIsLoading) {
             mIsLoading = true
             when (currentItem.isLiked) {
@@ -147,11 +150,71 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
 
     override fun onReviewCommentClick(position: Int) {
         val currentItem = mReviewList[position]
-        val isSelf = currentItem.userID == mAuthID
-        gotoReviewComment(currentItem.id, isSelf)
+        gotoReviewComment(currentItem.id)
     }
 
     private fun showGenre() {
+        loadGenre()
+        setGenreAdapter()
+    }
+
+    private fun getTimeline(page: Int, refreshPage: Boolean) {
+        mTimelineRequest.sendRequest(page, object : TimelineRequest.Callback {
+            override fun onSuccess(totalPage: Int, reviewList: ArrayList<Review>) {
+                when (mIsLoadFirstTimeSuccess) {
+                    true -> {
+                        if (refreshPage) {
+                            mCurrentPage = 1
+                            mTotalPage = totalPage
+                            mReviewList.clear()
+                            mReviewAdapter.notifyDataSetChanged()
+                        }
+                        val insertIndex = mReviewList.size
+                        mReviewList.addAll(insertIndex, reviewList)
+                        mReviewAdapter.notifyItemChanged(insertIndex - 1)
+                        mReviewAdapter.notifyItemRangeInserted(insertIndex, reviewList.size)
+                    }
+                    false -> {
+                        mReviewList = ArrayList()
+                        val insertIndex = mReviewList.size
+                        mReviewList.addAll(insertIndex, reviewList)
+                        setTimelineAdapter()
+                        mProgressBar.visibility = View.GONE
+                        mTotalPage = totalPage
+                        mIsLoadFirstTimeSuccess = true
+                    }
+                }
+                mTextMessage.visibility = View.GONE
+                mCurrentPage++
+            }
+
+            override fun onNotFound() {
+                mProgressBar.visibility = View.GONE
+                mTextMessage.visibility = View.VISIBLE
+                mTextMessage.text = getString(R.string.empty_timeline)
+            }
+
+            override fun onError(message: String) {
+                if (!mIsLoadFirstTimeSuccess) {
+                    mProgressBar.visibility = View.GONE
+                    mTextMessage.visibility = View.VISIBLE
+                    mTextMessage.text = getString(R.string.empty_timeline)
+                }
+                mLoadMoreBar.visibility = View.GONE
+                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+            }
+        })
+
+        // Memberhentikan loading
+        mIsLoading = false
+        if (refreshPage) mSwipeRefresh.isRefreshing = false
+        mLoadMoreBar.visibility = when (page == mTotalPage) {
+            true -> View.GONE
+            false -> View.INVISIBLE
+        }
+    }
+
+    private fun loadGenre() {
         mGenreList = ArrayList()
         mGenreList.add(Genre(28, R.drawable.img_action, getString(R.string.genre_action)))
         mGenreList.add(Genre(16, R.drawable.img_animation, getString(R.string.genre_animation)))
@@ -169,116 +232,27 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
         mGenreList.add(Genre(10749, R.drawable.img_romance, getString(R.string.genre_romance)))
         mGenreList.add(Genre(36, R.drawable.img_history, getString(R.string.genre_history)))
         mGenreList.add(Genre(53, R.drawable.img_thriller, getString(R.string.genre_thriller)))
+    }
 
+    private fun setGenreAdapter() {
         val genreHorizontalAdapter = GenreHorizontalAdapter(mContext, mGenreList, this)
         mRecyclerGenre.adapter = genreHorizontalAdapter
         mRecyclerGenre.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
         mRecyclerGenre.hasFixedSize()
-        mRecyclerGenre.isNestedScrollingEnabled = false
         mRecyclerGenre.visibility = View.VISIBLE
-        mProgressBar.visibility = View.GONE
     }
 
-    private fun getTimeline(page: Int, refreshPage: Boolean) {
-        mTimelineRequest.sendRequest(page, object : TimelineRequest.Callback {
-            override fun onSuccess(totalPage: Int, reviewList: ArrayList<Review>) {
-                when (mIsLoadFirstTimeSuccess) {
-                    true -> {
-                        if (refreshPage) {
-                            mCurrentPage = 1
-                            mReviewList.clear()
-                            mReviewAdapter.notifyDataSetChanged()
-                        }
-                        val insertIndex = mReviewList.size
-                        mReviewList.addAll(insertIndex, reviewList)
-                        mReviewAdapter.notifyItemChanged(insertIndex - 1)
-                        mReviewAdapter.notifyItemRangeInserted(insertIndex, reviewList.size)
-                        mRecyclerTimeline.scrollToPosition(insertIndex)
-                    }
-                    false -> {
-                        mReviewList = ArrayList()
-                        val insertIndex = mReviewList.size
-                        mReviewList.addAll(insertIndex, reviewList)
-                        mReviewAdapter = ReviewAdapter(mContext, mReviewList, this@TimelineFragment)
-                        mRecyclerTimeline.adapter = mReviewAdapter
-                        mRecyclerTimeline.layoutManager = LinearLayoutManager(mContext)
-                        mRecyclerTimeline.isNestedScrollingEnabled = false
-                        mRecyclerTimeline.visibility = View.VISIBLE
-                        mProgressBar.visibility = View.GONE
-                        mTotalPage = totalPage
-                        mIsLoadFirstTimeSuccess = true
-                    }
-                }
-                mTextMessage.visibility = View.GONE
-                mCurrentPage++
-            }
-
-            override fun onNotFound() {
-                when (mIsLoadFirstTimeSuccess) {
-                    true -> {
-                        mCurrentPage = 1
-                        mReviewList.clear()
-                        mReviewAdapter.notifyDataSetChanged()
-                    }
-                    false -> mProgressBar.visibility = View.GONE
-                }
-                mTextMessage.visibility = View.VISIBLE
-                mTextMessage.text = R.string.empty_timeline.toString()
-            }
-
-            override fun onError(message: String) {
-                if (!mIsLoadFirstTimeSuccess) {
-                    mProgressBar.visibility = View.GONE
-                    mTextMessage.visibility = View.VISIBLE
-                    mTextMessage.text = R.string.empty_timeline.toString()
-                }
-                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
-            }
-        })
-
-        // Memberhentikan loading
-        mIsLoading = false
-        mSwipeRefresh.isRefreshing = false
+    private fun setTimelineAdapter() {
+        mReviewAdapter = ReviewAdapter(mContext, mReviewList, this)
+        mRecyclerTimeline.adapter = mReviewAdapter
+        mRecyclerTimeline.layoutManager = LinearLayoutManager(mContext)
+        mRecyclerTimeline.visibility = View.VISIBLE
     }
 
-    private fun gotoDiscoverFilm(id: Int, title: String) {
-        val intent = Intent(mContext, DiscoverFilmActivity::class.java)
-        intent.putExtra(Popularin.GENRE_ID, id)
-        intent.putExtra(Popularin.GENRE_TITLE, title)
-        startActivity(intent)
-    }
-
-    private fun gotoReviewDetail(id: Int, isSelf: Boolean) {
-        val intent = Intent(mContext, ReviewActivity::class.java)
-        intent.putExtra(Popularin.REVIEW_ID, id)
-        intent.putExtra(Popularin.IS_SELF, isSelf)
-        startActivity(intent)
-    }
-
-    private fun gotoReviewComment(id: Int, isSelf: Boolean) {
-        val intent = Intent(mContext, ReviewActivity::class.java)
-        intent.putExtra(Popularin.REVIEW_ID, id)
-        intent.putExtra(Popularin.IS_SELF, isSelf)
-        intent.putExtra(Popularin.VIEW_PAGER_INDEX, 1)
-        startActivity(intent)
-    }
-
-    private fun gotoUserDetail(id: Int) {
-        val intent = Intent(mContext, UserDetailActivity::class.java)
-        intent.putExtra(Popularin.USER_ID, id)
-        startActivity(intent)
-    }
-
-    private fun gotoFilmDetail(id: Int) {
-        val intent = Intent(mContext, FilmDetailActivity::class.java)
-        intent.putExtra(Popularin.FILM_ID, id)
-        startActivity(intent)
-    }
-
-    private fun showFilmModal(id: Int, title: String, year: String, poster: String) {
-        val fragmentManager = (mContext as FragmentActivity).supportFragmentManager
-        val filmModal = FilmModal(id, title, year, poster)
-        filmModal.show(fragmentManager, Popularin.FILM_MODAL)
+    private fun resetState() {
+        mIsLoading = true
+        mIsLoadFirstTimeSuccess = false
+        mCurrentPage = 1
     }
 
     private fun likeReview(id: Int, position: Int) {
@@ -321,9 +295,40 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
         mIsLoading = false
     }
 
-    private fun resetState() {
-        mIsLoading = true
-        mIsLoadFirstTimeSuccess = false
-        mCurrentPage = 1
+    private fun showFilmModal(id: Int, title: String, year: String, poster: String) {
+        val filmModal = FilmModal(id, title, year, poster)
+        filmModal.show(requireFragmentManager(), Popularin.FILM_MODAL)
+    }
+
+    private fun gotoDiscoverFilm(id: Int, title: String) {
+        val intent = Intent(mContext, DiscoverFilmActivity::class.java)
+        intent.putExtra(Popularin.GENRE_ID, id)
+        intent.putExtra(Popularin.GENRE_TITLE, title)
+        startActivity(intent)
+    }
+
+    private fun gotoReviewDetail(id: Int) {
+        val intent = Intent(mContext, ReviewActivity::class.java)
+        intent.putExtra(Popularin.REVIEW_ID, id)
+        startActivity(intent)
+    }
+
+    private fun gotoReviewComment(id: Int) {
+        val intent = Intent(mContext, ReviewActivity::class.java)
+        intent.putExtra(Popularin.REVIEW_ID, id)
+        intent.putExtra(Popularin.VIEW_PAGER_INDEX, 1)
+        startActivity(intent)
+    }
+
+    private fun gotoUserDetail(id: Int) {
+        val intent = Intent(mContext, UserDetailActivity::class.java)
+        intent.putExtra(Popularin.USER_ID, id)
+        startActivity(intent)
+    }
+
+    private fun gotoFilmDetail(id: Int) {
+        val intent = Intent(mContext, FilmDetailActivity::class.java)
+        intent.putExtra(Popularin.FILM_ID, id)
+        startActivity(intent)
     }
 }

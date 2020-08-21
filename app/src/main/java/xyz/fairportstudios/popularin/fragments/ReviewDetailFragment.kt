@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
@@ -29,19 +28,22 @@ import xyz.fairportstudios.popularin.statics.Popularin
 import xyz.fairportstudios.popularin.statics.TMDbAPI
 
 class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
-    // Variable untuk fitur onResume
-    private var mIsResumeFirstTime: Boolean = true
+    // Primitive
+    private var mIsResumeFirstTime = true
+    private var mIsLoading = true
+    private var mIsLoadFirstTimeSuccess = false
+    private var mIsLiked = false
+    private var mUserID = 0
+    private var mFilmID = 0
+    private var mTotalLike = 0
 
-    // Variable untuk fitur load
-    private var mIsLoading: Boolean = true
-    private var mIsLoadFirstTimeSuccess: Boolean = false
-
-    // Variable member
-    private var mIsLiked: Boolean = false
-    private var mUserID: Int = 0
-    private var mFilmID: Int = 0
-    private var mTotalLike: Int = 0
+    // Member
     private lateinit var mContext: Context
+    private lateinit var mFilmTitle: String
+    private lateinit var mFilmYear: String
+    private lateinit var mFilmPoster: String
+
+    // View
     private lateinit var mImageUserProfile: ImageView
     private lateinit var mImageFilmPoster: ImageView
     private lateinit var mImageReviewStar: ImageView
@@ -49,9 +51,6 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
     private lateinit var mProgressBar: ProgressBar
     private lateinit var mAnchorLayout: RelativeLayout
     private lateinit var mScrollView: ScrollView
-    private lateinit var mFilmTitle: String
-    private lateinit var mFilmYear: String
-    private lateinit var mFilmPoster: String
     private lateinit var mSwipeRefresh: SwipeRefreshLayout
     private lateinit var mTextUsername: TextView
     private lateinit var mTextFilmTitleYear: TextView
@@ -62,7 +61,7 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
     private lateinit var mTextMessage: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view: View = inflater.inflate(R.layout.fragment_review_detail, container, false)
+        val view = inflater.inflate(R.layout.fragment_review_detail, container, false)
 
         // Context
         mContext = requireActivity()
@@ -137,7 +136,7 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
                 // Like status
                 mIsLiked = reviewDetail.isLiked
                 if (mIsLiked) {
-                    mTextLikeStatus.text = R.string.liked.toString()
+                    mTextLikeStatus.text = getString(R.string.liked)
                     mImageLike.setImageResource(R.drawable.ic_fill_heart)
                 }
 
@@ -150,6 +149,7 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
                 mFilmYear = ParseDate.getYear(reviewDetail.releaseDate)
                 val reviewStar = ConvertRating.getStar(reviewDetail.rating)
                 val reviewDate = ParseDate.getDateForHumans(reviewDetail.reviewDate)
+                val poster = "${TMDbAPI.BASE_SMALL_IMAGE_URL}$mFilmPoster"
 
                 // Isi
                 mTextUsername.text = reviewDetail.username
@@ -157,9 +157,9 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
                 mTextReviewDate.text = reviewDate
                 mTextReviewDetail.text = reviewDetail.reviewDetail
                 mTextTotalLike.text = String.format("Total %s", mTotalLike)
-                mImageReviewStar.setImageResource(reviewStar!!)
+                reviewStar?.let { mImageReviewStar.setImageResource(it) }
                 Glide.with(mContext).load(reviewDetail.profilePicture).into(mImageUserProfile)
-                Glide.with(mContext).load("${TMDbAPI.BASE_SMALL_IMAGE_URL}$mFilmPoster").into(mImageFilmPoster)
+                Glide.with(mContext).load(poster).into(mImageFilmPoster)
                 mTextMessage.visibility = View.GONE
                 mProgressBar.visibility = View.GONE
                 mScrollView.visibility = View.VISIBLE
@@ -183,46 +183,17 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
         mSwipeRefresh.isRefreshing = false
     }
 
-    private fun gotoUserDetail() {
-        val intent = Intent(mContext, UserDetailActivity::class.java)
-        intent.putExtra(Popularin.USER_ID, mUserID)
-        startActivity(intent)
-    }
-
-    private fun gotoFilmDetail() {
-        val intent = Intent(mContext, FilmDetailActivity::class.java)
-        intent.putExtra(Popularin.FILM_ID, mFilmID)
-        startActivity(intent)
-    }
-
-    private fun gotoLikedBy() {
-        val intent = Intent(mContext, LikedByActivity::class.java)
-        intent.putExtra(Popularin.REVIEW_ID, reviewID)
-        startActivity(intent)
-    }
-
-    private fun gotoEmptyAccount() {
-        val intent = Intent(mContext, EmptyAccountActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun showFilmModal() {
-        val fragmentManager = (mContext as FragmentActivity).supportFragmentManager
-        val filmModal = FilmModal(mFilmID, mFilmTitle, mFilmYear, mFilmPoster)
-        filmModal.show(fragmentManager, Popularin.FILM_MODAL)
-    }
-
     private fun setLikeState(state: Boolean) {
         mIsLiked = state
         when (mIsLiked) {
             true -> {
                 mTotalLike++
-                mTextLikeStatus.text = R.string.liked.toString()
+                mTextLikeStatus.text = getString(R.string.liked)
                 mImageLike.setImageResource(R.drawable.ic_fill_heart)
             }
             false -> {
                 mTotalLike--
-                mTextLikeStatus.text = R.string.like.toString()
+                mTextLikeStatus.text = getString(R.string.like)
                 mImageLike.setImageResource(R.drawable.ic_outline_heart)
             }
         }
@@ -259,5 +230,33 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
 
         // Memberhentikan loading
         mIsLoading = false
+    }
+
+    private fun showFilmModal() {
+        val filmModal = FilmModal(mFilmID, mFilmTitle, mFilmYear, mFilmPoster)
+        filmModal.show(requireFragmentManager(), Popularin.FILM_MODAL)
+    }
+
+    private fun gotoUserDetail() {
+        val intent = Intent(mContext, UserDetailActivity::class.java)
+        intent.putExtra(Popularin.USER_ID, mUserID)
+        startActivity(intent)
+    }
+
+    private fun gotoFilmDetail() {
+        val intent = Intent(mContext, FilmDetailActivity::class.java)
+        intent.putExtra(Popularin.FILM_ID, mFilmID)
+        startActivity(intent)
+    }
+
+    private fun gotoLikedBy() {
+        val intent = Intent(mContext, LikedByActivity::class.java)
+        intent.putExtra(Popularin.REVIEW_ID, reviewID)
+        startActivity(intent)
+    }
+
+    private fun gotoEmptyAccount() {
+        val intent = Intent(mContext, EmptyAccountActivity::class.java)
+        startActivity(intent)
     }
 }

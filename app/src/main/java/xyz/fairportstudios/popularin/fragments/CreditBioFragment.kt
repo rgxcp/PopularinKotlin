@@ -18,14 +18,14 @@ import xyz.fairportstudios.popularin.services.ParseBio
 import xyz.fairportstudios.popularin.statics.TMDbAPI
 
 class CreditBioFragment(private val creditID: Int) : Fragment() {
-    // Variable untuk fitur onResume
-    private var mIsResumeFirstTime: Boolean = true
+    // Primitive
+    private var mIsResumeFirstTime = true
+    private var mIsLoadFirstTimeSuccess = false
 
-    // Variable untuk fitur load
-    private var mIsLoadFirstTimeSuccess: Boolean = false
-
-    // Variable member
+    // Member
     private lateinit var mContext: Context
+
+    // View
     private lateinit var mImageProfile: ImageView
     private lateinit var mBioLayout: LinearLayout
     private lateinit var mProgressBar: ProgressBar
@@ -35,7 +35,7 @@ class CreditBioFragment(private val creditID: Int) : Fragment() {
     private lateinit var mTextMessage: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view: View = inflater.inflate(R.layout.fragment_credit_bio, container, false)
+        val view = inflater.inflate(R.layout.fragment_credit_bio, container, false)
 
         // Context
         mContext = requireActivity()

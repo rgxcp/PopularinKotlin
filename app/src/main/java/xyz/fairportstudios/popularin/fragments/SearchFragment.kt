@@ -11,7 +11,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
@@ -29,27 +28,29 @@ import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
 class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnClickListener {
-    // Variable untuk fitur search
-    private var mIsSearchFilmFirstTime: Boolean = true
-    private var mIsSearchUserFirstTime: Boolean = true
-    private var mIsLoadFilmFirstTimeSuccess: Boolean = false
-    private var mIsLoadUserFirstTimeSuccess: Boolean = false
+    // Primitive
+    private var mIsSearchFilmFirstTime = true
+    private var mIsSearchUserFirstTime = true
+    private var mIsLoadFilmFirstTimeSuccess = false
+    private var mIsLoadUserFirstTimeSuccess = false
 
-    // Variable member
-    private lateinit var mContext: Context
+    // Member
     private lateinit var mFilmList: ArrayList<Film>
     private lateinit var mUserList: ArrayList<User>
+    private lateinit var mContext: Context
     private lateinit var mFilmAdapter: FilmAdapter
+    private lateinit var mSearchQuery: String
+
+    // View
     private lateinit var mProgressBar: ProgressBar
     private lateinit var mRecyclerSearch: RecyclerView
     private lateinit var mSearchFilmRequest: SearchFilmRequest
     private lateinit var mSearchUserRequest: SearchUserRequest
-    private lateinit var mSearchQuery: String
     private lateinit var mTextMessage: TextView
     private lateinit var mUserAdapter: UserAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view: View = inflater.inflate(R.layout.fragment_search, container, false)
+        val view = inflater.inflate(R.layout.fragment_search, container, false)
 
         // Context
         mContext = requireActivity()
@@ -58,10 +59,10 @@ class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnCl
         mProgressBar = view.findViewById(R.id.pbr_fs_layout)
         mRecyclerSearch = view.findViewById(R.id.recycler_fs_layout)
         mTextMessage = view.findViewById(R.id.text_fs_message)
-        val chipSearchInFilm: Chip = view.findViewById(R.id.chip_fs_in_film)
-        val chipSearchInUser: Chip = view.findViewById(R.id.chip_fs_in_user)
-        val searchInLayout: LinearLayout = view.findViewById(R.id.layout_fs_search_in)
-        val searchView: SearchView = view.findViewById(R.id.search_fs_layout)
+        val chipSearchInFilm = view.findViewById<Chip>(R.id.chip_fs_in_film)
+        val chipSearchInUser = view.findViewById<Chip>(R.id.chip_fs_in_user)
+        val searchInLayout = view.findViewById<LinearLayout>(R.id.layout_fs_search_in)
+        val searchView = view.findViewById<SearchView>(R.id.search_fs_layout)
 
         // Activity
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -78,8 +79,8 @@ class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnCl
                     }
                     false -> {
                         mSearchQuery = newText
-                        mRecyclerSearch.visibility = View.GONE
                         searchInLayout.visibility = View.VISIBLE
+                        mRecyclerSearch.visibility = View.GONE
                         chipSearchInFilm.text = String.format("Cari \"%s\" dalam film", mSearchQuery)
                         chipSearchInUser.text = String.format("Cari \"%s\" dalam pengguna", mSearchQuery)
                     }
@@ -95,7 +96,7 @@ class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnCl
             }
             searchInLayout.visibility = View.GONE
             mProgressBar.visibility = View.VISIBLE
-            searchFilm(mSearchQuery)
+            searchFilm()
         }
 
         chipSearchInUser.setOnClickListener {
@@ -104,7 +105,7 @@ class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnCl
             }
             searchInLayout.visibility = View.GONE
             mProgressBar.visibility = View.VISIBLE
-            searchUser(mSearchQuery)
+            searchUser()
         }
 
         return view
@@ -136,8 +137,8 @@ class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnCl
         gotoUserDetail(currentItem.id)
     }
 
-    private fun searchFilm(query: String) {
-        mSearchFilmRequest.sendRequest(query, object : SearchFilmRequest.Callback {
+    private fun searchFilm() {
+        mSearchFilmRequest.sendRequest(mSearchQuery, object : SearchFilmRequest.Callback {
             override fun onSuccess(filmList: ArrayList<Film>) {
                 when (mIsSearchFilmFirstTime || mIsLoadFilmFirstTimeSuccess) {
                     true -> {
@@ -164,7 +165,7 @@ class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnCl
             override fun onNotFound() {
                 mProgressBar.visibility = View.GONE
                 mTextMessage.visibility = View.VISIBLE
-                mTextMessage.text = R.string.empty_search_result.toString()
+                mTextMessage.text = getString(R.string.empty_search_result)
             }
 
             override fun onError(message: String) {
@@ -177,10 +178,10 @@ class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnCl
         mIsSearchFilmFirstTime = false
     }
 
-    private fun searchUser(query: String) {
-        mSearchUserRequest.sendRequest(query, object : SearchUserRequest.Callback {
+    private fun searchUser() {
+        mSearchUserRequest.sendRequest(mSearchQuery, object : SearchUserRequest.Callback {
             override fun onSuccess(userList: ArrayList<User>) {
-                when (mIsSearchFilmFirstTime || mIsLoadFilmFirstTimeSuccess) {
+                when (mIsSearchUserFirstTime || mIsLoadUserFirstTimeSuccess) {
                     true -> {
                         mUserList.clear()
                         mUserAdapter.notifyDataSetChanged()
@@ -205,7 +206,7 @@ class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnCl
             override fun onNotFound() {
                 mProgressBar.visibility = View.GONE
                 mTextMessage.visibility = View.VISIBLE
-                mTextMessage.text = R.string.empty_search_result.toString()
+                mTextMessage.text = getString(R.string.empty_search_result)
             }
 
             override fun onError(message: String) {
@@ -218,6 +219,18 @@ class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnCl
         mIsSearchUserFirstTime = false
     }
 
+    private fun resetState() {
+        mIsSearchFilmFirstTime = true
+        mIsSearchUserFirstTime = true
+        mIsLoadFilmFirstTimeSuccess = false
+        mIsLoadUserFirstTimeSuccess = false
+    }
+
+    private fun showFilmModal(id: Int, title: String, year: String, poster: String) {
+        val filmModal = FilmModal(id, title, year, poster)
+        filmModal.show(requireFragmentManager(), Popularin.FILM_MODAL)
+    }
+
     private fun gotoFilmDetail(id: Int) {
         val intent = Intent(mContext, FilmDetailActivity::class.java)
         intent.putExtra(Popularin.FILM_ID, id)
@@ -228,18 +241,5 @@ class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnCl
         val intent = Intent(mContext, UserDetailActivity::class.java)
         intent.putExtra(Popularin.USER_ID, id)
         startActivity(intent)
-    }
-
-    private fun showFilmModal(id: Int, title: String, year: String, poster: String) {
-        val fragmentManager = (mContext as FragmentActivity).supportFragmentManager
-        val filmModal = FilmModal(id, title, year, poster)
-        filmModal.show(fragmentManager, Popularin.FILM_MODAL)
-    }
-
-    private fun resetState() {
-        mIsSearchFilmFirstTime = true
-        mIsSearchUserFirstTime = true
-        mIsLoadFilmFirstTimeSuccess = false
-        mIsLoadUserFirstTimeSuccess = false
     }
 }

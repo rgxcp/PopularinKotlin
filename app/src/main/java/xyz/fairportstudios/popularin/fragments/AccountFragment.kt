@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -29,13 +28,15 @@ import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
 class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, RecentReviewAdapter.OnClickListener {
-    // Variable untuk fitur load
-    private var mIsLoadFirstTimeSuccess: Boolean = false
+    // Primitive
+    private var mIsLoadFirstTimeSuccess = false
 
-    // Variable member
-    private lateinit var mContext: Context
+    // Member
     private lateinit var mRecentFavoriteList: ArrayList<RecentFavorite>
     private lateinit var mRecentReviewList: ArrayList<RecentReview>
+    private lateinit var mContext: Context
+
+    // View
     private lateinit var mAnchorLayout: CoordinatorLayout
     private lateinit var mImageProfile: ImageView
     private lateinit var mImageEmptyRecentFavorite: ImageView
@@ -55,7 +56,7 @@ class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, Recen
     private lateinit var mTextMessage: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view: View = inflater.inflate(R.layout.fragment_account, container, false)
+        val view = inflater.inflate(R.layout.fragment_account, container, false)
 
         // Context
         mContext = requireActivity()
@@ -78,13 +79,13 @@ class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, Recen
         mTextTotalFollower = view.findViewById(R.id.text_fa_total_follower)
         mTextTotalFollowing = view.findViewById(R.id.text_fa_total_following)
         mTextMessage = view.findViewById(R.id.text_fa_message)
-        val buttonEditProfile: Button = view.findViewById(R.id.button_fa_edit_profile)
-        val buttonSignOut: Button = view.findViewById(R.id.button_fa_sign_out)
-        val totalReviewLayout: LinearLayout = view.findViewById(R.id.layout_fa_total_review)
-        val totalFavoriteLayout: LinearLayout = view.findViewById(R.id.layout_fa_total_favorite)
-        val totalWatchlistLayout: LinearLayout = view.findViewById(R.id.layout_fa_total_watchlist)
-        val totalFollowerLayout: LinearLayout = view.findViewById(R.id.layout_fa_total_follower)
-        val totalFollowingLayout: LinearLayout = view.findViewById(R.id.layout_fa_total_following)
+        val buttonEditProfile = view.findViewById<Button>(R.id.button_fa_edit_profile)
+        val buttonSignOut = view.findViewById<Button>(R.id.button_fa_sign_out)
+        val totalReviewLayout = view.findViewById<LinearLayout>(R.id.layout_fa_total_review)
+        val totalFavoriteLayout = view.findViewById<LinearLayout>(R.id.layout_fa_total_favorite)
+        val totalWatchlistLayout = view.findViewById<LinearLayout>(R.id.layout_fa_total_watchlist)
+        val totalFollowerLayout = view.findViewById<LinearLayout>(R.id.layout_fa_total_follower)
+        val totalFollowingLayout = view.findViewById<LinearLayout>(R.id.layout_fa_total_following)
 
         // Auth
         val auth = Auth(mContext)
@@ -107,7 +108,7 @@ class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, Recen
         buttonEditProfile.setOnClickListener { gotoEditProfile() }
 
         buttonSignOut.setOnClickListener {
-            auth.delAuh()
+            auth.delAuth()
             signOut()
         }
 
@@ -162,22 +163,14 @@ class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, Recen
             override fun onHasRecentFavorite(recentFavoriteList: ArrayList<RecentFavorite>) {
                 mRecentFavoriteList = ArrayList()
                 mRecentFavoriteList.addAll(recentFavoriteList)
-                val recentFavoriteAdapter = RecentFavoriteAdapter(mContext, mRecentFavoriteList, this@AccountFragment)
-                mRecyclerRecentFavorite.adapter = recentFavoriteAdapter
-                mRecyclerRecentFavorite.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
-                mRecyclerRecentFavorite.hasFixedSize()
-                mRecyclerRecentFavorite.visibility = View.VISIBLE
+                setRecentFavoriteAdapter()
                 mImageEmptyRecentFavorite.visibility = View.GONE
             }
 
             override fun onHasRecentReview(recentReviewList: ArrayList<RecentReview>) {
                 mRecentReviewList = ArrayList()
                 mRecentReviewList.addAll(recentReviewList)
-                val recentReviewAdapter = RecentReviewAdapter(mContext, mRecentReviewList, this@AccountFragment)
-                mRecyclerRecentReview.adapter = recentReviewAdapter
-                mRecyclerRecentReview.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
-                mRecyclerRecentReview.hasFixedSize()
-                mRecyclerRecentReview.visibility = View.VISIBLE
+                setRecentReviewAdapter()
                 mImageEmptyRecentReview.visibility = View.GONE
             }
 
@@ -197,6 +190,27 @@ class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, Recen
         mSwipeRefresh.isRefreshing = false
     }
 
+    private fun setRecentFavoriteAdapter() {
+        val recentFavoriteAdapter = RecentFavoriteAdapter(mContext, mRecentFavoriteList, this)
+        mRecyclerRecentFavorite.adapter = recentFavoriteAdapter
+        mRecyclerRecentFavorite.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
+        mRecyclerRecentFavorite.hasFixedSize()
+        mRecyclerRecentFavorite.visibility = View.VISIBLE
+    }
+
+    private fun setRecentReviewAdapter() {
+        val recentReviewAdapter = RecentReviewAdapter(mContext, mRecentReviewList, this)
+        mRecyclerRecentReview.adapter = recentReviewAdapter
+        mRecyclerRecentReview.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
+        mRecyclerRecentReview.hasFixedSize()
+        mRecyclerRecentReview.visibility = View.VISIBLE
+    }
+
+    private fun showFilmModal(id: Int, title: String, year: String, poster: String) {
+        val filmModal = FilmModal(id, title, year, poster)
+        filmModal.show(requireFragmentManager(), Popularin.FILM_MODAL)
+    }
+
     private fun gotoFilmDetail(id: Int) {
         val intent = Intent(mContext, FilmDetailActivity::class.java)
         intent.putExtra(Popularin.FILM_ID, id)
@@ -208,12 +222,6 @@ class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, Recen
         intent.putExtra(Popularin.REVIEW_ID, id)
         intent.putExtra(Popularin.IS_SELF, true)
         startActivity(intent)
-    }
-
-    private fun showFilmModal(id: Int, title: String, year: String, poster: String) {
-        val fragmentManager = (mContext as FragmentActivity).supportFragmentManager
-        val filmModal = FilmModal(id, title, year, poster)
-        filmModal.show(fragmentManager, Popularin.FILM_MODAL)
     }
 
     private fun gotoAccountReview(id: Int) {

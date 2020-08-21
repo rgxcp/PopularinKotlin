@@ -10,7 +10,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -26,15 +25,15 @@ import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
 class CreditFilmAsCrewFragment(private val creditID: Int) : Fragment(), FilmGridAdapter.OnClickListener {
-    // Variable untuk fitur onResume
-    private var mIsResumeFirstTime: Boolean = true
+    // Primitive
+    private var mIsResumeFirstTime = true
+    private var mIsLoadFirstTimeSuccess = false
 
-    // Variable untuk fitur load
-    private var mIsLoadFirstTimeSuccess: Boolean = false
-
-    // Variable member
-    private lateinit var mContext: Context
+    // Member
     private lateinit var mFilmAsCrewList: ArrayList<Film>
+    private lateinit var mContext: Context
+
+    // View
     private lateinit var mAnchorLayout: CoordinatorLayout
     private lateinit var mProgressBar: ProgressBar
     private lateinit var mRecyclerFilm: RecyclerView
@@ -42,7 +41,7 @@ class CreditFilmAsCrewFragment(private val creditID: Int) : Fragment(), FilmGrid
     private lateinit var mTextMessage: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view: View = inflater.inflate(R.layout.reusable_recycler, container, false)
+        val view = inflater.inflate(R.layout.reusable_recycler, container, false)
 
         // Context
         mContext = requireActivity()
@@ -96,16 +95,12 @@ class CreditFilmAsCrewFragment(private val creditID: Int) : Fragment(), FilmGrid
                     true -> {
                         mFilmAsCrewList = ArrayList()
                         mFilmAsCrewList.addAll(filmAsCrewList)
-                        val filmGridAdapter = FilmGridAdapter(mContext, mFilmAsCrewList, this@CreditFilmAsCrewFragment)
-                        mRecyclerFilm.adapter = filmGridAdapter
-                        mRecyclerFilm.layoutManager = GridLayoutManager(mContext, 4)
-                        mRecyclerFilm.hasFixedSize()
-                        mRecyclerFilm.visibility = View.VISIBLE
+                        setAdapter()
                         mTextMessage.visibility = View.GONE
                     }
                     false -> {
                         mTextMessage.visibility = View.VISIBLE
-                        mTextMessage.text = R.string.empty_credit_film_as_crew.toString()
+                        mTextMessage.text = getString(R.string.empty_credit_film_as_crew)
                     }
                 }
                 mProgressBar.visibility = View.GONE
@@ -128,15 +123,22 @@ class CreditFilmAsCrewFragment(private val creditID: Int) : Fragment(), FilmGrid
         mSwipeRefresh.isRefreshing = false
     }
 
+    private fun setAdapter() {
+        val filmGridAdapter = FilmGridAdapter(mContext, mFilmAsCrewList, this)
+        mRecyclerFilm.adapter = filmGridAdapter
+        mRecyclerFilm.layoutManager = GridLayoutManager(mContext, 4)
+        mRecyclerFilm.hasFixedSize()
+        mRecyclerFilm.visibility = View.VISIBLE
+    }
+
+    private fun showFilmModal(id: Int, title: String, year: String, poster: String) {
+        val filmModal = FilmModal(id, title, year, poster)
+        filmModal.show(requireFragmentManager(), Popularin.FILM_MODAL)
+    }
+
     private fun gotoFilmDetail(id: Int) {
         val intent = Intent(mContext, FilmDetailActivity::class.java)
         intent.putExtra(Popularin.FILM_ID, id)
         startActivity(intent)
-    }
-
-    private fun showFilmModal(id: Int, title: String, year: String, poster: String) {
-        val fragmentManager = (mContext as FragmentActivity).supportFragmentManager
-        val filmModal = FilmModal(id, title, year, poster)
-        filmModal.show(fragmentManager, Popularin.FILM_MODAL)
     }
 }

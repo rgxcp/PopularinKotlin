@@ -18,13 +18,16 @@ import xyz.fairportstudios.popularin.models.Genre
 import xyz.fairportstudios.popularin.statics.Popularin
 
 class GenreFragment : Fragment(), GenreGridAdapter.OnClickListener {
-    private lateinit var mContext: Context
+    // Member
     private lateinit var mGenreList: ArrayList<Genre>
+    private lateinit var mContext: Context
+
+    // View
     private lateinit var mProgressBar: ProgressBar
     private lateinit var mRecyclerGenre: RecyclerView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view: View = inflater.inflate(R.layout.reusable_recycler, container, false)
+        val view = inflater.inflate(R.layout.reusable_recycler, container, false)
 
         // Context
         mContext = requireActivity()
@@ -32,7 +35,7 @@ class GenreFragment : Fragment(), GenreGridAdapter.OnClickListener {
         // Binding
         mProgressBar = view.findViewById(R.id.pbr_rr_layout)
         mRecyclerGenre = view.findViewById(R.id.recycler_rr_layout)
-        val swipeRefresh: SwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_rr_layout)
+        val swipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh_rr_layout)
 
         // Menampilkan genre
         showGenre()
@@ -49,6 +52,12 @@ class GenreFragment : Fragment(), GenreGridAdapter.OnClickListener {
     }
 
     private fun showGenre() {
+        loadGenre()
+        setAdapter()
+        mProgressBar.visibility = View.GONE
+    }
+
+    private fun loadGenre() {
         mGenreList = ArrayList()
         mGenreList.add(Genre(28, R.drawable.img_action, getString(R.string.genre_action)))
         mGenreList.add(Genre(16, R.drawable.img_animation, getString(R.string.genre_animation)))
@@ -66,13 +75,14 @@ class GenreFragment : Fragment(), GenreGridAdapter.OnClickListener {
         mGenreList.add(Genre(10749, R.drawable.img_romance, getString(R.string.genre_romance)))
         mGenreList.add(Genre(36, R.drawable.img_history, getString(R.string.genre_history)))
         mGenreList.add(Genre(53, R.drawable.img_thriller, getString(R.string.genre_thriller)))
+    }
 
+    private fun setAdapter() {
         val genreGridAdapter = GenreGridAdapter(mContext, mGenreList, this)
         mRecyclerGenre.adapter = genreGridAdapter
         mRecyclerGenre.layoutManager = GridLayoutManager(mContext, 2)
         mRecyclerGenre.hasFixedSize()
         mRecyclerGenre.visibility = View.VISIBLE
-        mProgressBar.visibility = View.GONE
     }
 
     private fun gotoDiscoverFilm(id: Int, title: String) {

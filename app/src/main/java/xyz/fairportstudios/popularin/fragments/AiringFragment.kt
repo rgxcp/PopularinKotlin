@@ -10,7 +10,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -25,22 +24,24 @@ import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
 class AiringFragment : Fragment(), FilmAdapter.OnClickListener {
-    // Variable untuk fitur load
-    private var mIsLoadFirstTimeSuccess: Boolean = false
+    // Primitive
+    private var mIsLoadFirstTimeSuccess = false
 
-    // Variable member
-    private lateinit var mContext: Context
+    // Member
     private lateinit var mAiringFilmRequest: AiringFilmRequest
     private lateinit var mFilmList: ArrayList<Film>
-    private lateinit var mAnchorLayout: CoordinatorLayout
+    private lateinit var mContext: Context
     private lateinit var mFilmAdapter: FilmAdapter
+
+    // View
+    private lateinit var mAnchorLayout: CoordinatorLayout
     private lateinit var mProgressBar: ProgressBar
     private lateinit var mRecyclerFilm: RecyclerView
     private lateinit var mSwipeRefresh: SwipeRefreshLayout
     private lateinit var mTextMessage: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view: View = inflater.inflate(R.layout.reusable_recycler, container, false)
+        val view = inflater.inflate(R.layout.reusable_recycler, container, false)
 
         // Context
         mContext = requireActivity()
@@ -103,11 +104,7 @@ class AiringFragment : Fragment(), FilmAdapter.OnClickListener {
                         mFilmList = ArrayList()
                         val insertIndex = mFilmList.size
                         mFilmList.addAll(insertIndex, filmList)
-                        mFilmAdapter = FilmAdapter(mContext, mFilmList, this@AiringFragment)
-                        mRecyclerFilm.adapter = mFilmAdapter
-                        mRecyclerFilm.layoutManager = LinearLayoutManager(mContext)
-                        mRecyclerFilm.hasFixedSize()
-                        mRecyclerFilm.visibility = View.VISIBLE
+                        setAdapter()
                         mProgressBar.visibility = View.GONE
                         mIsLoadFirstTimeSuccess = true
                     }
@@ -118,33 +115,43 @@ class AiringFragment : Fragment(), FilmAdapter.OnClickListener {
             override fun onNotFound() {
                 mProgressBar.visibility = View.GONE
                 mTextMessage.visibility = View.VISIBLE
-                mTextMessage.text = R.string.empty_airing_film.toString()
+                mTextMessage.text = getString(R.string.empty_airing_film)
             }
 
             override fun onError(message: String) {
                 if (!mIsLoadFirstTimeSuccess) {
                     mProgressBar.visibility = View.GONE
                     mTextMessage.visibility = View.VISIBLE
-                    mTextMessage.text = R.string.empty_airing_film.toString()
+                    mTextMessage.text = getString(R.string.empty_airing_film)
                 }
                 Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
+
+        // Memberhentikan loading
+        mSwipeRefresh.isRefreshing = false
+    }
+
+    private fun setAdapter() {
+        mFilmAdapter = FilmAdapter(mContext, mFilmList, this)
+        mRecyclerFilm.adapter = mFilmAdapter
+        mRecyclerFilm.layoutManager = LinearLayoutManager(mContext)
+        mRecyclerFilm.hasFixedSize()
+        mRecyclerFilm.visibility = View.VISIBLE
+    }
+
+    private fun resetState() {
+        mIsLoadFirstTimeSuccess = false
+    }
+
+    private fun showFilmModal(id: Int, title: String, year: String, poster: String) {
+        val filmModal = FilmModal(id, title, year, poster)
+        filmModal.show(requireFragmentManager(), Popularin.FILM_MODAL)
     }
 
     private fun gotoFilmDetail(id: Int) {
         val intent = Intent(mContext, FilmDetailActivity::class.java)
         intent.putExtra(Popularin.FILM_ID, id)
         startActivity(intent)
-    }
-
-    private fun showFilmModal(id: Int, title: String, year: String, poster: String) {
-        val fragmentManager = (mContext as FragmentActivity).supportFragmentManager
-        val filmModal = FilmModal(id, title, year, poster)
-        filmModal.show(fragmentManager, Popularin.FILM_MODAL)
-    }
-
-    private fun resetState() {
-        mIsLoadFirstTimeSuccess = false
     }
 }

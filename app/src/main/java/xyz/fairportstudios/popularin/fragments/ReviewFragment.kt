@@ -3,14 +3,15 @@ package xyz.fairportstudios.popularin.fragments
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -31,29 +32,32 @@ import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
 class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
-    // Variable untuk fitur load more
-    private var mIsLoading: Boolean = true
-    private var mIsLoadFirstTimeSuccess: Boolean = false
-    private val mStartPage: Int = 1
-    private var mCurrentPage: Int = 1
-    private var mTotalPage: Int = 0
+    // Primitive
+    private var mIsAuth = false
+    private var mIsLoading = true
+    private var mIsLoadFirstTimeSuccess = false
+    private val mStartPage = 1
+    private var mCurrentPage = 1
+    private var mTotalPage = 0
+    private var mTotalLike = 0
 
-    // Variable member
-    private var mIsAuth: Boolean = false
-    private var mAuthID: Int = 0
-    private var mTotalLike: Int = 0
-    private lateinit var mContext: Context
+    // Member
     private lateinit var mReviewList: ArrayList<Review>
-    private lateinit var mAnchorLayout: CoordinatorLayout
-    private lateinit var mProgressBar: ProgressBar
-    private lateinit var mRecyclerReview: RecyclerView
+    private lateinit var mAuth: Auth
+    private lateinit var mContext: Context
     private lateinit var mReviewAdapter: ReviewAdapter
     private lateinit var mReviewRequest: ReviewRequest
+
+    // View
+    private lateinit var mAnchorLayout: CoordinatorLayout
+    private lateinit var mProgressBar: ProgressBar
+    private lateinit var mLoadMoreBar: ProgressBar
+    private lateinit var mRecyclerReview: RecyclerView
     private lateinit var mSwipeRefresh: SwipeRefreshLayout
     private lateinit var mTextMessage: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view: View = inflater.inflate(R.layout.reusable_recycler, container, false)
+        val view = inflater.inflate(R.layout.reusable_recycler, container, false)
 
         // Context
         mContext = requireActivity()
@@ -61,35 +65,38 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
         // Binding
         mAnchorLayout = view.findViewById(R.id.anchor_rr_layout)
         mProgressBar = view.findViewById(R.id.pbr_rr_layout)
+        mLoadMoreBar = view.findViewById(R.id.lbr_rr_layout)
         mRecyclerReview = view.findViewById(R.id.recycler_rr_layout)
         mSwipeRefresh = view.findViewById(R.id.swipe_refresh_rr_layout)
         mTextMessage = view.findViewById(R.id.text_rr_message)
+        val nestedScrollView = view.findViewById<NestedScrollView>(R.id.nested_scroll_rr_layout)
 
         // Auth
-        val auth = Auth(mContext)
-        mIsAuth = auth.isAuth()
-        mAuthID = auth.getAuthID()
+        mAuth = Auth(mContext)
+        mIsAuth = mAuth.isAuth()
+
+        // Handler
+        val handler = Handler()
 
         // Mendapatkan data awal
         mReviewRequest = ReviewRequest(mContext)
         getReview(mStartPage, false)
 
         // Activity
-        mRecyclerReview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    if (!mIsLoading && mCurrentPage <= mTotalPage) {
-                        mIsLoading = true
-                        mSwipeRefresh.isRefreshing = true
+        nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+            if (scrollY > oldScrollY) {
+                if (!mIsLoading && mCurrentPage <= mTotalPage) {
+                    mIsLoading = true
+                    mLoadMoreBar.visibility = View.VISIBLE
+                    handler.postDelayed({
                         getReview(mCurrentPage, false)
-                    }
+                    }, 1000)
                 }
             }
-        })
+        }
 
         mSwipeRefresh.setOnRefreshListener {
-            mIsLoading = false
+            mIsLoading = true
             mSwipeRefresh.isRefreshing = true
             getReview(mStartPage, true)
         }
@@ -104,13 +111,13 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
 
     override fun onReviewItemClick(position: Int) {
         val currentItem = mReviewList[position]
-        val isSelf = currentItem.userID == mAuthID
+        val isSelf = mAuth.isSelf(currentItem.userID, mAuth.getAuthID())
         gotoReviewDetail(currentItem.id, isSelf)
     }
 
     override fun onReviewUserProfileClick(position: Int) {
         val currentItem = mReviewList[position]
-        gotoUserDetail(currentItem.id)
+        gotoUserDetail(currentItem.userID)
     }
 
     override fun onReviewFilmPosterClick(position: Int) {
@@ -128,6 +135,7 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
         when (mIsAuth) {
             true -> {
                 val currentItem = mReviewList[position]
+                mTotalLike = currentItem.totalLike
                 if (!mIsLoading) {
                     mIsLoading = true
                     when (currentItem.isLiked) {
@@ -142,7 +150,7 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
 
     override fun onReviewCommentClick(position: Int) {
         val currentItem = mReviewList[position]
-        val isSelf = currentItem.userID == mAuthID
+        val isSelf = mAuth.isSelf(currentItem.userID, mAuth.getAuthID())
         gotoReviewComment(currentItem.id, isSelf)
     }
 
@@ -153,6 +161,7 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
                     true -> {
                         if (refreshPage) {
                             mCurrentPage = 1
+                            mTotalPage = totalPage
                             mReviewList.clear()
                             mReviewAdapter.notifyDataSetChanged()
                         }
@@ -160,16 +169,12 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
                         mReviewList.addAll(insertIndex, reviewList)
                         mReviewAdapter.notifyItemChanged(insertIndex - 1)
                         mReviewAdapter.notifyItemRangeInserted(insertIndex, reviewList.size)
-                        mRecyclerReview.scrollToPosition(insertIndex)
                     }
                     false -> {
                         mReviewList = ArrayList()
                         val insertIndex = mReviewList.size
                         mReviewList.addAll(insertIndex, reviewList)
-                        mReviewAdapter = ReviewAdapter(mContext, mReviewList, this@ReviewFragment)
-                        mRecyclerReview.adapter = mReviewAdapter
-                        mRecyclerReview.layoutManager = LinearLayoutManager(mContext)
-                        mRecyclerReview.visibility = View.VISIBLE
+                        setAdapter()
                         mProgressBar.visibility = View.GONE
                         mTotalPage = totalPage
                         mIsLoadFirstTimeSuccess = true
@@ -180,64 +185,42 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
             }
 
             override fun onNotFound() {
-                when (mIsLoadFirstTimeSuccess) {
-                    true -> {
-                        mCurrentPage = 1
-                        mReviewList.clear()
-                        mReviewAdapter.notifyDataSetChanged()
-                    }
-                    false -> mProgressBar.visibility = View.GONE
-                }
+                mProgressBar.visibility = View.GONE
                 mTextMessage.visibility = View.VISIBLE
-                mTextMessage.text = R.string.empty_review.toString()
+                mTextMessage.text = getString(R.string.empty_review)
             }
 
             override fun onError(message: String) {
                 if (!mIsLoadFirstTimeSuccess) {
                     mProgressBar.visibility = View.GONE
                     mTextMessage.visibility = View.VISIBLE
-                    mTextMessage.text = R.string.empty_review.toString()
+                    mTextMessage.text = getString(R.string.empty_review)
                 }
+                mLoadMoreBar.visibility = View.GONE
                 Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 
         // Memberhentikan loading
         mIsLoading = false
-        mSwipeRefresh.isRefreshing = false
+        if (refreshPage) mSwipeRefresh.isRefreshing = false
+        mLoadMoreBar.visibility = when (page == mTotalPage) {
+            true -> View.GONE
+            false -> View.INVISIBLE
+        }
     }
 
-    private fun gotoReviewDetail(id: Int, isSelf: Boolean) {
-        val intent = Intent(mContext, ReviewActivity::class.java)
-        intent.putExtra(Popularin.REVIEW_ID, id)
-        intent.putExtra(Popularin.IS_SELF, isSelf)
-        startActivity(intent)
+    private fun setAdapter() {
+        mReviewAdapter = ReviewAdapter(mContext, mReviewList, this)
+        mRecyclerReview.adapter = mReviewAdapter
+        mRecyclerReview.layoutManager = LinearLayoutManager(mContext)
+        mRecyclerReview.visibility = View.VISIBLE
     }
 
-    private fun gotoReviewComment(id: Int, isSelf: Boolean) {
-        val intent = Intent(mContext, ReviewActivity::class.java)
-        intent.putExtra(Popularin.REVIEW_ID, id)
-        intent.putExtra(Popularin.IS_SELF, isSelf)
-        intent.putExtra(Popularin.VIEW_PAGER_INDEX, 1)
-        startActivity(intent)
-    }
-
-    private fun gotoUserDetail(id: Int) {
-        val intent = Intent(mContext, UserDetailActivity::class.java)
-        intent.putExtra(Popularin.USER_ID, id)
-        startActivity(intent)
-    }
-
-    private fun gotoFilmDetail(id: Int) {
-        val intent = Intent(mContext, FilmDetailActivity::class.java)
-        intent.putExtra(Popularin.FILM_ID, id)
-        startActivity(intent)
-    }
-
-    private fun showFilmModal(id: Int, title: String, year: String, poster: String) {
-        val fragmentManager = (mContext as FragmentActivity).supportFragmentManager
-        val filmModal = FilmModal(id, title, year, poster)
-        filmModal.show(fragmentManager, Popularin.FILM_MODAL)
+    private fun resetState() {
+        mIsLoading = true
+        mIsLoadFirstTimeSuccess = false
+        mCurrentPage = 1
     }
 
     private fun likeReview(id: Int, position: Int) {
@@ -280,14 +263,40 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
         mIsLoading = false
     }
 
-    private fun gotoEmptyAccount() {
-        val intent = Intent(mContext, EmptyAccountActivity::class.java)
+    private fun showFilmModal(id: Int, title: String, year: String, poster: String) {
+        val filmModal = FilmModal(id, title, year, poster)
+        filmModal.show(requireFragmentManager(), Popularin.FILM_MODAL)
+    }
+
+    private fun gotoReviewDetail(id: Int, isSelf: Boolean) {
+        val intent = Intent(mContext, ReviewActivity::class.java)
+        intent.putExtra(Popularin.REVIEW_ID, id)
+        intent.putExtra(Popularin.IS_SELF, isSelf)
         startActivity(intent)
     }
 
-    private fun resetState() {
-        mIsLoading = true
-        mIsLoadFirstTimeSuccess = false
-        mCurrentPage = 1
+    private fun gotoReviewComment(id: Int, isSelf: Boolean) {
+        val intent = Intent(mContext, ReviewActivity::class.java)
+        intent.putExtra(Popularin.REVIEW_ID, id)
+        intent.putExtra(Popularin.IS_SELF, isSelf)
+        intent.putExtra(Popularin.VIEW_PAGER_INDEX, 1)
+        startActivity(intent)
+    }
+
+    private fun gotoUserDetail(id: Int) {
+        val intent = Intent(mContext, UserDetailActivity::class.java)
+        intent.putExtra(Popularin.USER_ID, id)
+        startActivity(intent)
+    }
+
+    private fun gotoFilmDetail(id: Int) {
+        val intent = Intent(mContext, FilmDetailActivity::class.java)
+        intent.putExtra(Popularin.FILM_ID, id)
+        startActivity(intent)
+    }
+
+    private fun gotoEmptyAccount() {
+        val intent = Intent(mContext, EmptyAccountActivity::class.java)
+        startActivity(intent)
     }
 }
