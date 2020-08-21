@@ -23,12 +23,13 @@
         android:layout_height="match_parent">
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/nested_scroll_ft_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -36,6 +37,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false"
                     android:visibility="gone" />
 
                 <View
@@ -47,6 +49,13 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_ft_timeline"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:nestedScrollingEnabled="false"
+                    android:visibility="gone" />
+
+                <ProgressBar
+                    android:id="@+id/lbr_ft_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone" />
