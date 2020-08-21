@@ -27,17 +27,19 @@ import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
 class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickListener, RecentReviewAdapter.OnClickListener {
-    // Variable untuk fitur load
-    private var mIsLoadFirstTimeSuccess: Boolean = false
+    // Primitive
+    private var mIsLoadFirstTimeSuccess = false
+    private var mIsSelf = false
+    private var mIsFollower = false
+    private var mIsFollowing = false
+    private var mTotalFollower = 0
 
-    // Variable member
-    private var mIsSelf: Boolean = false
-    private var mIsFollower: Boolean = false
-    private var mIsFollowing: Boolean = false
-    private var mTotalFollower: Int = 0
-    private lateinit var mContext: Context
+    // Member
     private lateinit var mRecentFavoriteList: ArrayList<RecentFavorite>
     private lateinit var mRecentReviewList: ArrayList<RecentReview>
+    private lateinit var mContext: Context
+
+    // View
     private lateinit var mButtonFollow: Button
     private lateinit var mImageProfile: ImageView
     private lateinit var mImageEmptyRecentFavorite: ImageView
@@ -85,24 +87,21 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
         mTextTotalFollower = findViewById(R.id.text_aud_total_follower)
         mTextTotalFollowing = findViewById(R.id.text_aud_total_following)
         mTextMessage = findViewById(R.id.text_aud_message)
-        val totalReviewLayout: LinearLayout = findViewById(R.id.layout_aud_total_review)
-        val totalFavoriteLayout: LinearLayout = findViewById(R.id.layout_aud_total_favorite)
-        val totalWatchlistLayout: LinearLayout = findViewById(R.id.layout_aud_total_watchlist)
-        val totalFollowerLayout: LinearLayout = findViewById(R.id.layout_aud_total_follower)
-        val totalFollowingLayout: LinearLayout = findViewById(R.id.layout_aud_total_following)
-        val toolbar: Toolbar = findViewById(R.id.toolbar_aud_layout)
+        val totalReviewLayout = findViewById<LinearLayout>(R.id.layout_aud_total_review)
+        val totalFavoriteLayout = findViewById<LinearLayout>(R.id.layout_aud_total_favorite)
+        val totalWatchlistLayout = findViewById<LinearLayout>(R.id.layout_aud_total_watchlist)
+        val totalFollowerLayout = findViewById<LinearLayout>(R.id.layout_aud_total_follower)
+        val totalFollowingLayout = findViewById<LinearLayout>(R.id.layout_aud_total_following)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar_aud_layout)
 
         // Extra
-        val intent = intent
         val userID = intent.getIntExtra(Popularin.USER_ID, 0)
 
         // Auth
         val auth = Auth(mContext)
         val isAuth = auth.isAuth()
-        mIsSelf = userID == auth.getAuthID()
-        if (mIsSelf) {
-            mButtonFollow.text = R.string.edit_profile.toString()
-        }
+        mIsSelf = auth.isSelf(userID, auth.getAuthID())
+        if (mIsSelf) mButtonFollow.text = getString(R.string.edit_profile)
 
         // Mendapatkan data
         getUserDetail(userID)
@@ -174,13 +173,11 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
                 // Following status
                 mIsFollower = userDetail.isFollower
                 mIsFollowing = userDetail.isFollowing
-                when (mIsFollower) {
-                    true -> mTextFollowMe.visibility = View.VISIBLE
-                    false -> mTextFollowMe.visibility = View.GONE
+                mTextFollowMe.visibility = when (mIsFollower) {
+                    true -> View.VISIBLE
+                    false -> View.GONE
                 }
-                if (mIsFollowing) {
-                    mButtonFollow.text = R.string.following.toString()
-                }
+                if (mIsFollowing) mButtonFollow.text = getString(R.string.following)
 
                 // Isi
                 mTotalFollower = userDetail.totalFollower
@@ -201,22 +198,14 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
             override fun onHasRecentFavorite(recentFavoriteList: ArrayList<RecentFavorite>) {
                 mRecentFavoriteList = ArrayList()
                 mRecentFavoriteList.addAll(recentFavoriteList)
-                val recentFavoriteAdapter = RecentFavoriteAdapter(mContext, mRecentFavoriteList, this@UserDetailActivity)
-                mRecyclerRecentFavorite.adapter = recentFavoriteAdapter
-                mRecyclerRecentFavorite.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
-                mRecyclerRecentFavorite.hasFixedSize()
-                mRecyclerRecentFavorite.visibility = View.VISIBLE
+                setRecentFavoriteAdapter()
                 mImageEmptyRecentFavorite.visibility = View.GONE
             }
 
             override fun onHasRecentReview(recentReviewList: ArrayList<RecentReview>) {
                 mRecentReviewList = ArrayList()
                 mRecentReviewList.addAll(recentReviewList)
-                val recentReviewAdapter = RecentReviewAdapter(mContext, mRecentReviewList, this@UserDetailActivity)
-                mRecyclerRecentReview.adapter = recentReviewAdapter
-                mRecyclerRecentReview.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
-                mRecyclerRecentReview.hasFixedSize()
-                mRecyclerRecentReview.visibility = View.VISIBLE
+                setRecentReviewAdapter()
                 mImageEmptyRecentReview.visibility = View.GONE
             }
 
@@ -236,6 +225,79 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
         mSwipeRefresh.isRefreshing = false
     }
 
+    private fun setRecentFavoriteAdapter() {
+        val recentFavoriteAdapter = RecentFavoriteAdapter(mContext, mRecentFavoriteList, this)
+        mRecyclerRecentFavorite.adapter = recentFavoriteAdapter
+        mRecyclerRecentFavorite.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
+        mRecyclerRecentFavorite.hasFixedSize()
+        mRecyclerRecentFavorite.visibility = View.VISIBLE
+    }
+
+    private fun setRecentReviewAdapter() {
+        val recentReviewAdapter = RecentReviewAdapter(mContext, mRecentReviewList, this)
+        mRecyclerRecentReview.adapter = recentReviewAdapter
+        mRecyclerRecentReview.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
+        mRecyclerRecentReview.hasFixedSize()
+        mRecyclerRecentReview.visibility = View.VISIBLE
+    }
+
+    private enum class FollowingState {
+        FOLLOWING, NOT_FOLLOWING, LOADING
+    }
+
+    private fun setFollowingState(state: Boolean) {
+        mIsFollowing = state
+        when (mIsFollowing) {
+            true -> mTotalFollower++
+            false -> mTotalFollower--
+        }
+        mTextTotalFollower.text = mTotalFollower.toString()
+    }
+
+    private fun setFollowButtonState(state: Boolean, followingStateEnum: Enum<FollowingState>) {
+        mButtonFollow.isEnabled = state
+        when (followingStateEnum) {
+            FollowingState.FOLLOWING -> mButtonFollow.text = getString(R.string.following)
+            FollowingState.NOT_FOLLOWING -> mButtonFollow.text = getString(R.string.follow)
+            else -> mButtonFollow.text = getString(R.string.loading)
+        }
+    }
+
+    private fun followUser(id: Int) {
+        val followUserRequest = FollowUserRequest(mContext, id)
+        followUserRequest.sendRequest(object : FollowUserRequest.Callback {
+            override fun onSuccess() {
+                setFollowingState(true)
+                setFollowButtonState(true, FollowingState.FOLLOWING)
+            }
+
+            override fun onError(message: String) {
+                setFollowButtonState(true, FollowingState.NOT_FOLLOWING)
+                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    private fun unfollowUser(id: Int) {
+        val unfollowUserRequest = UnfollowUserRequest(mContext, id)
+        unfollowUserRequest.sendRequest(object : UnfollowUserRequest.Callback {
+            override fun onSuccess() {
+                setFollowingState(false)
+                setFollowButtonState(true, FollowingState.NOT_FOLLOWING)
+            }
+
+            override fun onError(message: String) {
+                setFollowButtonState(true, FollowingState.FOLLOWING)
+                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    private fun showFilmModal(id: Int, title: String, year: String, poster: String) {
+        val filmModal = FilmModal(id, title, year, poster)
+        filmModal.show(supportFragmentManager, Popularin.FILM_MODAL)
+    }
+
     private fun gotoFilmDetail(id: Int) {
         val intent = Intent(mContext, FilmDetailActivity::class.java)
         intent.putExtra(Popularin.FILM_ID, id)
@@ -247,11 +309,6 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
         intent.putExtra(Popularin.REVIEW_ID, id)
         intent.putExtra(Popularin.IS_SELF, mIsSelf)
         startActivity(intent)
-    }
-
-    private fun showFilmModal(id: Int, title: String, year: String, poster: String) {
-        val filmModal = FilmModal(id, title, year, poster)
-        filmModal.show(supportFragmentManager, Popularin.FILM_MODAL)
     }
 
     private fun gotoUserReview(id: Int) {
@@ -287,57 +344,5 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
     private fun gotoEmptyAccount() {
         val intent = Intent(mContext, EmptyAccountActivity::class.java)
         startActivity(intent)
-    }
-
-    private enum class FollowingState {
-        FOLLOWING, NOT_FOLLOWING, LOADING
-    }
-
-    private fun setFollowingState(state: Boolean) {
-        mIsFollowing = state
-        when (mIsFollowing) {
-            true -> mTotalFollower++
-            false -> mTotalFollower--
-        }
-        mTextTotalFollower.text = mTotalFollower.toString()
-    }
-
-    private fun setFollowButtonState(state: Boolean, followingStateEnum: Enum<FollowingState>) {
-        mButtonFollow.isEnabled = state
-        when (followingStateEnum) {
-            FollowingState.FOLLOWING -> mButtonFollow.text = R.string.following.toString()
-            FollowingState.NOT_FOLLOWING -> mButtonFollow.text = R.string.follow.toString()
-            else -> mButtonFollow.text = R.string.loading.toString()
-        }
-    }
-
-    private fun followUser(id: Int) {
-        val followUserRequest = FollowUserRequest(mContext, id)
-        followUserRequest.sendRequest(object : FollowUserRequest.Callback {
-            override fun onSuccess() {
-                setFollowingState(true)
-                setFollowButtonState(true, FollowingState.FOLLOWING)
-            }
-
-            override fun onError(message: String) {
-                setFollowButtonState(true, FollowingState.NOT_FOLLOWING)
-                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
-            }
-        })
-    }
-
-    private fun unfollowUser(id: Int) {
-        val unfollowUserRequest = UnfollowUserRequest(mContext, id)
-        unfollowUserRequest.sendRequest(object : UnfollowUserRequest.Callback {
-            override fun onSuccess() {
-                setFollowingState(false)
-                setFollowButtonState(true, FollowingState.NOT_FOLLOWING)
-            }
-
-            override fun onError(message: String) {
-                setFollowButtonState(true, FollowingState.FOLLOWING)
-                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
-            }
-        })
     }
 }

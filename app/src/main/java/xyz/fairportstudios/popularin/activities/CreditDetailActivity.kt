@@ -19,23 +19,22 @@ class CreditDetailActivity : AppCompatActivity() {
         setContentView(R.layout.reusable_toolbar_pager)
 
         // Binding
-        val tabLayout: TabLayout = findViewById(R.id.tab_rtp_layout)
-        val toolbar: Toolbar = findViewById(R.id.toolbar_rtp_layout)
-        val viewPager: ViewPager = findViewById(R.id.pager_rtp_layout)
+        val tabLayout = findViewById<TabLayout>(R.id.tab_rtp_layout)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar_rtp_layout)
+        val viewPager = findViewById<ViewPager>(R.id.pager_rtp_layout)
 
         // Extra
-        val intent = intent
         val creditID = intent.getIntExtra(Popularin.CREDIT_ID, 0)
         val viewPagerIndex = intent.getIntExtra(Popularin.VIEW_PAGER_INDEX, 0)
 
         // Toolbar
-        toolbar.title = R.string.credit.toString()
+        toolbar.title = getString(R.string.credit)
 
         // Tab pager
         val pagerAdapter = PagerAdapter(supportFragmentManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
-        pagerAdapter.addFragment(CreditBioFragment(creditID), R.string.bio.toString())
-        pagerAdapter.addFragment(CreditFilmAsCastFragment(creditID), R.string.cast.toString())
-        pagerAdapter.addFragment(CreditFilmAsCrewFragment(creditID), R.string.crew.toString())
+        pagerAdapter.addFragment(CreditBioFragment(creditID), getString(R.string.bio))
+        pagerAdapter.addFragment(CreditFilmAsCastFragment(creditID), getString(R.string.cast))
+        pagerAdapter.addFragment(CreditFilmAsCrewFragment(creditID), getString(R.string.crew))
         viewPager.adapter = pagerAdapter
         viewPager.offscreenPageLimit = 3
         viewPager.currentItem = viewPagerIndex

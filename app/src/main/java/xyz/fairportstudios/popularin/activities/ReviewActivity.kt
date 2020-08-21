@@ -17,10 +17,10 @@ import xyz.fairportstudios.popularin.fragments.ReviewDetailFragment
 import xyz.fairportstudios.popularin.statics.Popularin
 
 class ReviewActivity : AppCompatActivity() {
-    // Variable untuk fitur load
-    private var mIsLoading: Boolean = false
+    // Primitive
+    private var mIsLoading = false
 
-    // Variable member
+    // View
     private lateinit var mToolbar: Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,25 +32,22 @@ class ReviewActivity : AppCompatActivity() {
 
         // Binding
         mToolbar = findViewById(R.id.toolbar_rtp_layout)
-        val tabLayout: TabLayout = findViewById(R.id.tab_rtp_layout)
-        val viewPager: ViewPager = findViewById(R.id.pager_rtp_layout)
+        val tabLayout = findViewById<TabLayout>(R.id.tab_rtp_layout)
+        val viewPager = findViewById<ViewPager>(R.id.pager_rtp_layout)
 
         // Extra
-        val intent = intent
         val reviewID = intent.getIntExtra(Popularin.REVIEW_ID, 0)
         val viewPagerIndex = intent.getIntExtra(Popularin.VIEW_PAGER_INDEX, 0)
         val isSelf = intent.getBooleanExtra(Popularin.IS_SELF, false)
 
         // Toolbar
-        mToolbar.title = R.string.review.toString()
-        if (isSelf) {
-            addToolbarMenu(context, reviewID)
-        }
+        mToolbar.title = getString(R.string.review)
+        if (isSelf) addToolbarMenu(context, reviewID)
 
         // Tab pager
         val pagerAdapter = PagerAdapter(supportFragmentManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
-        pagerAdapter.addFragment(ReviewDetailFragment(reviewID), R.string.detail.toString())
-        pagerAdapter.addFragment(ReviewCommentFragment(reviewID), R.string.comment.toString())
+        pagerAdapter.addFragment(ReviewDetailFragment(reviewID), getString(R.string.detail))
+        pagerAdapter.addFragment(ReviewCommentFragment(reviewID), getString(R.string.comment))
         viewPager.adapter = pagerAdapter
         viewPager.currentItem = viewPagerIndex
         tabLayout.setupWithViewPager(viewPager)

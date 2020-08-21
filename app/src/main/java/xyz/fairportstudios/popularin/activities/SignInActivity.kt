@@ -18,14 +18,16 @@ import xyz.fairportstudios.popularin.apis.popularin.post.SignInRequest
 import xyz.fairportstudios.popularin.preferences.Auth
 
 class SignInActivity : AppCompatActivity() {
-    // Variable untuk fitur load
-    private var mIsLoading: Boolean = false
+    // Primitive
+    private var mIsLoading = false
 
-    // Variable member
-    private lateinit var mButtonSignIn: Button
-    private lateinit var mAnchorLayout: LinearLayout
+    // Member
     private lateinit var mUsername: String
     private lateinit var mPassword: String
+
+    // View
+    private lateinit var mButtonSignIn: Button
+    private lateinit var mAnchorLayout: LinearLayout
     private lateinit var mInputUsername: TextInputEditText
     private lateinit var mInputPassword: TextInputEditText
 
@@ -41,14 +43,14 @@ class SignInActivity : AppCompatActivity() {
         mAnchorLayout = findViewById(R.id.anchor_asi_layout)
         mInputUsername = findViewById(R.id.input_asi_username)
         mInputPassword = findViewById(R.id.input_asi_password)
-        val textWelcome: TextView = findViewById(R.id.text_asi_welcome)
+        val textWelcomeMessage = findViewById<TextView>(R.id.text_asi_welcome)
 
         // Pesan
-        textWelcome.text = getWelcomeMessage()
+        textWelcomeMessage.text = getWelcomeMessage()
 
         // Text watcher
-        mInputUsername.addTextChangedListener(signInWatcher)
-        mInputPassword.addTextChangedListener(signInWatcher)
+        mInputUsername.addTextChangedListener(mSignInWatcher)
+        mInputPassword.addTextChangedListener(mSignInWatcher)
 
         // Activity
         mButtonSignIn.setOnClickListener {
@@ -59,12 +61,10 @@ class SignInActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (!mIsLoading) {
-            super.onBackPressed()
-        }
+        if (!mIsLoading) super.onBackPressed()
     }
 
-    private val signInWatcher = object : TextWatcher {
+    private val mSignInWatcher = object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
             // Tidak digunakan
         }
@@ -81,7 +81,7 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun getWelcomeMessage(): SpannableString {
-        val welcomeMessage = R.string.sign_in_welcome_message.toString()
+        val welcomeMessage = getString(R.string.sign_in_welcome_message)
         val spannableString = SpannableString(welcomeMessage)
         val relativeSizeSpan = RelativeSizeSpan(2f)
         spannableString.setSpan(relativeSizeSpan, 0, 5, 0)
@@ -90,9 +90,9 @@ class SignInActivity : AppCompatActivity() {
 
     private fun setSignInButtonState(state: Boolean) {
         mButtonSignIn.isEnabled = state
-        when (state) {
-            true -> mButtonSignIn.text = R.string.sign_in.toString()
-            false -> mButtonSignIn.text = R.string.loading.toString()
+        mButtonSignIn.text = when (state) {
+            true -> getString(R.string.sign_in)
+            false -> getString(R.string.loading)
         }
     }
 

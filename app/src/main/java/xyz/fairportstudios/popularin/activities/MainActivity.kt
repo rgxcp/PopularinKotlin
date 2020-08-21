@@ -12,19 +12,19 @@ import xyz.fairportstudios.popularin.fragments.*
 import xyz.fairportstudios.popularin.preferences.Auth
 
 class MainActivity : AppCompatActivity() {
-    // Variable untuk fitur double tap to exit
-    private val mTimeInterval: Int = 2000
-    private var mTimeBackPressed: Long = 0
+    // Primitive
+    private val mTimeInterval = 2000
+    private var mTimeBackPressed = 0L
+    private var mIsAuth = false
 
-    // Variable member
-    private var mIsAuth: Boolean = false
-    private val mAccountFragment: Fragment = AccountFragment()
-    private val mAiringFragment: Fragment = AiringFragment()
-    private val mEmptyAccountFragment: Fragment = EmptyAccountFragment()
-    private val mGenreFragment: Fragment = GenreFragment()
-    private val mReviewFragment: Fragment = ReviewFragment()
-    private val mSearchFragment: Fragment = SearchFragment()
-    private val mTimelineFragment: Fragment = TimelineFragment()
+    // Member
+    private val mAccountFragment = AccountFragment()
+    private val mAiringFragment = AiringFragment()
+    private val mEmptyAccountFragment = EmptyAccountFragment()
+    private val mGenreFragment = GenreFragment()
+    private val mReviewFragment = ReviewFragment()
+    private val mSearchFragment = SearchFragment()
+    private val mTimelineFragment = TimelineFragment()
     private lateinit var mContext: Context
     private lateinit var mSelectedFragment: Fragment
 
@@ -39,8 +39,8 @@ class MainActivity : AppCompatActivity() {
         mIsAuth = Auth(mContext).isAuth()
 
         // Bottom navigation
-        val bottomNavigation: BottomNavigationView = findViewById(R.id.bottom_navigation_am_layout)
-        bottomNavigation.setOnNavigationItemSelectedListener(listener)
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation_am_layout)
+        bottomNavigation.setOnNavigationItemSelectedListener(mListener)
 
         // Menampilkan fragment otomatis sesuai kondisi
         mSelectedFragment = when (mIsAuth) {
@@ -54,15 +54,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (mTimeInterval + mTimeBackPressed > System.currentTimeMillis()) {
-            super.onBackPressed()
-        } else {
-            Toast.makeText(mContext, R.string.press_once_more_to_exit, Toast.LENGTH_SHORT).show()
+        when (mTimeInterval + mTimeBackPressed > System.currentTimeMillis()) {
+            true -> super.onBackPressed()
+            false -> Toast.makeText(mContext, R.string.press_once_more_to_exit, Toast.LENGTH_SHORT).show()
         }
         mTimeBackPressed = System.currentTimeMillis()
     }
 
-    private val listener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+    private val mListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.menu_bn_home -> {
                 mSelectedFragment = when (mIsAuth) {

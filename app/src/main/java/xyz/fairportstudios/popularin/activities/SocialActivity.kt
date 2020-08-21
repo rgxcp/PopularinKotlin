@@ -23,22 +23,21 @@ class SocialActivity : AppCompatActivity() {
         val context = this
 
         // Binding
-        val tabLayout: TabLayout = findViewById(R.id.tab_rtp_layout)
-        val toolbar: Toolbar = findViewById(R.id.toolbar_rtp_layout)
-        val viewPager: ViewPager = findViewById(R.id.pager_rtp_layout)
+        val tabLayout = findViewById<TabLayout>(R.id.tab_rtp_layout)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar_rtp_layout)
+        val viewPager = findViewById<ViewPager>(R.id.pager_rtp_layout)
 
         // Extra
-        val intent = intent
         val userID = intent.getIntExtra(Popularin.USER_ID, 0)
         val viewPagerIndex = intent.getIntExtra(Popularin.VIEW_PAGER_INDEX, 0)
 
         // Auth
         val auth = Auth(context)
         val isAuth = auth.isAuth()
-        val isSelf = userID == auth.getAuthID()
+        val isSelf = auth.isSelf(userID, auth.getAuthID())
 
         // Toolbar
-        toolbar.title = R.string.social.toString()
+        toolbar.title = getString(R.string.social)
 
         // Limit page yang akan ditampilkan
         val screenPageLimit = when (isAuth && !isSelf) {
@@ -48,11 +47,9 @@ class SocialActivity : AppCompatActivity() {
 
         // Tab pager
         val pagerAdapter = PagerAdapter(supportFragmentManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
-        pagerAdapter.addFragment(FollowerFragment(userID, isSelf), R.string.follower.toString())
-        pagerAdapter.addFragment(FollowingFragment(userID, isSelf), R.string.following.toString())
-        if (isAuth && !isSelf) {
-            pagerAdapter.addFragment(MutualFragment(userID), R.string.mutual.toString())
-        }
+        pagerAdapter.addFragment(FollowerFragment(userID, isSelf), getString(R.string.follower))
+        pagerAdapter.addFragment(FollowingFragment(userID, isSelf), getString(R.string.following))
+        if (isAuth && !isSelf) pagerAdapter.addFragment(MutualFragment(userID), getString(R.string.mutual))
         viewPager.adapter = pagerAdapter
         viewPager.offscreenPageLimit = screenPageLimit
         viewPager.currentItem = viewPagerIndex

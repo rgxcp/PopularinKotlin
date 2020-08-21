@@ -16,8 +16,8 @@ class EmptyAccountActivity : AppCompatActivity() {
         val context = this
 
         // Binding
-        val buttonSignIn: Button = findViewById(R.id.button_rea_sign_in)
-        val buttonSignUp: Button = findViewById(R.id.button_rea_sign_up)
+        val buttonSignIn = findViewById<Button>(R.id.button_rea_sign_in)
+        val buttonSignUp = findViewById<Button>(R.id.button_rea_sign_up)
 
         // Activity
         buttonSignIn.setOnClickListener { gotoSignIn(context) }

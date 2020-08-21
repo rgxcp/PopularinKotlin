@@ -19,16 +19,18 @@ import xyz.fairportstudios.popularin.apis.popularin.post.SignUpRequest
 import xyz.fairportstudios.popularin.preferences.Auth
 
 class SignUpActivity : AppCompatActivity() {
-    // Variable untuk fitur load
-    private var mIsLoading: Boolean = false
+    // Primitive
+    private var mIsLoading = false
 
-    // Variable member
-    private lateinit var mButtonSignUp: Button
-    private lateinit var mAnchorLayout: LinearLayout
+    // Member
     private lateinit var mFullName: String
     private lateinit var mUsername: String
     private lateinit var mEmail: String
     private lateinit var mPassword: String
+
+    // View
+    private lateinit var mButtonSignUp: Button
+    private lateinit var mAnchorLayout: LinearLayout
     private lateinit var mInputFullName: TextInputEditText
     private lateinit var mInputUsername: TextInputEditText
     private lateinit var mInputEmail: TextInputEditText
@@ -48,16 +50,16 @@ class SignUpActivity : AppCompatActivity() {
         mInputUsername = findViewById(R.id.input_asu_username)
         mInputEmail = findViewById(R.id.input_asu_email)
         mInputPassword = findViewById(R.id.input_asu_password)
-        val textWelcome: TextView = findViewById(R.id.text_asu_welcome)
+        val textWelcomeMessage = findViewById<TextView>(R.id.text_asu_welcome)
 
         // Pesan
-        textWelcome.text = getWelcomeMessage()
+        textWelcomeMessage.text = getWelcomeMessage()
 
         // Text watcher
-        mInputFullName.addTextChangedListener(signUpWatcher)
-        mInputUsername.addTextChangedListener(signUpWatcher)
-        mInputEmail.addTextChangedListener(signUpWatcher)
-        mInputPassword.addTextChangedListener(signUpWatcher)
+        mInputFullName.addTextChangedListener(mSignUpWatcher)
+        mInputUsername.addTextChangedListener(mSignUpWatcher)
+        mInputEmail.addTextChangedListener(mSignUpWatcher)
+        mInputPassword.addTextChangedListener(mSignUpWatcher)
 
         // Activity
         mButtonSignUp.setOnClickListener {
@@ -68,12 +70,10 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (!mIsLoading) {
-            super.onBackPressed()
-        }
+        if (!mIsLoading) super.onBackPressed()
     }
 
-    private val signUpWatcher = object : TextWatcher {
+    private val mSignUpWatcher = object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
             // Tidak digunakan
         }
@@ -92,7 +92,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun getWelcomeMessage(): SpannableString {
-        val welcomeMessage = R.string.sign_up_welcome_message.toString()
+        val welcomeMessage = getString(R.string.sign_up_welcome_message)
         val spannableString = SpannableString(welcomeMessage)
         val relativeSizeSpan = RelativeSizeSpan(2f)
         spannableString.setSpan(relativeSizeSpan, 0, 5, 0)
@@ -114,12 +114,12 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun emailValidated(): Boolean {
-        return when {
-            !Patterns.EMAIL_ADDRESS.matcher(mEmail).matches() -> {
+        return when (!Patterns.EMAIL_ADDRESS.matcher(mEmail).matches()) {
+            true -> {
                 Snackbar.make(mAnchorLayout, R.string.validate_email_format, Snackbar.LENGTH_LONG).show()
                 false
             }
-            else -> true
+            false -> true
         }
     }
 
@@ -139,9 +139,9 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun setSignUpButtonState(state: Boolean) {
         mButtonSignUp.isEnabled = state
-        when (state) {
-            true -> mButtonSignUp.text = R.string.sign_up.toString()
-            false -> mButtonSignUp.text = R.string.loading.toString()
+        mButtonSignUp.text = when (state) {
+            true -> getString(R.string.sign_up)
+            false -> getString(R.string.loading)
         }
     }
 

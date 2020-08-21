@@ -4,11 +4,13 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -23,24 +25,27 @@ import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
 class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
-    // Variable untuk fitur load more
-    private var mIsLoading: Boolean = true
-    private var mIsLoadFirstTimeSuccess: Boolean = false
-    private val mStartPage: Int = 1
-    private var mCurrentPage: Int = 1
-    private var mTotalPage: Int = 0
+    // Primitive
+    private var mIsSelf = false
+    private var mIsLoading = true
+    private var mIsLoadFirstTimeSuccess = false
+    private val mStartPage = 1
+    private var mCurrentPage = 1
+    private var mTotalPage = 0
 
-    // Variable member
-    private var mIsSelf: Boolean = false
-    private lateinit var mContext: Context
+    // Member
     private lateinit var mFilmList: ArrayList<Film>
+    private lateinit var mContext: Context
     private lateinit var mFilmAdapter: FilmAdapter
+    private lateinit var mUserWatchlistRequest: UserWatchlistRequest
+
+    // View
     private lateinit var mProgressBar: ProgressBar
+    private lateinit var mLoadMoreBar: ProgressBar
     private lateinit var mRecyclerFilm: RecyclerView
     private lateinit var mAnchorLayout: RelativeLayout
     private lateinit var mSwipeRefresh: SwipeRefreshLayout
     private lateinit var mTextMessage: TextView
-    private lateinit var mUserWatchlistRequest: UserWatchlistRequest
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,23 +54,28 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
         // Context
         mContext = this
 
-        // Extra
-        val intent = intent
-        val userID = intent.getIntExtra(Popularin.USER_ID, 0)
-
-        // Auth
-        mIsSelf = userID == Auth(mContext).getAuthID()
-
         // Binding
         mProgressBar = findViewById(R.id.pbr_rtr_layout)
+        mLoadMoreBar = findViewById(R.id.lbr_rtr_layout)
         mRecyclerFilm = findViewById(R.id.recycler_rtr_layout)
         mAnchorLayout = findViewById(R.id.anchor_rtr_layout)
         mSwipeRefresh = findViewById(R.id.swipe_refresh_rtr_layout)
         mTextMessage = findViewById(R.id.text_aud_message)
-        val toolbar: Toolbar = findViewById(R.id.toolbar_rtr_layout)
+        val nestedScrollView = findViewById<NestedScrollView>(R.id.nested_scroll_rtr_layout)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar_rtr_layout)
+
+        // Extra
+        val userID = intent.getIntExtra(Popularin.USER_ID, 0)
+
+        // Auth
+        val auth = Auth(mContext)
+        mIsSelf = auth.isSelf(userID, auth.getAuthID())
+
+        // Handler
+        val handler = Handler()
 
         // Toolbar
-        toolbar.title = R.string.watchlist.toString()
+        toolbar.title = getString(R.string.watchlist)
 
         // Mendapatkan data awal
         mUserWatchlistRequest = UserWatchlistRequest(mContext, userID)
@@ -74,18 +84,17 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
         // Activity
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        mRecyclerFilm.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    if (!mIsLoading && mCurrentPage <= mTotalPage) {
-                        mIsLoading = true
-                        mSwipeRefresh.isRefreshing = true
+        nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+            if (scrollY > oldScrollY) {
+                if (!mIsLoading && mCurrentPage <= mTotalPage) {
+                    mIsLoading = true
+                    mLoadMoreBar.visibility = View.VISIBLE
+                    handler.postDelayed({
                         getUserWatchlist(mCurrentPage, false)
-                    }
+                    }, 1000)
                 }
             }
-        })
+        }
 
         mSwipeRefresh.setOnRefreshListener {
             mIsLoading = true
@@ -117,22 +126,19 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
                     true -> {
                         if (refreshPage) {
                             mCurrentPage = 1
+                            mTotalPage = totalPage
                             mFilmList.clear()
                             mFilmAdapter.notifyDataSetChanged()
                         }
                         val insertIndex = mFilmList.size
                         mFilmList.addAll(insertIndex, filmList)
                         mFilmAdapter.notifyItemRangeInserted(insertIndex, filmList.size)
-                        mRecyclerFilm.scrollToPosition(insertIndex)
                     }
                     false -> {
                         mFilmList = ArrayList()
                         val insertIndex = mFilmList.size
                         mFilmList.addAll(insertIndex, filmList)
-                        mFilmAdapter = FilmAdapter(mContext, mFilmList, this@UserWatchlistActivity)
-                        mRecyclerFilm.adapter = mFilmAdapter
-                        mRecyclerFilm.layoutManager = LinearLayoutManager(mContext)
-                        mRecyclerFilm.visibility = View.VISIBLE
+                        setAdapter()
                         mProgressBar.visibility = View.GONE
                         mTotalPage = totalPage
                         mIsLoadFirstTimeSuccess = true
@@ -143,24 +149,20 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
             }
 
             override fun onNotFound() {
-                when (mIsLoadFirstTimeSuccess) {
-                    true -> {
-                        mCurrentPage = 1
-                        mFilmList.clear()
-                        mFilmAdapter.notifyDataSetChanged()
-                    }
-                    false -> mProgressBar.visibility = View.GONE
-                }
+                mProgressBar.visibility = View.GONE
                 mTextMessage.visibility = View.VISIBLE
                 mTextMessage.text = when (mIsSelf) {
-                    true -> R.string.empty_self_watchlist_film.toString()
-                    false -> R.string.empty_user_watchlist.toString()
+                    true -> getString(R.string.empty_self_watchlist_film)
+                    false -> getString(R.string.empty_user_watchlist)
                 }
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
-                    true -> Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                    true -> {
+                        mLoadMoreBar.visibility = View.GONE
+                        Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                    }
                     false -> {
                         mProgressBar.visibility = View.GONE
                         mTextMessage.visibility = View.VISIBLE
@@ -172,17 +174,28 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
 
         // Memberhentikan loading
         mIsLoading = false
-        mSwipeRefresh.isRefreshing = false
+        if (refreshPage) mSwipeRefresh.isRefreshing = false
+        mLoadMoreBar.visibility = when (page == mTotalPage) {
+            true -> View.GONE
+            false -> View.INVISIBLE
+        }
+    }
+
+    private fun setAdapter() {
+        mFilmAdapter = FilmAdapter(mContext, mFilmList, this)
+        mRecyclerFilm.adapter = mFilmAdapter
+        mRecyclerFilm.layoutManager = LinearLayoutManager(mContext)
+        mRecyclerFilm.visibility = View.VISIBLE
+    }
+
+    private fun showFilmModal(id: Int, title: String, year: String, poster: String) {
+        val filmModal = FilmModal(id, title, year, poster)
+        filmModal.show(supportFragmentManager, Popularin.FILM_MODAL)
     }
 
     private fun gotoFilmDetail(id: Int) {
         val intent = Intent(mContext, FilmDetailActivity::class.java)
         intent.putExtra(Popularin.FILM_ID, id)
         startActivity(intent)
-    }
-
-    private fun showFilmModal(id: Int, title: String, year: String, poster: String) {
-        val filmModal = FilmModal(id, title, year, poster)
-        filmModal.show(supportFragmentManager, Popularin.FILM_MODAL)
     }
 }

@@ -39,11 +39,20 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, CrewAdapter.OnClickListener {
-    // Variable member
-    private var mGenreID: Int = 0
-    private lateinit var mContext: Context
+    // Primitive
+    private var mGenreID = 0
+
+    // Member
     private lateinit var mCastList: ArrayList<Cast>
     private lateinit var mCrewList: ArrayList<Crew>
+    private lateinit var mContext: Context
+    private lateinit var mGenreTitle: String
+    private lateinit var mFilmTitle: String
+    private lateinit var mFilmYear: String
+    private lateinit var mFilmPoster: String
+    private lateinit var mYoutubeKey: String
+
+    // View
     private lateinit var mChipGenre: Chip
     private lateinit var mChipRuntime: Chip
     private lateinit var mChipRating: Chip
@@ -55,11 +64,6 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
     private lateinit var mProgressBar: ProgressBar
     private lateinit var mRecyclerCast: RecyclerView
     private lateinit var mRecyclerCrew: RecyclerView
-    private lateinit var mGenreTitle: String
-    private lateinit var mFilmTitle: String
-    private lateinit var mFilmYear: String
-    private lateinit var mFilmPoster: String
-    private lateinit var mYoutubeKey: String
     private lateinit var mSwipeRefresh: SwipeRefreshLayout
     private lateinit var mTextTotalReview: TextView
     private lateinit var mTextTotalFavorite: TextView
@@ -94,15 +98,14 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
         mTextOverview = findViewById(R.id.text_afd_overview)
         mTextMessage = findViewById(R.id.text_afd_message)
         mToolbar = findViewById(R.id.toolbar_afd_layout)
-        val collapsingToolbar: CollapsingToolbarLayout = findViewById(R.id.collapsing_toolbar_afd_layout)
-        val fab: FloatingActionButton = findViewById(R.id.fab_afd_layout)
-        val imagePlayTrailer: ImageView = findViewById(R.id.image_afd_play)
-        val imageReview: ImageView = findViewById(R.id.image_afd_review)
-        val imageFavorite: ImageView = findViewById(R.id.image_afd_favorite)
-        val imageWatchlist: ImageView = findViewById(R.id.image_afd_watchlist)
+        val collapsingToolbar = findViewById<CollapsingToolbarLayout>(R.id.collapsing_toolbar_afd_layout)
+        val fab = findViewById<FloatingActionButton>(R.id.fab_afd_layout)
+        val imagePlayTrailer = findViewById<ImageView>(R.id.image_afd_play)
+        val imageReview = findViewById<ImageView>(R.id.image_afd_review)
+        val imageFavorite = findViewById<ImageView>(R.id.image_afd_favorite)
+        val imageWatchlist = findViewById<ImageView>(R.id.image_afd_watchlist)
 
         // Extra
-        val intent = intent
         val filmID = intent.getIntExtra(Popularin.FILM_ID, 0)
 
         // Mengatur jenis font untuk collapsing toolbar
@@ -126,9 +129,7 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
         }
 
         mChipGenre.setOnClickListener {
-            if (mGenreID != 0) {
-                gotoDiscoverFilm(mGenreID, mGenreTitle)
-            }
+            if (mGenreID != 0) gotoDiscoverFilm(mGenreID, mGenreTitle)
         }
 
         imageReview.setOnClickListener { gotoFilmReview(filmID) }
@@ -163,11 +164,12 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
                 mGenreID = filmDetail.genreID
                 mFilmTitle = filmDetail.originalTitle
                 mFilmPoster = filmDetail.posterPath
-                mYoutubeKey = filmDetail.video_key
+                mYoutubeKey = filmDetail.videoKey
                 mGenreTitle = ConvertGenre.getGenreForHumans(mGenreID).toString()
                 mFilmYear = ParseDate.getYear(filmDetail.releaseDate)
                 val overview = filmDetail.overview
                 val runtime = ConvertRuntime.getRuntimeForHumans(filmDetail.runtime)
+                val poster = "${TMDbAPI.BASE_LARGE_IMAGE_URL}$mFilmPoster"
 
                 // Detail
                 mToolbar.title = mFilmTitle
@@ -178,7 +180,7 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
                     mTextOverview.visibility = View.VISIBLE
                     mTextOverview.text = overview
                 }
-                Glide.with(mContext).load("${TMDbAPI.BASE_LARGE_IMAGE_URL}$mFilmPoster").into(mImagePoster)
+                Glide.with(mContext).load(poster).into(mImagePoster)
                 mProgressBar.visibility = View.GONE
                 mAnchorLayout.visibility = View.VISIBLE
 
@@ -186,11 +188,7 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
                 if (castList.isNotEmpty()) {
                     mCastList = ArrayList()
                     mCastList.addAll(castList)
-                    val castAdapter = CastAdapter(mContext, mCastList, this@FilmDetailActivity)
-                    mRecyclerCast.adapter = castAdapter
-                    mRecyclerCast.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
-                    mRecyclerCast.hasFixedSize()
-                    mRecyclerCast.visibility = View.VISIBLE
+                    setCastAdapter()
                     mImageEmptyCast.visibility = View.GONE
                 }
 
@@ -198,11 +196,7 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
                 if (crewList.isNotEmpty()) {
                     mCrewList = ArrayList()
                     mCrewList.addAll(crewList)
-                    val crewAdapter = CrewAdapter(mContext, mCrewList, this@FilmDetailActivity)
-                    mRecyclerCrew.adapter = crewAdapter
-                    mRecyclerCrew.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
-                    mRecyclerCrew.hasFixedSize()
-                    mRecyclerCrew.visibility = View.VISIBLE
+                    setCrewAdapter()
                     mImageEmptyCrew.visibility = View.GONE
                 }
             }
@@ -238,11 +232,25 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
         mSwipeRefresh.isRefreshing = false
     }
 
-    private fun gotoCredit(id: Int, viewPagerIndex: Int) {
-        val intent = Intent(mContext, CreditDetailActivity::class.java)
-        intent.putExtra(Popularin.CREDIT_ID, id)
-        intent.putExtra(Popularin.VIEW_PAGER_INDEX, viewPagerIndex)
-        startActivity(intent)
+    private fun setCastAdapter() {
+        val castAdapter = CastAdapter(mContext, mCastList, this)
+        mRecyclerCast.adapter = castAdapter
+        mRecyclerCast.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
+        mRecyclerCast.hasFixedSize()
+        mRecyclerCast.visibility = View.VISIBLE
+    }
+
+    private fun setCrewAdapter() {
+        val crewAdapter = CrewAdapter(mContext, mCrewList, this)
+        mRecyclerCrew.adapter = crewAdapter
+        mRecyclerCrew.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
+        mRecyclerCrew.hasFixedSize()
+        mRecyclerCrew.visibility = View.VISIBLE
+    }
+
+    private fun showFilmModal(id: Int) {
+        val filmModal = FilmModal(id, mFilmTitle, mFilmYear, mFilmPoster)
+        filmModal.show(supportFragmentManager, Popularin.FILM_MODAL)
     }
 
     private fun playTrailer(key: String) {
@@ -280,8 +288,10 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
         startActivity(intent)
     }
 
-    private fun showFilmModal(id: Int) {
-        val filmModal = FilmModal(id, mFilmTitle, mFilmYear, mFilmPoster)
-        filmModal.show(supportFragmentManager, Popularin.FILM_MODAL)
+    private fun gotoCredit(id: Int, viewPagerIndex: Int) {
+        val intent = Intent(mContext, CreditDetailActivity::class.java)
+        intent.putExtra(Popularin.CREDIT_ID, id)
+        intent.putExtra(Popularin.VIEW_PAGER_INDEX, viewPagerIndex)
+        startActivity(intent)
     }
 }

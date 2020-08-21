@@ -17,16 +17,18 @@ import java.text.DateFormat
 import java.util.*
 
 class AddReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
-    // Variable untuk fitur load
-    private var mIsLoading: Boolean = false
+    // Primitive
+    private var mIsLoading = false
+    private var mRating = 0.0f
 
-    // Variable member
-    private var mRating: Float = 0.0f
+    // Member
     private lateinit var mCalendar: Calendar
-    private lateinit var mInputReview: EditText
-    private lateinit var mAnchorLayout: LinearLayout
     private lateinit var mWatchDate: String
     private lateinit var mReview: String
+
+    // View
+    private lateinit var mInputReview: EditText
+    private lateinit var mAnchorLayout: LinearLayout
     private lateinit var mTextWatchDate: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,26 +38,25 @@ class AddReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
         // Context
         val context = this
 
-        // Calendar
-        mCalendar = Calendar.getInstance()
-
         // Binding
         mInputReview = findViewById(R.id.input_adr_review)
         mAnchorLayout = findViewById(R.id.anchor_adr_layout)
         mTextWatchDate = findViewById(R.id.text_adr_watch_date)
-        val imageFilmPoster: ImageView = findViewById(R.id.image_adr_poster)
-        val ratingBar: RatingBar = findViewById(R.id.rbr_adr_layout)
-        val textFilmTitle: TextView = findViewById(R.id.text_adr_title)
-        val textFilmYear: TextView = findViewById(R.id.text_adr_year)
-        val toolbar: Toolbar = findViewById(R.id.toolbar_adr_layout)
+        val imageFilmPoster = findViewById<ImageView>(R.id.image_adr_poster)
+        val ratingBar = findViewById<RatingBar>(R.id.rbr_adr_layout)
+        val textFilmTitle = findViewById<TextView>(R.id.text_adr_title)
+        val textFilmYear = findViewById<TextView>(R.id.text_adr_year)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar_adr_layout)
 
         // Extra
-        val intent = intent
         mRating = intent.getFloatExtra(Popularin.RATING, 0.0f)
         val filmID = intent.getIntExtra(Popularin.FILM_ID, 0)
         val filmTitle = intent.getStringExtra(Popularin.FILM_TITLE)
         val filmYear = intent.getStringExtra(Popularin.FILM_YEAR)
-        val filmPoster = intent.getStringExtra("${TMDbAPI.BASE_SMALL_IMAGE_URL}${intent.getStringExtra(Popularin.FILM_POSTER)}")
+        val filmPoster = "${TMDbAPI.BASE_SMALL_IMAGE_URL}${intent.getStringExtra(Popularin.FILM_POSTER)}"
+
+        // Calendar
+        mCalendar = Calendar.getInstance()
 
         // Menampilkan tanggal sekarang
         getCurrentDate()
@@ -85,11 +86,11 @@ class AddReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
         ratingBar.setOnRatingBarChangeListener { _, rating, _ -> mRating = rating }
     }
 
-    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        mWatchDate = "$year-${month + 1}-$dayOfMonth"
+    override fun onDateSet(view: DatePicker?, year: Int, month: Int, day: Int) {
+        mWatchDate = "$year-${month + 1}-$day"
         mCalendar.set(Calendar.YEAR, year)
         mCalendar.set(Calendar.MONTH, month)
-        mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        mCalendar.set(Calendar.DAY_OF_MONTH, day)
         mTextWatchDate.text = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.time)
     }
 

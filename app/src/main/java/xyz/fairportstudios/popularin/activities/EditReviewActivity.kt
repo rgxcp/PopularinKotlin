@@ -21,20 +21,22 @@ import java.text.DateFormat
 import java.util.*
 
 class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
-    // Variable untuk fitur load
-    private var mIsLoading: Boolean = true
+    // Primitive
+    private var mIsLoading = true
+    private var mRating = 0.0f
 
-    // Variable member
-    private var mRating: Float = 0.0f
+    // Member
     private lateinit var mCalendar: Calendar
+    private lateinit var mWatchDate: String
+    private lateinit var mReview: String
+
+    // View
     private lateinit var mInputReview: EditText
     private lateinit var mImageFilmPoster: ImageView
     private lateinit var mEditReviewLayout: LinearLayout
     private lateinit var mProgressBar: ProgressBar
     private lateinit var mRatingBar: RatingBar
     private lateinit var mAnchorLayout: RelativeLayout
-    private lateinit var mWatchDate: String
-    private lateinit var mReview: String
     private lateinit var mTextFilmTitle: TextView
     private lateinit var mTextFilmYear: TextView
     private lateinit var mTextWatchDate: TextView
@@ -47,9 +49,6 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         // Context
         val context = this
 
-        // Calendar
-        mCalendar = Calendar.getInstance()
-
         // Binding
         mInputReview = findViewById(R.id.input_aer_review)
         mImageFilmPoster = findViewById(R.id.image_aer_poster)
@@ -61,11 +60,13 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         mTextFilmYear = findViewById(R.id.text_aer_year)
         mTextWatchDate = findViewById(R.id.text_aer_watch_date)
         mTextMessage = findViewById(R.id.text_aer_message)
-        val toolbar: Toolbar = findViewById(R.id.toolbar_aer_layout)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar_aer_layout)
 
         // Extra
-        val intent = intent
         val reviewID = intent.getIntExtra(Popularin.REVIEW_ID, 0)
+
+        // Calendar
+        mCalendar = Calendar.getInstance()
 
         // Menampilkan ulasan awal
         getCurrentReview(context, reviewID)
@@ -89,11 +90,11 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         mRatingBar.setOnRatingBarChangeListener { _, rating, _ -> mRating = rating }
     }
 
-    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        mWatchDate = "$year-${month + 1}-$dayOfMonth"
+    override fun onDateSet(view: DatePicker?, year: Int, month: Int, day: Int) {
+        mWatchDate = "$year-${month + 1}-$day"
         mCalendar.set(Calendar.YEAR, year)
         mCalendar.set(Calendar.MONTH, month)
-        mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        mCalendar.set(Calendar.DAY_OF_MONTH, day)
         mTextWatchDate.text = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.time)
     }
 
@@ -132,10 +133,9 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     private fun getCurrentWatchDate(watchDate: String) {
-        val parseDate = ParseDate
-        val year = parseDate.getYear(watchDate).toInt()
-        val month = parseDate.getMonth(watchDate).toInt() - 1
-        val day = parseDate.getDay(watchDate).toInt()
+        val year = ParseDate.getYear(watchDate).toInt()
+        val month = ParseDate.getMonth(watchDate).toInt() - 1
+        val day = ParseDate.getDay(watchDate).toInt()
         mWatchDate = "$year-${month + 1}-$day"
         mCalendar.set(Calendar.YEAR, year)
         mCalendar.set(Calendar.MONTH, month)
