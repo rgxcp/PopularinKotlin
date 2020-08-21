@@ -177,7 +177,14 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapter.OnClickListene
             }
 
             override fun onNotFound() {
-                mProgressBar.visibility = View.GONE
+                when (mIsLoadFirstTimeSuccess) {
+                    true -> {
+                        mCurrentPage = 1
+                        mUserReviewList.clear()
+                        mUserReviewAdapter.notifyDataSetChanged()
+                    }
+                    false -> mProgressBar.visibility = View.GONE
+                }
                 mTextMessage.visibility = View.VISIBLE
                 mTextMessage.text = when (mIsSelf) {
                     true -> getString(R.string.empty_self_review)

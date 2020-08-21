@@ -209,7 +209,14 @@ class FilmReviewActivity : AppCompatActivity(), FilmReviewAdapter.OnClickListene
             }
 
             override fun onNotFound() {
-                mProgressBar.visibility = View.GONE
+                when (mIsLoadFirstTimeSuccess) {
+                    true -> {
+                        mCurrentPage = 1
+                        mFilmReviewList.clear()
+                        mFilmReviewAdapter.notifyDataSetChanged()
+                    }
+                    false -> mProgressBar.visibility = View.GONE
+                }
                 mTextMessage.visibility = View.VISIBLE
                 mTextMessage.text = getString(R.string.empty_film_review)
             }

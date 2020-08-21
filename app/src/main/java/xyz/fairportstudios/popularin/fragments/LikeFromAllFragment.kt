@@ -124,7 +124,14 @@ class LikeFromAllFragment(private val reviewID: Int) : Fragment(), UserAdapter.O
             }
 
             override fun onNotFound() {
-                mProgressBar.visibility = View.GONE
+                when (mIsLoadFirstTimeSuccess) {
+                    true -> {
+                        mCurrentPage = 1
+                        mUserList.clear()
+                        mUserAdapter.notifyDataSetChanged()
+                    }
+                    false -> mProgressBar.visibility = View.GONE
+                }
                 mTextMessage.visibility = View.VISIBLE
                 mTextMessage.text = getString(R.string.empty_review_like)
             }

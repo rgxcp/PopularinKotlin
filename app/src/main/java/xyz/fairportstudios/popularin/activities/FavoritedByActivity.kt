@@ -164,7 +164,14 @@ class FavoritedByActivity : AppCompatActivity(), UserAdapter.OnClickListener {
             }
 
             override fun onNotFound() {
-                mProgressBar.visibility = View.GONE
+                when (mIsLoadFirstTimeSuccess) {
+                    true -> {
+                        mCurrentPage = 1
+                        mUserList.clear()
+                        mUserAdapter.notifyDataSetChanged()
+                    }
+                    false -> mProgressBar.visibility = View.GONE
+                }
                 mTextMessage.visibility = View.VISIBLE
                 mTextMessage.text = getString(R.string.empty_film_favorite)
             }

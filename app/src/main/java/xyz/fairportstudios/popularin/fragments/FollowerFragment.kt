@@ -131,7 +131,14 @@ class FollowerFragment(private val userID: Int, private val isSelf: Boolean) : F
             }
 
             override fun onNotFound() {
-                mProgressBar.visibility = View.GONE
+                when (mIsLoadFirstTimeSuccess) {
+                    true -> {
+                        mCurrentPage = 1
+                        mUserList.clear()
+                        mUserAdapter.notifyDataSetChanged()
+                    }
+                    false -> mProgressBar.visibility = View.GONE
+                }
                 mTextMessage.visibility = View.VISIBLE
                 mTextMessage.text = when (isSelf) {
                     true -> getString(R.string.empty_self_follower)

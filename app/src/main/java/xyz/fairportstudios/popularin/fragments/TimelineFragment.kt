@@ -189,7 +189,14 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
             }
 
             override fun onNotFound() {
-                mProgressBar.visibility = View.GONE
+                when (mIsLoadFirstTimeSuccess) {
+                    true -> {
+                        mCurrentPage = 1
+                        mReviewList.clear()
+                        mReviewAdapter.notifyDataSetChanged()
+                    }
+                    false -> mProgressBar.visibility = View.GONE
+                }
                 mTextMessage.visibility = View.VISIBLE
                 mTextMessage.text = getString(R.string.empty_timeline)
             }
