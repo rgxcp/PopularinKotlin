@@ -3,14 +3,12 @@ package xyz.fairportstudios.popularin.fragments
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -47,7 +45,6 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
     private lateinit var mInputComment: EditText
     private lateinit var mImageSend: ImageView
     private lateinit var mProgressBar: ProgressBar
-    private lateinit var mLoadMoreBar: ProgressBar
     private lateinit var mRecyclerComment: RecyclerView
     private lateinit var mSwipeRefresh: SwipeRefreshLayout
     private lateinit var mTextMessage: TextView
@@ -61,19 +58,14 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
         // Binding
         mInputComment = view.findViewById(R.id.input_frc_comment)
         mImageSend = view.findViewById(R.id.image_frc_send)
-        mProgressBar = view.findViewById(R.id.pbr_rr_layout)
-        mLoadMoreBar = view.findViewById(R.id.lbr_rr_layout)
-        mRecyclerComment = view.findViewById(R.id.recycler_rr_layout)
-        mSwipeRefresh = view.findViewById(R.id.swipe_refresh_rr_layout)
-        mTextMessage = view.findViewById(R.id.text_rr_message)
-        val nestedScrollView = view.findViewById<NestedScrollView>(R.id.nested_scroll_rr_layout)
+        mProgressBar = view.findViewById(R.id.pbr_frc_layout)
+        mRecyclerComment = view.findViewById(R.id.recycler_frc_layout)
+        mSwipeRefresh = view.findViewById(R.id.swipe_refresh_frc_layout)
+        mTextMessage = view.findViewById(R.id.text_frc_message)
 
         // Auth
         mAuth = Auth(mContext)
         val isAuth = mAuth.isAuth()
-
-        // Handler
-        val handler = Handler()
 
         // Text watcher
         mInputComment.addTextChangedListener(mCommentWatcher)
@@ -89,17 +81,18 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
             }
         }
 
-        nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
-            if (scrollY > oldScrollY) {
-                if (!mIsLoading && mCurrentPage <= mTotalPage) {
-                    mIsLoading = true
-                    mLoadMoreBar.visibility = View.VISIBLE
-                    handler.postDelayed({
+        mRecyclerComment.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    if (!mIsLoading && mCurrentPage <= mTotalPage) {
+                        mIsLoading = true
+                        mSwipeRefresh.isRefreshing = true
                         getComment(mCurrentPage, false)
-                    }, 1000)
+                    }
                 }
             }
-        }
+        })
 
         mSwipeRefresh.setOnRefreshListener {
             mIsLoading = true
@@ -195,10 +188,7 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
-                    true -> {
-                        mLoadMoreBar.visibility = View.GONE
-                        Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
-                    }
+                    true -> Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
                     false -> {
                         mProgressBar.visibility = View.GONE
                         mTextMessage.visibility = View.VISIBLE
@@ -210,11 +200,7 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
 
         // Memberhentikan loading
         mIsLoading = false
-        if (refreshPage) mSwipeRefresh.isRefreshing = false
-        mLoadMoreBar.visibility = when (page == mTotalPage) {
-            true -> View.GONE
-            false -> View.INVISIBLE
-        }
+        mSwipeRefresh.isRefreshing = false
     }
 
     private fun setAdapter() {

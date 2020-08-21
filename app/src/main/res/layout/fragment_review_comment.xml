@@ -5,11 +5,33 @@
     android:layout_height="match_parent"
     tools:context=".activities.ReviewActivity">
 
-    <include
-        layout="@layout/reusable_recycler"
+    <ProgressBar
+        android:id="@+id/pbr_frc_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/comment_frc_layout" />
+        android:layout_above="@id/comment_frc_layout"
+        android:padding="170dp" />
+
+    <TextView
+        android:id="@+id/text_frc_message"
+        style="@style/TextMessagePrimary"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/comment_frc_layout"
+        android:visibility="gone" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_frc_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/comment_frc_layout">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_frc_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <RelativeLayout
         android:id="@+id/comment_frc_layout"
