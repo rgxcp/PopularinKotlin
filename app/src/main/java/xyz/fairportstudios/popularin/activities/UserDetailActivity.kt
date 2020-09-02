@@ -4,12 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.R
@@ -18,6 +15,7 @@ import xyz.fairportstudios.popularin.adapters.RecentReviewAdapter
 import xyz.fairportstudios.popularin.apis.popularin.delete.UnfollowUserRequest
 import xyz.fairportstudios.popularin.apis.popularin.get.UserDetailRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.FollowUserRequest
+import xyz.fairportstudios.popularin.databinding.ActivityUserDetailBinding
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.RecentFavorite
 import xyz.fairportstudios.popularin.models.RecentReview
@@ -39,60 +37,16 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
     private lateinit var mRecentReviewList: ArrayList<RecentReview>
     private lateinit var mContext: Context
 
-    // View
-    private lateinit var mButtonFollow: Button
-    private lateinit var mImageProfile: ImageView
-    private lateinit var mImageEmptyRecentFavorite: ImageView
-    private lateinit var mImageEmptyRecentReview: ImageView
-    private lateinit var mProgressBar: ProgressBar
-    private lateinit var mRecyclerRecentFavorite: RecyclerView
-    private lateinit var mRecyclerRecentReview: RecyclerView
-    private lateinit var mAnchorLayout: RelativeLayout
-    private lateinit var mScrollView: ScrollView
-    private lateinit var mSwipeRefresh: SwipeRefreshLayout
-    private lateinit var mTextFullName: TextView
-    private lateinit var mTextUsername: TextView
-    private lateinit var mTextFollowMe: TextView
-    private lateinit var mTextTotalReview: TextView
-    private lateinit var mTextTotalFavorite: TextView
-    private lateinit var mTextTotalWatchlist: TextView
-    private lateinit var mTextTotalFollower: TextView
-    private lateinit var mTextTotalFollowing: TextView
-    private lateinit var mTextMessage: TextView
+    // View binding
+    private lateinit var mViewBinding: ActivityUserDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_user_detail)
+        mViewBinding = ActivityUserDetailBinding.inflate(layoutInflater)
+        setContentView(mViewBinding.root)
 
         // Context
         mContext = this
-
-        // Binding
-        mButtonFollow = findViewById(R.id.button_aud_follow)
-        mImageProfile = findViewById(R.id.image_aud_profile)
-        mImageEmptyRecentFavorite = findViewById(R.id.image_aud_empty_recent_favorite)
-        mImageEmptyRecentReview = findViewById(R.id.image_aud_empty_recent_review)
-        mProgressBar = findViewById(R.id.pbr_aud_layout)
-        mRecyclerRecentFavorite = findViewById(R.id.recycler_aud_recent_favorite)
-        mRecyclerRecentReview = findViewById(R.id.recycler_aud_recent_review)
-        mAnchorLayout = findViewById(R.id.anchor_aud_layout)
-        mScrollView = findViewById(R.id.scroll_aud_layout)
-        mSwipeRefresh = findViewById(R.id.swipe_refresh_aud_layout)
-        mTextFullName = findViewById(R.id.text_aud_full_name)
-        mTextUsername = findViewById(R.id.text_aud_username)
-        mTextFollowMe = findViewById(R.id.text_aud_follow_me)
-        mTextTotalReview = findViewById(R.id.text_aud_total_review)
-        mTextTotalFavorite = findViewById(R.id.text_aud_total_favorite)
-        mTextTotalWatchlist = findViewById(R.id.text_aud_total_watchlist)
-        mTextTotalFollower = findViewById(R.id.text_aud_total_follower)
-        mTextTotalFollowing = findViewById(R.id.text_aud_total_following)
-        mTextMessage = findViewById(R.id.text_aud_message)
-        val totalReviewLayout = findViewById<LinearLayout>(R.id.layout_aud_total_review)
-        val totalFavoriteLayout = findViewById<LinearLayout>(R.id.layout_aud_total_favorite)
-        val totalWatchlistLayout = findViewById<LinearLayout>(R.id.layout_aud_total_watchlist)
-        val totalFollowerLayout = findViewById<LinearLayout>(R.id.layout_aud_total_follower)
-        val totalFollowingLayout = findViewById<LinearLayout>(R.id.layout_aud_total_following)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar_aud_layout)
 
         // Extra
         val userID = intent.getIntExtra(Popularin.USER_ID, 0)
@@ -101,25 +55,25 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
         val auth = Auth(mContext)
         val isAuth = auth.isAuth()
         mIsSelf = auth.isSelf(userID, auth.getAuthID())
-        if (mIsSelf) mButtonFollow.text = getString(R.string.edit_profile)
+        if (mIsSelf) mViewBinding.followButton.text = getString(R.string.edit_profile)
 
         // Mendapatkan data
         getUserDetail(userID)
 
         // Activity
-        toolbar.setNavigationOnClickListener { onBackPressed() }
+        mViewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        totalReviewLayout.setOnClickListener { gotoUserReview(userID) }
+        mViewBinding.totalReviewLayout.setOnClickListener { gotoUserReview(userID) }
 
-        totalFavoriteLayout.setOnClickListener { gotoUserFavorite(userID) }
+        mViewBinding.totalFavoriteLayout.setOnClickListener { gotoUserFavorite(userID) }
 
-        totalWatchlistLayout.setOnClickListener { gotoUserWatchlist(userID) }
+        mViewBinding.totalWatchlistLayout.setOnClickListener { gotoUserWatchlist(userID) }
 
-        totalFollowerLayout.setOnClickListener { gotoUserSocial(userID, 0) }
+        mViewBinding.totalFollowerLayout.setOnClickListener { gotoUserSocial(userID, 0) }
 
-        totalFollowingLayout.setOnClickListener { gotoUserSocial(userID, 1) }
+        mViewBinding.totalFollowingLayout.setOnClickListener { gotoUserSocial(userID, 1) }
 
-        mButtonFollow.setOnClickListener {
+        mViewBinding.followButton.setOnClickListener {
             when {
                 isAuth && !mIsSelf -> {
                     when (mIsFollowing) {
@@ -138,8 +92,8 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
             }
         }
 
-        mSwipeRefresh.setOnRefreshListener {
-            mSwipeRefresh.isRefreshing = true
+        mViewBinding.swipeRefresh.setOnRefreshListener {
+            mViewBinding.swipeRefresh.isRefreshing = true
             getUserDetail(userID)
         }
     }
@@ -173,25 +127,25 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
                 // Following status
                 mIsFollower = userDetail.isFollower
                 mIsFollowing = userDetail.isFollowing
-                mTextFollowMe.visibility = when (mIsFollower) {
+                mViewBinding.followMe.visibility = when (mIsFollower) {
                     true -> View.VISIBLE
                     false -> View.GONE
                 }
-                if (mIsFollowing) mButtonFollow.text = getString(R.string.following)
+                if (mIsFollowing) mViewBinding.followButton.text = getString(R.string.following)
 
                 // Isi
                 mTotalFollower = userDetail.totalFollower
-                mTextFullName.text = userDetail.fullName
-                mTextUsername.text = String.format("@%s", userDetail.username)
-                mTextTotalReview.text = userDetail.totalReview.toString()
-                mTextTotalFavorite.text = userDetail.totalFavorite.toString()
-                mTextTotalWatchlist.text = userDetail.totalWatchlist.toString()
-                mTextTotalFollower.text = mTotalFollower.toString()
-                mTextTotalFollowing.text = userDetail.totalFollowing.toString()
-                Glide.with(mContext).load(userDetail.profilePicture).into(mImageProfile)
-                mProgressBar.visibility = View.GONE
-                mTextMessage.visibility = View.GONE
-                mScrollView.visibility = View.VISIBLE
+                mViewBinding.fullName.text = userDetail.fullName
+                mViewBinding.username.text = String.format("@%s", userDetail.username)
+                mViewBinding.totalReview.text = userDetail.totalReview.toString()
+                mViewBinding.totalFavorite.text = userDetail.totalFavorite.toString()
+                mViewBinding.totalWatchlist.text = userDetail.totalWatchlist.toString()
+                mViewBinding.totalFollower.text = mTotalFollower.toString()
+                mViewBinding.totalFollowing.text = userDetail.totalFollowing.toString()
+                Glide.with(mContext).load(userDetail.profilePicture).into(mViewBinding.userProfile)
+                mViewBinding.progressBar.visibility = View.GONE
+                mViewBinding.errorMessage.visibility = View.GONE
+                mViewBinding.scrollView.visibility = View.VISIBLE
                 mIsLoadFirstTimeSuccess = true
             }
 
@@ -199,46 +153,46 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
                 mRecentFavoriteList = ArrayList()
                 mRecentFavoriteList.addAll(recentFavoriteList)
                 setRecentFavoriteAdapter()
-                mImageEmptyRecentFavorite.visibility = View.GONE
+                mViewBinding.emptyRecentFavoriteImage.visibility = View.GONE
             }
 
             override fun onHasRecentReview(recentReviewList: ArrayList<RecentReview>) {
                 mRecentReviewList = ArrayList()
                 mRecentReviewList.addAll(recentReviewList)
                 setRecentReviewAdapter()
-                mImageEmptyRecentReview.visibility = View.GONE
+                mViewBinding.emptyRecentReviewImage.visibility = View.GONE
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
-                    true -> Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                    true -> Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     false -> {
-                        mProgressBar.visibility = View.GONE
-                        mTextMessage.visibility = View.VISIBLE
-                        mTextMessage.text = message
+                        mViewBinding.progressBar.visibility = View.GONE
+                        mViewBinding.errorMessage.visibility = View.VISIBLE
+                        mViewBinding.errorMessage.text = message
                     }
                 }
             }
         })
 
         // Memberhentikan loading
-        mSwipeRefresh.isRefreshing = false
+        mViewBinding.swipeRefresh.isRefreshing = false
     }
 
     private fun setRecentFavoriteAdapter() {
         val recentFavoriteAdapter = RecentFavoriteAdapter(mContext, mRecentFavoriteList, this)
-        mRecyclerRecentFavorite.adapter = recentFavoriteAdapter
-        mRecyclerRecentFavorite.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
-        mRecyclerRecentFavorite.hasFixedSize()
-        mRecyclerRecentFavorite.visibility = View.VISIBLE
+        mViewBinding.recyclerViewRecentFavorite.adapter = recentFavoriteAdapter
+        mViewBinding.recyclerViewRecentFavorite.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
+        mViewBinding.recyclerViewRecentFavorite.hasFixedSize()
+        mViewBinding.recyclerViewRecentFavorite.visibility = View.VISIBLE
     }
 
     private fun setRecentReviewAdapter() {
         val recentReviewAdapter = RecentReviewAdapter(mContext, mRecentReviewList, this)
-        mRecyclerRecentReview.adapter = recentReviewAdapter
-        mRecyclerRecentReview.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
-        mRecyclerRecentReview.hasFixedSize()
-        mRecyclerRecentReview.visibility = View.VISIBLE
+        mViewBinding.recyclerViewRecentReview.adapter = recentReviewAdapter
+        mViewBinding.recyclerViewRecentReview.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
+        mViewBinding.recyclerViewRecentReview.hasFixedSize()
+        mViewBinding.recyclerViewRecentReview.visibility = View.VISIBLE
     }
 
     private fun setFollowingState(state: Boolean) {
@@ -247,15 +201,15 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
             true -> mTotalFollower++
             false -> mTotalFollower--
         }
-        mTextTotalFollower.text = mTotalFollower.toString()
+        mViewBinding.totalFollower.text = mTotalFollower.toString()
     }
 
     private fun setFollowButtonState(state: Boolean, followingStateEnum: Enum<FollowingState>) {
-        mButtonFollow.isEnabled = state
+        mViewBinding.followButton.isEnabled = state
         when (followingStateEnum) {
-            FollowingState.FOLLOWING -> mButtonFollow.text = getString(R.string.following)
-            FollowingState.NOT_FOLLOWING -> mButtonFollow.text = getString(R.string.follow)
-            else -> mButtonFollow.text = getString(R.string.loading)
+            FollowingState.FOLLOWING -> mViewBinding.followButton.text = getString(R.string.following)
+            FollowingState.NOT_FOLLOWING -> mViewBinding.followButton.text = getString(R.string.follow)
+            else -> mViewBinding.followButton.text = getString(R.string.loading)
         }
     }
 
@@ -273,7 +227,7 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
 
             override fun onError(message: String) {
                 setFollowButtonState(true, FollowingState.NOT_FOLLOWING)
-                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
     }
@@ -288,7 +242,7 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
 
             override fun onError(message: String) {
                 setFollowButtonState(true, FollowingState.FOLLOWING)
-                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
     }

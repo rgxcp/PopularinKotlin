@@ -6,29 +6,33 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
-import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.activities.SignInActivity
 import xyz.fairportstudios.popularin.activities.SignUpActivity
+import xyz.fairportstudios.popularin.databinding.ReusableEmptyAccountBinding
 
 class EmptyAccountFragment : Fragment() {
+    // View binding
+    private var _mViewBinding: ReusableEmptyAccountBinding? = null
+    private val mViewBinding get() = _mViewBinding!!
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.reusable_empty_account, container, false)
+        _mViewBinding = ReusableEmptyAccountBinding.inflate(inflater, container, false)
 
         // Context
         val context = requireActivity()
 
-        // Binding
-        val buttonSignIn = view.findViewById<Button>(R.id.button_rea_sign_in)
-        val buttonSignUp = view.findViewById<Button>(R.id.button_rea_sign_up)
-
         // Activity
-        buttonSignIn.setOnClickListener { gotoSignIn(context) }
+        mViewBinding.signInButton.setOnClickListener { gotoSignIn(context) }
 
-        buttonSignUp.setOnClickListener { gotoSignUp(context) }
+        mViewBinding.signUpButton.setOnClickListener { gotoSignUp(context) }
 
-        return view
+        return mViewBinding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _mViewBinding = null
     }
 
     private fun gotoSignIn(context: Context) {

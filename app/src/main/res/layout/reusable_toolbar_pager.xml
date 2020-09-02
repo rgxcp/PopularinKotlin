@@ -6,13 +6,13 @@
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_rtp_layout"
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:navigationIcon="@drawable/ic_fill_back" />
 
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tab_rtp_layout"
+        android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorBackground"
@@ -21,7 +21,7 @@
         app:tabTextColor="@color/colorOnBackground" />
 
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/pager_rtp_layout"
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

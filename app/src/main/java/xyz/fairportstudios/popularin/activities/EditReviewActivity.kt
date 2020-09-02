@@ -4,14 +4,15 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.widget.*
+import android.widget.DatePicker
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.apis.popularin.get.ReviewDetailRequest
 import xyz.fairportstudios.popularin.apis.popularin.put.UpdateReviewRequest
+import xyz.fairportstudios.popularin.databinding.ActivityEditReviewBinding
 import xyz.fairportstudios.popularin.dialogs.WatchDatePickerDialog
 import xyz.fairportstudios.popularin.models.ReviewDetail
 import xyz.fairportstudios.popularin.services.ParseDate
@@ -30,37 +31,16 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     private lateinit var mWatchDate: String
     private lateinit var mReview: String
 
-    // View
-    private lateinit var mInputReview: EditText
-    private lateinit var mImageFilmPoster: ImageView
-    private lateinit var mEditReviewLayout: LinearLayout
-    private lateinit var mProgressBar: ProgressBar
-    private lateinit var mRatingBar: RatingBar
-    private lateinit var mAnchorLayout: RelativeLayout
-    private lateinit var mTextFilmTitle: TextView
-    private lateinit var mTextFilmYear: TextView
-    private lateinit var mTextWatchDate: TextView
-    private lateinit var mTextMessage: TextView
+    // View binding
+    private lateinit var mViewBinding: ActivityEditReviewBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_edit_review)
+        mViewBinding = ActivityEditReviewBinding.inflate(layoutInflater)
+        setContentView(mViewBinding.anchorLayout)
 
         // Context
         val context = this
-
-        // Binding
-        mInputReview = findViewById(R.id.input_aer_review)
-        mImageFilmPoster = findViewById(R.id.image_aer_poster)
-        mEditReviewLayout = findViewById(R.id.layout_aer_edit_review)
-        mProgressBar = findViewById(R.id.pbr_aer_layout)
-        mRatingBar = findViewById(R.id.rbr_aer_layout)
-        mAnchorLayout = findViewById(R.id.anchor_aer_layout)
-        mTextFilmTitle = findViewById(R.id.text_aer_title)
-        mTextFilmYear = findViewById(R.id.text_aer_year)
-        mTextWatchDate = findViewById(R.id.text_aer_watch_date)
-        mTextMessage = findViewById(R.id.text_aer_message)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar_aer_layout)
 
         // Extra
         val reviewID = intent.getIntExtra(Popularin.REVIEW_ID, 0)
@@ -72,9 +52,9 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         getCurrentReview(context, reviewID)
 
         // Activity
-        toolbar.setNavigationOnClickListener { onBackPressed() }
+        mViewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        toolbar.setOnMenuItemClickListener {
+        mViewBinding.toolbar.setOnMenuItemClickListener {
             return@setOnMenuItemClickListener when (ratingValidated() && reviewValidated() && !mIsLoading) {
                 true -> {
                     mIsLoading = true
@@ -85,9 +65,9 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             }
         }
 
-        mTextWatchDate.setOnClickListener { showDatePicker() }
+        mViewBinding.watchDate.setOnClickListener { showDatePicker() }
 
-        mRatingBar.setOnRatingBarChangeListener { _, rating, _ -> mRating = rating }
+        mViewBinding.ratingBar.setOnRatingBarChangeListener { _, rating, _ -> mRating = rating }
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, day: Int) {
@@ -95,7 +75,7 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         mCalendar.set(Calendar.YEAR, year)
         mCalendar.set(Calendar.MONTH, month)
         mCalendar.set(Calendar.DAY_OF_MONTH, day)
-        mTextWatchDate.text = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.time)
+        mViewBinding.watchDate.text = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.time)
     }
 
     private fun getCurrentReview(context: Context, id: Int) {
@@ -112,19 +92,19 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                 val filmPoster = "${TMDbAPI.BASE_SMALL_IMAGE_URL}${reviewDetail.poster}"
 
                 // Isi
-                mTextFilmTitle.text = reviewDetail.title
-                mTextFilmYear.text = filmYear
-                mRatingBar.rating = mRating
-                mInputReview.setText(mReview)
-                Glide.with(context).load(filmPoster).into(mImageFilmPoster)
-                mProgressBar.visibility = View.GONE
-                mEditReviewLayout.visibility = View.VISIBLE
+                mViewBinding.filmTitle.text = reviewDetail.title
+                mViewBinding.filmYear.text = filmYear
+                mViewBinding.ratingBar.rating = mRating
+                mViewBinding.inputReview.setText(mReview)
+                Glide.with(context).load(filmPoster).into(mViewBinding.filmPoster)
+                mViewBinding.progressBar.visibility = View.GONE
+                mViewBinding.editReviewLayout.visibility = View.VISIBLE
             }
 
             override fun onError(message: String) {
-                mProgressBar.visibility = View.GONE
-                mTextMessage.visibility = View.VISIBLE
-                mTextMessage.text = message
+                mViewBinding.progressBar.visibility = View.GONE
+                mViewBinding.errorMessage.visibility = View.VISIBLE
+                mViewBinding.errorMessage.text = message
             }
         })
 
@@ -140,7 +120,7 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         mCalendar.set(Calendar.YEAR, year)
         mCalendar.set(Calendar.MONTH, month)
         mCalendar.set(Calendar.DAY_OF_MONTH, day)
-        mTextWatchDate.text = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.time)
+        mViewBinding.watchDate.text = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.time)
     }
 
     private fun showDatePicker() {
@@ -151,7 +131,7 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     private fun ratingValidated(): Boolean {
         return when (mRating == 0.0f) {
             true -> {
-                Snackbar.make(mAnchorLayout, R.string.validate_rating, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_rating, Snackbar.LENGTH_LONG).show()
                 false
             }
             false -> true
@@ -159,10 +139,10 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     private fun reviewValidated(): Boolean {
-        mReview = mInputReview.text.toString()
+        mReview = mViewBinding.inputReview.text.toString()
         return when (mReview.isEmpty()) {
             true -> {
-                Snackbar.make(mAnchorLayout, R.string.validate_review, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_review, Snackbar.LENGTH_LONG).show()
                 false
             }
             false -> true
@@ -178,11 +158,11 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             }
 
             override fun onFailed(message: String) {
-                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
 
             override fun onError(message: String) {
-                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 

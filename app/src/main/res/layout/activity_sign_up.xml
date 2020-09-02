@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/anchor_asu_layout"
+    android:id="@+id/anchor_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
@@ -11,7 +11,7 @@
     tools:context=".activities.SignUpActivity">
 
     <TextView
-        android:id="@+id/text_asu_welcome"
+        android:id="@+id/welcome_message"
         style="@style/TextWelcomePrimary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
         app:startIconDrawable="@drawable/ic_outline_account">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_asu_full_name"
+            android:id="@+id/input_full_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName" />
@@ -39,7 +39,7 @@
         app:startIconDrawable="@drawable/ic_outline_username">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_asu_username"
+            android:id="@+id/input_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text" />
@@ -53,7 +53,7 @@
         app:startIconDrawable="@drawable/ic_outline_email">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_asu_email"
+            android:id="@+id/input_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress" />
@@ -68,14 +68,14 @@
         app:startIconDrawable="@drawable/ic_outline_password">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_asu_password"
+            android:id="@+id/input_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/button_asu_sign_up"
+        android:id="@+id/sign_up_button"
         style="@style/ButtonPrimary"
         android:layout_width="match_parent"
         android:layout_height="60dp"

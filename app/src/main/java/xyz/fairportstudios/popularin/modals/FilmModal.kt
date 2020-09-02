@@ -6,9 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.RatingBar
-import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import xyz.fairportstudios.popularin.R
@@ -19,6 +16,7 @@ import xyz.fairportstudios.popularin.apis.popularin.delete.DeleteWatchlistReques
 import xyz.fairportstudios.popularin.apis.popularin.get.FilmSelfRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.AddFavoriteRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.AddWatchlistRequest
+import xyz.fairportstudios.popularin.databinding.ModalFilmBinding
 import xyz.fairportstudios.popularin.models.FilmSelf
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.statics.Popularin
@@ -35,32 +33,22 @@ class FilmModal(
     private var mInWatchlist = false
     private var mLastRate = 0.0f
 
-    // View
-    private lateinit var mImageReview: ImageView
-    private lateinit var mImageFavorite: ImageView
-    private lateinit var mImageWatchlist: ImageView
-    private lateinit var mRatingBar: RatingBar
+    // View binding
+    private var _mViewBinding: ModalFilmBinding? = null
+    private val mViewBinding get() = _mViewBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.modal_film, container, false)
+        _mViewBinding = ModalFilmBinding.inflate(inflater, container, false)
 
         // Context
         val context = requireActivity()
-
-        // Binding
-        mImageReview = view.findViewById(R.id.image_mf_review)
-        mImageFavorite = view.findViewById(R.id.image_mf_favorite)
-        mImageWatchlist = view.findViewById(R.id.image_mf_watchlist)
-        mRatingBar = view.findViewById(R.id.rbr_mf_layout)
-        val textFilmTitle = view.findViewById<TextView>(R.id.text_mf_title)
-        val textFilmYear = view.findViewById<TextView>(R.id.text_mf_year)
 
         // Auth
         val isAuth = Auth(context).isAuth()
 
         // Isi
-        textFilmTitle.text = filmTitle
-        textFilmYear.text = filmYear
+        mViewBinding.filmTitle.text = filmTitle
+        mViewBinding.filmYear.text = filmYear
 
         // Mendapatkan status film
         if (isAuth) {
@@ -68,7 +56,7 @@ class FilmModal(
         }
 
         // Activity
-        mImageReview.setOnClickListener {
+        mViewBinding.reviewImage.setOnClickListener {
             when (isAuth) {
                 true -> gotoAddReview(context)
                 false -> gotoEmptyAccount(context)
@@ -76,7 +64,7 @@ class FilmModal(
             dismiss()
         }
 
-        mImageFavorite.setOnClickListener {
+        mViewBinding.favoriteImage.setOnClickListener {
             when (isAuth) {
                 true -> {
                     when (mInFavorite) {
@@ -89,7 +77,7 @@ class FilmModal(
             dismiss()
         }
 
-        mImageWatchlist.setOnClickListener {
+        mViewBinding.watchlistImage.setOnClickListener {
             when (isAuth) {
                 true -> {
                     when (mInWatchlist) {
@@ -102,7 +90,7 @@ class FilmModal(
             dismiss()
         }
 
-        mRatingBar.setOnRatingBarChangeListener { _, newRate, _ ->
+        mViewBinding.ratingBar.setOnRatingBarChangeListener { _, newRate, _ ->
             when (isAuth) {
                 true -> {
                     if (mLastRate != newRate) {
@@ -118,7 +106,12 @@ class FilmModal(
             }
         }
 
-        return view
+        return mViewBinding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _mViewBinding = null
     }
 
     private fun getFilmSelf(context: Context) {
@@ -129,16 +122,16 @@ class FilmModal(
                 mInFavorite = filmSelf.inFavorite
                 mInWatchlist = filmSelf.inWatchlist
                 mLastRate = filmSelf.lastRate.toFloat()
-                mRatingBar.rating = mLastRate
+                mViewBinding.ratingBar.rating = mLastRate
 
                 if (mInReview) {
-                    mImageReview.setImageResource(R.drawable.ic_fill_eye)
+                    mViewBinding.reviewImage.setImageResource(R.drawable.ic_fill_eye)
                 }
                 if (mInFavorite) {
-                    mImageFavorite.setImageResource(R.drawable.ic_fill_heart)
+                    mViewBinding.favoriteImage.setImageResource(R.drawable.ic_fill_heart)
                 }
                 if (mInWatchlist) {
-                    mImageWatchlist.setImageResource(R.drawable.ic_fill_watchlist)
+                    mViewBinding.watchlistImage.setImageResource(R.drawable.ic_fill_watchlist)
                 }
             }
 

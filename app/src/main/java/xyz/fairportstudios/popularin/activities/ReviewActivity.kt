@@ -5,13 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.viewpager.widget.ViewPager
-import com.google.android.material.tabs.TabLayout
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.adapters.PagerAdapter
 import xyz.fairportstudios.popularin.apis.popularin.delete.DeleteReviewRequest
+import xyz.fairportstudios.popularin.databinding.ReusableToolbarPagerBinding
 import xyz.fairportstudios.popularin.fragments.ReviewCommentFragment
 import xyz.fairportstudios.popularin.fragments.ReviewDetailFragment
 import xyz.fairportstudios.popularin.statics.Popularin
@@ -20,20 +18,16 @@ class ReviewActivity : AppCompatActivity() {
     // Primitive
     private var mIsLoading = false
 
-    // View
-    private lateinit var mToolbar: Toolbar
+    // View binding
+    private lateinit var mViewBinding: ReusableToolbarPagerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.reusable_toolbar_pager)
+        mViewBinding = ReusableToolbarPagerBinding.inflate(layoutInflater)
+        setContentView(mViewBinding.root)
 
         // Context
         val context = this
-
-        // Binding
-        mToolbar = findViewById(R.id.toolbar_rtp_layout)
-        val tabLayout = findViewById<TabLayout>(R.id.tab_rtp_layout)
-        val viewPager = findViewById<ViewPager>(R.id.pager_rtp_layout)
 
         // Extra
         val reviewID = intent.getIntExtra(Popularin.REVIEW_ID, 0)
@@ -41,24 +35,24 @@ class ReviewActivity : AppCompatActivity() {
         val isSelf = intent.getBooleanExtra(Popularin.IS_SELF, false)
 
         // Toolbar
-        mToolbar.title = getString(R.string.review)
+        mViewBinding.toolbar.title = getString(R.string.review)
         if (isSelf) addToolbarMenu(context, reviewID)
 
         // Tab pager
         val pagerAdapter = PagerAdapter(supportFragmentManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
         pagerAdapter.addFragment(ReviewDetailFragment(reviewID), getString(R.string.detail))
         pagerAdapter.addFragment(ReviewCommentFragment(reviewID), getString(R.string.comment))
-        viewPager.adapter = pagerAdapter
-        viewPager.currentItem = viewPagerIndex
-        tabLayout.setupWithViewPager(viewPager)
+        mViewBinding.viewPager.adapter = pagerAdapter
+        mViewBinding.viewPager.currentItem = viewPagerIndex
+        mViewBinding.tabLayout.setupWithViewPager(mViewBinding.viewPager)
 
         // Activity
-        mToolbar.setNavigationOnClickListener { onBackPressed() }
+        mViewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
     }
 
     private fun addToolbarMenu(context: Context, id: Int) {
-        mToolbar.inflateMenu(R.menu.review_detail)
-        mToolbar.setOnMenuItemClickListener { item ->
+        mViewBinding.toolbar.inflateMenu(R.menu.review_detail)
+        mViewBinding.toolbar.setOnMenuItemClickListener { item ->
             return@setOnMenuItemClickListener when (item.itemId) {
                 R.id.menu_rd_edit -> {
                     editReview(context, id)

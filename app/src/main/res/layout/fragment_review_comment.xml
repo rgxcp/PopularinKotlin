@@ -6,42 +6,42 @@
     tools:context=".activities.ReviewActivity">
 
     <ProgressBar
-        android:id="@+id/pbr_frc_layout"
+        android:id="@+id/progress_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/comment_frc_layout"
+        android:layout_above="@id/comment_layout"
         android:padding="170dp" />
 
     <TextView
-        android:id="@+id/text_frc_message"
+        android:id="@+id/error_message"
         style="@style/TextMessagePrimary"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/comment_frc_layout"
+        android:layout_above="@id/comment_layout"
         android:visibility="gone" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_frc_layout"
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/comment_frc_layout">
+        android:layout_above="@id/comment_layout">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_frc_layout"
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <RelativeLayout
-        android:id="@+id/comment_frc_layout"
+        android:id="@+id/comment_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:padding="16dp">
 
         <EditText
-            android:id="@+id/input_frc_comment"
+            android:id="@+id/input_comment"
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:autofillHints="@null"
@@ -54,7 +54,7 @@
             android:textSize="15sp" />
 
         <ImageView
-            android:id="@+id/image_frc_send"
+            android:id="@+id/send_image"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_alignParentEnd="true"

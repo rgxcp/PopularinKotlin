@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/anchor_ft_layout"
+    android:id="@+id/anchor_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ProgressBar
-        android:id="@+id/pbr_ft_layout"
+        android:id="@+id/progress_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="170dp" />
 
     <TextView
-        android:id="@+id/text_ft_message"
+        android:id="@+id/error_message"
         style="@style/TextMessagePrimary"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_ft_layout"
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.core.widget.NestedScrollView
-            android:id="@+id/nested_scroll_ft_layout"
+            android:id="@+id/nested_scroll_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -33,7 +33,7 @@
                 android:orientation="vertical">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_ft_genre"
+                    android:id="@+id/recycler_view_genre"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -48,14 +48,14 @@
                     android:background="@color/grayPrimary" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_ft_timeline"
+                    android:id="@+id/recycler_view_timeline"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:nestedScrollingEnabled="false"
                     android:visibility="gone" />
 
                 <ProgressBar
-                    android:id="@+id/lbr_ft_layout"
+                    android:id="@+id/load_more_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone" />

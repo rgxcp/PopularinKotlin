@@ -5,21 +5,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.adapters.UserReviewAdapter
 import xyz.fairportstudios.popularin.apis.popularin.delete.UnlikeReviewRequest
 import xyz.fairportstudios.popularin.apis.popularin.get.UserReviewRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.LikeReviewRequest
+import xyz.fairportstudios.popularin.databinding.ReusableToolbarRecyclerBinding
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.UserReview
 import xyz.fairportstudios.popularin.preferences.Auth
@@ -43,30 +38,16 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapter.OnClickListene
     private lateinit var mUserReviewAdapter: UserReviewAdapter
     private lateinit var mUserReviewRequest: UserReviewRequest
 
-    // View
-    private lateinit var mProgressBar: ProgressBar
-    private lateinit var mLoadMoreBar: ProgressBar
-    private lateinit var mRecyclerUserReview: RecyclerView
-    private lateinit var mAnchorLayout: RelativeLayout
-    private lateinit var mSwipeRefresh: SwipeRefreshLayout
-    private lateinit var mTextMessage: TextView
+    // View binding
+    private lateinit var mViewBinding: ReusableToolbarRecyclerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.reusable_toolbar_recycler)
+        mViewBinding = ReusableToolbarRecyclerBinding.inflate(layoutInflater)
+        setContentView(mViewBinding.root)
 
         // Context
         mContext = this
-
-        // Binding
-        mProgressBar = findViewById(R.id.pbr_rtr_layout)
-        mLoadMoreBar = findViewById(R.id.lbr_rtr_layout)
-        mRecyclerUserReview = findViewById(R.id.recycler_rtr_layout)
-        mAnchorLayout = findViewById(R.id.anchor_rtr_layout)
-        mSwipeRefresh = findViewById(R.id.swipe_refresh_rtr_layout)
-        mTextMessage = findViewById(R.id.text_aud_message)
-        val nestedScrollView = findViewById<NestedScrollView>(R.id.nested_scroll_rtr_layout)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar_rtr_layout)
 
         // Extra
         val userID = intent.getIntExtra(Popularin.USER_ID, 0)
@@ -80,20 +61,20 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapter.OnClickListene
         val handler = Handler()
 
         // Toolbar
-        toolbar.title = getString(R.string.review)
+        mViewBinding.toolbar.title = getString(R.string.review)
 
         // Mendapatkan data awal
         mUserReviewRequest = UserReviewRequest(mContext, userID)
         getUserReview(mStartPage, false)
 
         // Activity
-        toolbar.setNavigationOnClickListener { onBackPressed() }
+        mViewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+        mViewBinding.nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mLoadMoreBar.visibility = View.VISIBLE
+                    mViewBinding.loadMoreBar.visibility = View.VISIBLE
                     handler.postDelayed({
                         getUserReview(mCurrentPage, false)
                     }, 1000)
@@ -101,9 +82,9 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapter.OnClickListene
             }
         }
 
-        mSwipeRefresh.setOnRefreshListener {
+        mViewBinding.swipeRefresh.setOnRefreshListener {
             mIsLoading = true
-            mSwipeRefresh.isRefreshing = true
+            mViewBinding.swipeRefresh.isRefreshing = true
             getUserReview(mStartPage, true)
         }
     }
@@ -167,12 +148,12 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapter.OnClickListene
                         val insertIndex = mUserReviewList.size
                         mUserReviewList.addAll(insertIndex, userReviewList)
                         setAdapter()
-                        mProgressBar.visibility = View.GONE
+                        mViewBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mTextMessage.visibility = View.GONE
+                mViewBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -183,10 +164,10 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapter.OnClickListene
                         mUserReviewList.clear()
                         mUserReviewAdapter.notifyDataSetChanged()
                     }
-                    false -> mProgressBar.visibility = View.GONE
+                    false -> mViewBinding.progressBar.visibility = View.GONE
                 }
-                mTextMessage.visibility = View.VISIBLE
-                mTextMessage.text = when (mIsSelf) {
+                mViewBinding.errorMessage.visibility = View.VISIBLE
+                mViewBinding.errorMessage.text = when (mIsSelf) {
                     true -> getString(R.string.empty_self_review)
                     false -> getString(R.string.empty_user_review)
                 }
@@ -195,13 +176,13 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapter.OnClickListene
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mLoadMoreBar.visibility = View.GONE
-                        Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                        mViewBinding.loadMoreBar.visibility = View.GONE
+                        Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mProgressBar.visibility = View.GONE
-                        mTextMessage.visibility = View.VISIBLE
-                        mTextMessage.text = message
+                        mViewBinding.progressBar.visibility = View.GONE
+                        mViewBinding.errorMessage.visibility = View.VISIBLE
+                        mViewBinding.errorMessage.text = message
                     }
                 }
             }
@@ -209,8 +190,8 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapter.OnClickListene
 
         // Memberhentikan loading
         mIsLoading = false
-        if (refreshPage) mSwipeRefresh.isRefreshing = false
-        mLoadMoreBar.visibility = when (page == mTotalPage) {
+        if (refreshPage) mViewBinding.swipeRefresh.isRefreshing = false
+        mViewBinding.loadMoreBar.visibility = when (page == mTotalPage) {
             true -> View.GONE
             false -> View.INVISIBLE
         }
@@ -218,9 +199,9 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapter.OnClickListene
 
     private fun setAdapter() {
         mUserReviewAdapter = UserReviewAdapter(mContext, mUserReviewList, this)
-        mRecyclerUserReview.adapter = mUserReviewAdapter
-        mRecyclerUserReview.layoutManager = LinearLayoutManager(mContext)
-        mRecyclerUserReview.visibility = View.VISIBLE
+        mViewBinding.recyclerView.adapter = mUserReviewAdapter
+        mViewBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
+        mViewBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun likeReview(id: Int, position: Int) {
@@ -235,7 +216,7 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapter.OnClickListene
             }
 
             override fun onError(message: String) {
-                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 
@@ -255,7 +236,7 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapter.OnClickListene
             }
 
             override fun onError(message: String) {
-                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 

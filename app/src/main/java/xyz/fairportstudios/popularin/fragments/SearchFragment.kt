@@ -6,14 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.chip.Chip
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.activities.FilmDetailActivity
 import xyz.fairportstudios.popularin.activities.UserDetailActivity
@@ -21,6 +16,7 @@ import xyz.fairportstudios.popularin.adapters.FilmAdapter
 import xyz.fairportstudios.popularin.adapters.UserAdapter
 import xyz.fairportstudios.popularin.apis.popularin.get.SearchUserRequest
 import xyz.fairportstudios.popularin.apis.tmdb.get.SearchFilmRequest
+import xyz.fairportstudios.popularin.databinding.FragmentSearchBinding
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.Film
 import xyz.fairportstudios.popularin.models.User
@@ -39,33 +35,23 @@ class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnCl
     private lateinit var mUserList: ArrayList<User>
     private lateinit var mContext: Context
     private lateinit var mFilmAdapter: FilmAdapter
-    private lateinit var mSearchQuery: String
-
-    // View
-    private lateinit var mProgressBar: ProgressBar
-    private lateinit var mRecyclerSearch: RecyclerView
     private lateinit var mSearchFilmRequest: SearchFilmRequest
     private lateinit var mSearchUserRequest: SearchUserRequest
-    private lateinit var mTextMessage: TextView
+    private lateinit var mSearchQuery: String
     private lateinit var mUserAdapter: UserAdapter
 
+    // View binding
+    private var _mViewBinding: FragmentSearchBinding? = null
+    private val mViewBinding get() = _mViewBinding!!
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_search, container, false)
+        _mViewBinding = FragmentSearchBinding.inflate(inflater, container, false)
 
         // Context
         mContext = requireActivity()
 
-        // Binding
-        mProgressBar = view.findViewById(R.id.pbr_fs_layout)
-        mRecyclerSearch = view.findViewById(R.id.recycler_fs_layout)
-        mTextMessage = view.findViewById(R.id.text_fs_message)
-        val chipSearchInFilm = view.findViewById<Chip>(R.id.chip_fs_in_film)
-        val chipSearchInUser = view.findViewById<Chip>(R.id.chip_fs_in_user)
-        val searchInLayout = view.findViewById<LinearLayout>(R.id.layout_fs_search_in)
-        val searchView = view.findViewById<SearchView>(R.id.search_fs_layout)
-
         // Activity
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        mViewBinding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 // Tidak digunakan
                 return false
@@ -74,45 +60,46 @@ class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnCl
             override fun onQueryTextChange(newText: String?): Boolean {
                 when (newText.isNullOrEmpty()) {
                     true -> {
-                        searchInLayout.visibility = View.GONE
-                        mRecyclerSearch.visibility = View.VISIBLE
+                        mViewBinding.searchInLayout.visibility = View.GONE
+                        mViewBinding.recyclerView.visibility = View.VISIBLE
                     }
                     false -> {
                         mSearchQuery = newText
-                        searchInLayout.visibility = View.VISIBLE
-                        mRecyclerSearch.visibility = View.GONE
-                        chipSearchInFilm.text = String.format("Cari \"%s\" dalam film", mSearchQuery)
-                        chipSearchInUser.text = String.format("Cari \"%s\" dalam pengguna", mSearchQuery)
+                        mViewBinding.searchInLayout.visibility = View.VISIBLE
+                        mViewBinding.recyclerView.visibility = View.GONE
+                        mViewBinding.inFilmChip.text = String.format("Cari \"%s\" dalam film", mSearchQuery)
+                        mViewBinding.inUserChip.text = String.format("Cari \"%s\" dalam pengguna", mSearchQuery)
                     }
                 }
-                mTextMessage.visibility = View.GONE
+                mViewBinding.errorMessage.visibility = View.GONE
                 return true
             }
         })
 
-        chipSearchInFilm.setOnClickListener {
+        mViewBinding.inFilmChip.setOnClickListener {
             if (mIsSearchFilmFirstTime) {
                 mSearchFilmRequest = SearchFilmRequest(mContext)
             }
-            searchInLayout.visibility = View.GONE
-            mProgressBar.visibility = View.VISIBLE
+            mViewBinding.searchInLayout.visibility = View.GONE
+            mViewBinding.progressBar.visibility = View.VISIBLE
             searchFilm()
         }
 
-        chipSearchInUser.setOnClickListener {
+        mViewBinding.inUserChip.setOnClickListener {
             if (mIsSearchUserFirstTime) {
                 mSearchUserRequest = SearchUserRequest(mContext)
             }
-            searchInLayout.visibility = View.GONE
-            mProgressBar.visibility = View.VISIBLE
+            mViewBinding.searchInLayout.visibility = View.GONE
+            mViewBinding.progressBar.visibility = View.VISIBLE
             searchUser()
         }
 
-        return view
+        return mViewBinding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _mViewBinding = null
         resetState()
     }
 
@@ -153,25 +140,25 @@ class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnCl
                         val insertIndex = mFilmList.size
                         mFilmList.addAll(insertIndex, filmList)
                         mFilmAdapter = FilmAdapter(mContext, mFilmList, this@SearchFragment)
-                        mRecyclerSearch.layoutManager = LinearLayoutManager(mContext)
+                        mViewBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
                         mIsLoadFilmFirstTimeSuccess = true
                     }
                 }
-                mRecyclerSearch.adapter = mFilmAdapter
-                mRecyclerSearch.visibility = View.VISIBLE
-                mProgressBar.visibility = View.GONE
+                mViewBinding.recyclerView.adapter = mFilmAdapter
+                mViewBinding.recyclerView.visibility = View.VISIBLE
+                mViewBinding.progressBar.visibility = View.GONE
             }
 
             override fun onNotFound() {
-                mProgressBar.visibility = View.GONE
-                mTextMessage.visibility = View.VISIBLE
-                mTextMessage.text = getString(R.string.empty_search_result)
+                mViewBinding.progressBar.visibility = View.GONE
+                mViewBinding.errorMessage.visibility = View.VISIBLE
+                mViewBinding.errorMessage.text = getString(R.string.empty_search_result)
             }
 
             override fun onError(message: String) {
-                mProgressBar.visibility = View.GONE
-                mTextMessage.visibility = View.VISIBLE
-                mTextMessage.text = message
+                mViewBinding.progressBar.visibility = View.GONE
+                mViewBinding.errorMessage.visibility = View.VISIBLE
+                mViewBinding.errorMessage.text = message
             }
         })
 
@@ -194,25 +181,25 @@ class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnCl
                         val insertIndex = mUserList.size
                         mUserList.addAll(insertIndex, userList)
                         mUserAdapter = UserAdapter(mContext, mUserList, this@SearchFragment)
-                        mRecyclerSearch.layoutManager = LinearLayoutManager(mContext)
+                        mViewBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
                         mIsLoadUserFirstTimeSuccess = true
                     }
                 }
-                mRecyclerSearch.adapter = mUserAdapter
-                mRecyclerSearch.visibility = View.VISIBLE
-                mProgressBar.visibility = View.GONE
+                mViewBinding.recyclerView.adapter = mUserAdapter
+                mViewBinding.recyclerView.visibility = View.VISIBLE
+                mViewBinding.progressBar.visibility = View.GONE
             }
 
             override fun onNotFound() {
-                mProgressBar.visibility = View.GONE
-                mTextMessage.visibility = View.VISIBLE
-                mTextMessage.text = getString(R.string.empty_search_result)
+                mViewBinding.progressBar.visibility = View.GONE
+                mViewBinding.errorMessage.visibility = View.VISIBLE
+                mViewBinding.errorMessage.text = getString(R.string.empty_search_result)
             }
 
             override fun onError(message: String) {
-                mProgressBar.visibility = View.GONE
-                mTextMessage.visibility = View.VISIBLE
-                mTextMessage.text = message
+                mViewBinding.progressBar.visibility = View.GONE
+                mViewBinding.errorMessage.visibility = View.VISIBLE
+                mViewBinding.errorMessage.text = message
             }
         })
 

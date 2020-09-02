@@ -7,19 +7,15 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.activities.UserDetailActivity
 import xyz.fairportstudios.popularin.adapters.UserAdapter
 import xyz.fairportstudios.popularin.apis.popularin.get.WatchlistFromAllRequest
+import xyz.fairportstudios.popularin.databinding.ReusableRecyclerBinding
 import xyz.fairportstudios.popularin.models.User
 import xyz.fairportstudios.popularin.statics.Popularin
 
@@ -37,28 +33,15 @@ class WatchlistFromAllFragment(private val filmID: Int) : Fragment(), UserAdapte
     private lateinit var mUserAdapter: UserAdapter
     private lateinit var mWatchlistFromAllRequest: WatchlistFromAllRequest
 
-    // View
-    private lateinit var mAnchorLayout: CoordinatorLayout
-    private lateinit var mProgressBar: ProgressBar
-    private lateinit var mLoadMoreBar: ProgressBar
-    private lateinit var mRecyclerUser: RecyclerView
-    private lateinit var mSwipeRefresh: SwipeRefreshLayout
-    private lateinit var mTextMessage: TextView
+    // View binding
+    private var _mViewBinding: ReusableRecyclerBinding? = null
+    private val mViewBinding get() = _mViewBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.reusable_recycler, container, false)
+        _mViewBinding = ReusableRecyclerBinding.inflate(inflater, container, false)
 
         // Context
         mContext = requireActivity()
-
-        // Binding
-        mAnchorLayout = view.findViewById(R.id.anchor_rr_layout)
-        mProgressBar = view.findViewById(R.id.pbr_rr_layout)
-        mLoadMoreBar = view.findViewById(R.id.lbr_rr_layout)
-        mRecyclerUser = view.findViewById(R.id.recycler_rr_layout)
-        mSwipeRefresh = view.findViewById(R.id.swipe_refresh_rr_layout)
-        mTextMessage = view.findViewById(R.id.text_rr_message)
-        val nestedScrollView = view.findViewById<NestedScrollView>(R.id.nested_scroll_rr_layout)
 
         // Handler
         val handler = Handler()
@@ -68,11 +51,11 @@ class WatchlistFromAllFragment(private val filmID: Int) : Fragment(), UserAdapte
         getWatchlistFromAll(mStartPage, false)
 
         // Activity
-        nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+        mViewBinding.nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mLoadMoreBar.visibility = View.VISIBLE
+                    mViewBinding.loadMoreBar.visibility = View.VISIBLE
                     handler.postDelayed({
                         getWatchlistFromAll(mCurrentPage, false)
                     }, 1000)
@@ -80,13 +63,18 @@ class WatchlistFromAllFragment(private val filmID: Int) : Fragment(), UserAdapte
             }
         }
 
-        mSwipeRefresh.setOnRefreshListener {
+        mViewBinding.swipeRefresh.setOnRefreshListener {
             mIsLoading = true
-            mSwipeRefresh.isRefreshing = true
+            mViewBinding.swipeRefresh.isRefreshing = true
             getWatchlistFromAll(mStartPage, true)
         }
 
-        return view
+        return mViewBinding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _mViewBinding = null
     }
 
     override fun onUserItemClick(position: Int) {
@@ -114,12 +102,12 @@ class WatchlistFromAllFragment(private val filmID: Int) : Fragment(), UserAdapte
                         val insertIndex = mUserList.size
                         mUserList.addAll(insertIndex, userList)
                         setAdapter()
-                        mProgressBar.visibility = View.GONE
+                        mViewBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mTextMessage.visibility = View.GONE
+                mViewBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -130,22 +118,22 @@ class WatchlistFromAllFragment(private val filmID: Int) : Fragment(), UserAdapte
                         mUserList.clear()
                         mUserAdapter.notifyDataSetChanged()
                     }
-                    false -> mProgressBar.visibility = View.GONE
+                    false -> mViewBinding.progressBar.visibility = View.GONE
                 }
-                mTextMessage.visibility = View.VISIBLE
-                mTextMessage.text = getString(R.string.empty_film_watchlist)
+                mViewBinding.errorMessage.visibility = View.VISIBLE
+                mViewBinding.errorMessage.text = getString(R.string.empty_film_watchlist)
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mLoadMoreBar.visibility = View.GONE
-                        Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                        mViewBinding.loadMoreBar.visibility = View.GONE
+                        Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mProgressBar.visibility = View.GONE
-                        mTextMessage.visibility = View.VISIBLE
-                        mTextMessage.text = message
+                        mViewBinding.progressBar.visibility = View.GONE
+                        mViewBinding.errorMessage.visibility = View.VISIBLE
+                        mViewBinding.errorMessage.text = message
                     }
                 }
             }
@@ -153,8 +141,8 @@ class WatchlistFromAllFragment(private val filmID: Int) : Fragment(), UserAdapte
 
         // Memberhentikan loading
         mIsLoading = false
-        if (refreshPage) mSwipeRefresh.isRefreshing = false
-        mLoadMoreBar.visibility = when (page == mTotalPage) {
+        if (refreshPage) mViewBinding.swipeRefresh.isRefreshing = false
+        mViewBinding.loadMoreBar.visibility = when (page == mTotalPage) {
             true -> View.GONE
             false -> View.INVISIBLE
         }
@@ -162,9 +150,9 @@ class WatchlistFromAllFragment(private val filmID: Int) : Fragment(), UserAdapte
 
     private fun setAdapter() {
         mUserAdapter = UserAdapter(mContext, mUserList, this)
-        mRecyclerUser.adapter = mUserAdapter
-        mRecyclerUser.layoutManager = LinearLayoutManager(mContext)
-        mRecyclerUser.visibility = View.VISIBLE
+        mViewBinding.recyclerView.adapter = mUserAdapter
+        mViewBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
+        mViewBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun gotoUserDetail(id: Int) {

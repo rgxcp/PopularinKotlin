@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/anchor_fep_layout"
+    android:id="@+id/anchor_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
@@ -11,7 +11,7 @@
     tools:context=".activities.EditProfileActivity">
 
     <TextView
-        android:id="@+id/text_fep_welcome"
+        android:id="@+id/welcome_message"
         style="@style/TextWelcomePrimary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
         app:startIconDrawable="@drawable/ic_outline_account">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_fep_full_name"
+            android:id="@+id/input_full_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName" />
@@ -39,7 +39,7 @@
         app:startIconDrawable="@drawable/ic_outline_username">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_fep_username"
+            android:id="@+id/input_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text" />
@@ -53,14 +53,14 @@
         app:startIconDrawable="@drawable/ic_outline_email">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_fep_email"
+            android:id="@+id/input_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/button_fep_save_profile"
+        android:id="@+id/save_profile_button"
         style="@style/ButtonPrimary"
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -69,7 +69,7 @@
         android:text="@string/save_profile" />
 
     <Button
-        android:id="@+id/button_fep_edit_password"
+        android:id="@+id/edit_password_button"
         style="@style/ButtonTextDanger"
         android:layout_width="match_parent"
         android:layout_height="60dp"

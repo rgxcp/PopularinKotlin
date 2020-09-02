@@ -6,18 +6,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.activities.FilmDetailActivity
 import xyz.fairportstudios.popularin.adapters.FilmGridAdapter
 import xyz.fairportstudios.popularin.apis.tmdb.get.CreditDetailRequest
+import xyz.fairportstudios.popularin.databinding.ReusableRecyclerBinding
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.CreditDetail
 import xyz.fairportstudios.popularin.models.Film
@@ -33,38 +29,28 @@ class CreditFilmAsCastFragment(private val creditID: Int) : Fragment(), FilmGrid
     private lateinit var mFilmAsCastList: ArrayList<Film>
     private lateinit var mContext: Context
 
-    // View
-    private lateinit var mAnchorLayout: CoordinatorLayout
-    private lateinit var mProgressBar: ProgressBar
-    private lateinit var mRecyclerFilm: RecyclerView
-    private lateinit var mSwipeRefresh: SwipeRefreshLayout
-    private lateinit var mTextMessage: TextView
+    // View binding
+    private var _mViewBinding: ReusableRecyclerBinding? = null
+    private val mViewBinding get() = _mViewBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.reusable_recycler, container, false)
+        _mViewBinding = ReusableRecyclerBinding.inflate(inflater, container, false)
 
         // Context
         mContext = requireActivity()
 
-        // Binding
-        mAnchorLayout = view.findViewById(R.id.anchor_rr_layout)
-        mProgressBar = view.findViewById(R.id.pbr_rr_layout)
-        mRecyclerFilm = view.findViewById(R.id.recycler_rr_layout)
-        mSwipeRefresh = view.findViewById(R.id.swipe_refresh_rr_layout)
-        mTextMessage = view.findViewById(R.id.text_rr_message)
-
         // Activity
-        mSwipeRefresh.setOnRefreshListener {
+        mViewBinding.swipeRefresh.setOnRefreshListener {
             when (mIsLoadFirstTimeSuccess) {
-                true -> mSwipeRefresh.isRefreshing = false
+                true -> mViewBinding.swipeRefresh.isRefreshing = false
                 false -> {
-                    mSwipeRefresh.isRefreshing = true
+                    mViewBinding.swipeRefresh.isRefreshing = true
                     getFilmAsCast()
                 }
             }
         }
 
-        return view
+        return mViewBinding.root
     }
 
     override fun onResume() {
@@ -74,6 +60,11 @@ class CreditFilmAsCastFragment(private val creditID: Int) : Fragment(), FilmGrid
             mIsResumeFirstTime = false
             getFilmAsCast()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _mViewBinding = null
     }
 
     override fun onFilmGridItemClick(position: Int) {
@@ -96,39 +87,39 @@ class CreditFilmAsCastFragment(private val creditID: Int) : Fragment(), FilmGrid
                         mFilmAsCastList = ArrayList()
                         mFilmAsCastList.addAll(filmAsCastList)
                         setAdapter()
-                        mTextMessage.visibility = View.GONE
+                        mViewBinding.errorMessage.visibility = View.GONE
                     }
                     false -> {
-                        mTextMessage.visibility = View.VISIBLE
-                        mTextMessage.text = getString(R.string.empty_credit_film_as_cast)
+                        mViewBinding.errorMessage.visibility = View.VISIBLE
+                        mViewBinding.errorMessage.text = getString(R.string.empty_credit_film_as_cast)
                     }
                 }
-                mProgressBar.visibility = View.GONE
+                mViewBinding.progressBar.visibility = View.GONE
                 mIsLoadFirstTimeSuccess = true
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
-                    true -> Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                    true -> Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     false -> {
-                        mProgressBar.visibility = View.GONE
-                        mTextMessage.visibility = View.VISIBLE
-                        mTextMessage.text = message
+                        mViewBinding.progressBar.visibility = View.GONE
+                        mViewBinding.errorMessage.visibility = View.VISIBLE
+                        mViewBinding.errorMessage.text = message
                     }
                 }
             }
         })
 
         // Memberhentikan loading
-        mSwipeRefresh.isRefreshing = false
+        mViewBinding.swipeRefresh.isRefreshing = false
     }
 
     private fun setAdapter() {
         val filmGridAdapter = FilmGridAdapter(mContext, mFilmAsCastList, this)
-        mRecyclerFilm.adapter = filmGridAdapter
-        mRecyclerFilm.layoutManager = GridLayoutManager(mContext, 4)
-        mRecyclerFilm.hasFixedSize()
-        mRecyclerFilm.visibility = View.VISIBLE
+        mViewBinding.recyclerView.adapter = filmGridAdapter
+        mViewBinding.recyclerView.layoutManager = GridLayoutManager(mContext, 4)
+        mViewBinding.recyclerView.hasFixedSize()
+        mViewBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun showFilmModal(id: Int, title: String, year: String, poster: String) {

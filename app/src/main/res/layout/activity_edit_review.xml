@@ -2,18 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/anchor_aer_layout"
+    android:id="@+id/anchor_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.EditReviewActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar_aer_layout"
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_aer_layout"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorBackground"
@@ -23,25 +23,25 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <ProgressBar
-        android:id="@+id/pbr_aer_layout"
+        android:id="@+id/progress_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/app_bar_aer_layout"
+        android:layout_below="@id/app_bar"
         android:padding="170dp" />
 
     <TextView
-        android:id="@+id/text_aer_message"
+        android:id="@+id/error_message"
         style="@style/TextMessagePrimary"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/app_bar_aer_layout"
+        android:layout_below="@id/app_bar"
         android:visibility="gone" />
 
     <LinearLayout
-        android:id="@+id/layout_aer_edit_review"
+        android:id="@+id/edit_review_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/app_bar_aer_layout"
+        android:layout_below="@id/app_bar"
         android:orientation="vertical"
         android:visibility="gone">
 
@@ -52,27 +52,27 @@
             android:paddingHorizontal="16dp">
 
             <TextView
-                android:id="@+id/text_aer_title"
+                android:id="@+id/film_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_marginEnd="16dp"
-                android:layout_toStartOf="@+id/sov_aer_layout"
+                android:layout_toStartOf="@+id/sov_film_poster"
                 android:fontFamily="@font/jost_medium"
                 android:textColor="@color/colorOnBackground"
                 android:textSize="17sp" />
 
             <TextView
-                android:id="@+id/text_aer_year"
+                android:id="@+id/film_year"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/text_aer_title"
+                android:layout_below="@id/film_title"
                 android:layout_marginTop="4dp"
                 android:fontFamily="@font/jost_regular"
                 android:textSize="15sp" />
 
             <com.github.florent37.shapeofview.shapes.RoundRectView
-                android:id="@+id/sov_aer_layout"
+                android:id="@+id/sov_film_poster"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -84,7 +84,7 @@
                 app:shape_roundRect_topRightRadius="2dp">
 
                 <ImageView
-                    android:id="@+id/image_aer_poster"
+                    android:id="@+id/film_poster"
                     android:layout_width="40dp"
                     android:layout_height="60dp"
                     android:background="@color/colorSurface"
@@ -108,14 +108,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_toStartOf="@id/text_aer_watch_date"
+                android:layout_toStartOf="@id/watch_date"
                 android:fontFamily="@font/jost_regular"
                 android:text="@string/watch_date"
                 android:textColor="@color/colorOnBackground"
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/text_aer_watch_date"
+                android:id="@+id/watch_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -141,14 +141,14 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:layout_toStartOf="@id/rbr_aer_layout"
+                android:layout_toStartOf="@id/rating_bar"
                 android:fontFamily="@font/jost_regular"
                 android:text="@string/rating"
                 android:textColor="@color/colorOnBackground"
                 android:textSize="15sp" />
 
             <RatingBar
-                android:id="@+id/rbr_aer_layout"
+                android:id="@+id/rating_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="45dp"
                 android:layout_alignParentEnd="true"
@@ -163,7 +163,7 @@
             android:background="@color/colorSurface" />
 
         <EditText
-            android:id="@+id/input_aer_review"
+            android:id="@+id/input_review"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:autofillHints="@null"

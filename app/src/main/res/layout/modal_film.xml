@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorBackground"
@@ -7,7 +8,7 @@
     android:paddingVertical="8dp">
 
     <TextView
-        android:id="@+id/text_mf_title"
+        android:id="@+id/film_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
@@ -18,7 +19,7 @@
         android:textSize="17sp" />
 
     <TextView
-        android:id="@+id/text_mf_year"
+        android:id="@+id/film_year"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -46,19 +47,19 @@
             android:layout_weight="1">
 
             <ImageView
-                android:id="@+id/image_mf_review"
+                android:id="@+id/review_image"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_centerHorizontal="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_outline_eye"
-                android:tint="@color/colorAccent" />
+                app:tint="@color/colorAccent" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/image_mf_review"
+                android:layout_below="@id/review_image"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/jost_regular"
@@ -73,19 +74,19 @@
             android:layout_weight="1">
 
             <ImageView
-                android:id="@+id/image_mf_favorite"
+                android:id="@+id/favorite_image"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_centerHorizontal="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_outline_heart"
-                android:tint="@color/colorAccent" />
+                app:tint="@color/colorAccent" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/image_mf_favorite"
+                android:layout_below="@+id/favorite_image"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/jost_regular"
@@ -100,19 +101,19 @@
             android:layout_weight="1">
 
             <ImageView
-                android:id="@+id/image_mf_watchlist"
+                android:id="@+id/watchlist_image"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_centerHorizontal="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_outline_watchlist"
-                android:tint="@color/colorAccent" />
+                app:tint="@color/colorAccent" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/image_mf_watchlist"
+                android:layout_below="@+id/watchlist_image"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/jost_regular"
@@ -129,7 +130,7 @@
         android:background="@color/colorSurface" />
 
     <RatingBar
-        android:id="@+id/rbr_mf_layout"
+        android:id="@+id/rating_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

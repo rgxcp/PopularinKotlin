@@ -7,14 +7,10 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.activities.DiscoverFilmActivity
@@ -26,6 +22,7 @@ import xyz.fairportstudios.popularin.adapters.ReviewAdapter
 import xyz.fairportstudios.popularin.apis.popularin.delete.UnlikeReviewRequest
 import xyz.fairportstudios.popularin.apis.popularin.get.TimelineRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.LikeReviewRequest
+import xyz.fairportstudios.popularin.databinding.FragmentTimelineBinding
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.Genre
 import xyz.fairportstudios.popularin.models.Review
@@ -48,30 +45,15 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
     private lateinit var mReviewAdapter: ReviewAdapter
     private lateinit var mTimelineRequest: TimelineRequest
 
-    // View
-    private lateinit var mAnchorLayout: CoordinatorLayout
-    private lateinit var mProgressBar: ProgressBar
-    private lateinit var mLoadMoreBar: ProgressBar
-    private lateinit var mRecyclerGenre: RecyclerView
-    private lateinit var mRecyclerTimeline: RecyclerView
-    private lateinit var mSwipeRefresh: SwipeRefreshLayout
-    private lateinit var mTextMessage: TextView
+    // View binding
+    private var _mViewBinding: FragmentTimelineBinding? = null
+    private val mViewBinding get() = _mViewBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_timeline, container, false)
+        _mViewBinding = FragmentTimelineBinding.inflate(inflater, container, false)
 
         // Context
         mContext = requireActivity()
-
-        // Binding
-        mAnchorLayout = view.findViewById(R.id.anchor_ft_layout)
-        mProgressBar = view.findViewById(R.id.pbr_ft_layout)
-        mLoadMoreBar = view.findViewById(R.id.lbr_ft_layout)
-        mRecyclerGenre = view.findViewById(R.id.recycler_ft_genre)
-        mRecyclerTimeline = view.findViewById(R.id.recycler_ft_timeline)
-        mSwipeRefresh = view.findViewById(R.id.swipe_refresh_ft_layout)
-        mTextMessage = view.findViewById(R.id.text_ft_message)
-        val nestedScrollView = view.findViewById<NestedScrollView>(R.id.nested_scroll_ft_layout)
 
         // Handler
         val handler = Handler()
@@ -84,11 +66,11 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
         getTimeline(mStartPage, false)
 
         // Activity
-        nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+        mViewBinding.nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mLoadMoreBar.visibility = View.VISIBLE
+                    mViewBinding.loadMoreBar.visibility = View.VISIBLE
                     handler.postDelayed({
                         getTimeline(mCurrentPage, false)
                     }, 1000)
@@ -96,17 +78,18 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
             }
         }
 
-        mSwipeRefresh.setOnRefreshListener {
+        mViewBinding.swipeRefresh.setOnRefreshListener {
             mIsLoading = true
-            mSwipeRefresh.isRefreshing = true
+            mViewBinding.swipeRefresh.isRefreshing = true
             getTimeline(mStartPage, true)
         }
 
-        return view
+        return mViewBinding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _mViewBinding = null
         resetState()
     }
 
@@ -179,12 +162,12 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
                         val insertIndex = mReviewList.size
                         mReviewList.addAll(insertIndex, reviewList)
                         setTimelineAdapter()
-                        mProgressBar.visibility = View.GONE
+                        mViewBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mTextMessage.visibility = View.GONE
+                mViewBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -195,27 +178,27 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
                         mReviewList.clear()
                         mReviewAdapter.notifyDataSetChanged()
                     }
-                    false -> mProgressBar.visibility = View.GONE
+                    false -> mViewBinding.progressBar.visibility = View.GONE
                 }
-                mTextMessage.visibility = View.VISIBLE
-                mTextMessage.text = getString(R.string.empty_timeline)
+                mViewBinding.errorMessage.visibility = View.VISIBLE
+                mViewBinding.errorMessage.text = getString(R.string.empty_timeline)
             }
 
             override fun onError(message: String) {
                 if (!mIsLoadFirstTimeSuccess) {
-                    mProgressBar.visibility = View.GONE
-                    mTextMessage.visibility = View.VISIBLE
-                    mTextMessage.text = getString(R.string.empty_timeline)
+                    mViewBinding.progressBar.visibility = View.GONE
+                    mViewBinding.errorMessage.visibility = View.VISIBLE
+                    mViewBinding.errorMessage.text = getString(R.string.empty_timeline)
                 }
-                mLoadMoreBar.visibility = View.GONE
-                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                mViewBinding.loadMoreBar.visibility = View.GONE
+                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 
         // Memberhentikan loading
         mIsLoading = false
-        if (refreshPage) mSwipeRefresh.isRefreshing = false
-        mLoadMoreBar.visibility = when (page == mTotalPage) {
+        if (refreshPage) mViewBinding.swipeRefresh.isRefreshing = false
+        mViewBinding.loadMoreBar.visibility = when (page == mTotalPage) {
             true -> View.GONE
             false -> View.INVISIBLE
         }
@@ -243,17 +226,17 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
 
     private fun setGenreAdapter() {
         val genreHorizontalAdapter = GenreHorizontalAdapter(mContext, mGenreList, this)
-        mRecyclerGenre.adapter = genreHorizontalAdapter
-        mRecyclerGenre.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
-        mRecyclerGenre.hasFixedSize()
-        mRecyclerGenre.visibility = View.VISIBLE
+        mViewBinding.recyclerViewGenre.adapter = genreHorizontalAdapter
+        mViewBinding.recyclerViewGenre.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
+        mViewBinding.recyclerViewGenre.hasFixedSize()
+        mViewBinding.recyclerViewGenre.visibility = View.VISIBLE
     }
 
     private fun setTimelineAdapter() {
         mReviewAdapter = ReviewAdapter(mContext, mReviewList, this)
-        mRecyclerTimeline.adapter = mReviewAdapter
-        mRecyclerTimeline.layoutManager = LinearLayoutManager(mContext)
-        mRecyclerTimeline.visibility = View.VISIBLE
+        mViewBinding.recyclerViewTimeline.adapter = mReviewAdapter
+        mViewBinding.recyclerViewTimeline.layoutManager = LinearLayoutManager(mContext)
+        mViewBinding.recyclerViewTimeline.visibility = View.VISIBLE
     }
 
     private fun resetState() {
@@ -274,7 +257,7 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
             }
 
             override fun onError(message: String) {
-                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 
@@ -294,7 +277,7 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
             }
 
             override fun onError(message: String) {
-                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 

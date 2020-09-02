@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/anchor_fa_layout"
+    android:id="@+id/anchor_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity">
 
     <ProgressBar
-        android:id="@+id/pbr_fa_layout"
+        android:id="@+id/progress_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="170dp" />
 
     <TextView
-        android:id="@+id/text_fa_message"
+        android:id="@+id/error_message"
         style="@style/TextMessagePrimary"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_fa_layout"
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ScrollView
-            android:id="@+id/scroll_fa_layout"
+            android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="none"
@@ -43,7 +43,7 @@
                     android:layout_gravity="center">
 
                     <ImageView
-                        android:id="@+id/image_fa_profile"
+                        android:id="@+id/user_profile"
                         android:layout_width="90dp"
                         android:layout_height="90dp"
                         android:background="@color/colorSurface"
@@ -51,7 +51,7 @@
                 </com.github.florent37.shapeofview.shapes.CircleView>
 
                 <TextView
-                    android:id="@+id/text_fa_full_name"
+                    android:id="@+id/full_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -65,7 +65,7 @@
                     android:textSize="17sp" />
 
                 <TextView
-                    android:id="@+id/text_fa_username"
+                    android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -87,7 +87,7 @@
                     android:weightSum="5">
 
                     <LinearLayout
-                        android:id="@+id/layout_fa_total_review"
+                        android:id="@+id/total_review_layout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -96,7 +96,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/text_fa_total_review"
+                            android:id="@+id/total_review"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
@@ -118,7 +118,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/layout_fa_total_favorite"
+                        android:id="@+id/total_favorite_layout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -127,7 +127,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/text_fa_total_favorite"
+                            android:id="@+id/total_favorite"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
@@ -149,7 +149,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/layout_fa_total_watchlist"
+                        android:id="@+id/total_watchlist_layout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -158,7 +158,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/text_fa_total_watchlist"
+                            android:id="@+id/total_watchlist"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
@@ -180,7 +180,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/layout_fa_total_follower"
+                        android:id="@+id/total_follower_layout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -189,7 +189,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/text_fa_total_follower"
+                            android:id="@+id/total_follower"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
@@ -211,7 +211,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/layout_fa_total_following"
+                        android:id="@+id/total_following_layout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -220,7 +220,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/text_fa_total_following"
+                            android:id="@+id/total_following"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
@@ -250,7 +250,7 @@
                     android:weightSum="2">
 
                     <Button
-                        android:id="@+id/button_fa_edit_profile"
+                        android:id="@+id/edit_profile_button"
                         style="@style/ButtonPrimary"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
@@ -259,7 +259,7 @@
                         android:text="@string/edit_profile" />
 
                     <Button
-                        android:id="@+id/button_fa_sign_out"
+                        android:id="@+id/sign_out_button"
                         style="@style/ButtonOutlinedDanger"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
@@ -284,13 +284,13 @@
                     android:layout_marginTop="4dp">
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_fa_recent_favorite"
+                        android:id="@+id/recycler_view_recent_favorite"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:visibility="gone" />
 
                     <ImageView
-                        android:id="@+id/image_fa_empty_recent_favorite"
+                        android:id="@+id/empty_recent_favorite_image"
                         android:layout_width="match_parent"
                         android:layout_height="150dp"
                         android:layout_marginHorizontal="16dp"
@@ -317,13 +317,13 @@
                     android:layout_marginTop="4dp">
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_fa_recent_review"
+                        android:id="@+id/recycler_view_recent_review"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:visibility="gone" />
 
                     <ImageView
-                        android:id="@+id/image_fa_empty_recent_review"
+                        android:id="@+id/empty_recent_review_image"
                         android:layout_width="match_parent"
                         android:layout_height="150dp"
                         android:layout_marginHorizontal="16dp"

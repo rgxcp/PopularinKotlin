@@ -8,7 +8,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import xyz.fairportstudios.popularin.R
-import xyz.fairportstudios.popularin.fragments.*
+import xyz.fairportstudios.popularin.databinding.ActivityMainBinding
+import xyz.fairportstudios.popularin.fragments.AccountFragment
+import xyz.fairportstudios.popularin.fragments.AiringFragment
+import xyz.fairportstudios.popularin.fragments.EmptyAccountFragment
+import xyz.fairportstudios.popularin.fragments.GenreFragment
+import xyz.fairportstudios.popularin.fragments.ReviewFragment
+import xyz.fairportstudios.popularin.fragments.SearchFragment
+import xyz.fairportstudios.popularin.fragments.TimelineFragment
 import xyz.fairportstudios.popularin.preferences.Auth
 
 class MainActivity : AppCompatActivity() {
@@ -30,7 +37,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val viewBinding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(viewBinding.root)
 
         // Context
         mContext = this
@@ -39,8 +47,7 @@ class MainActivity : AppCompatActivity() {
         mIsAuth = Auth(mContext).isAuth()
 
         // Bottom navigation
-        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation_am_layout)
-        bottomNavigation.setOnNavigationItemSelectedListener(mListener)
+        viewBinding.bottomNavigation.setOnNavigationItemSelectedListener(mListener)
 
         // Menampilkan fragment otomatis sesuai kondisi
         mSelectedFragment = when (mIsAuth) {

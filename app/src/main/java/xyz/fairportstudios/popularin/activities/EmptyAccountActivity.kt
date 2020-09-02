@@ -2,27 +2,23 @@ package xyz.fairportstudios.popularin.activities
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import xyz.fairportstudios.popularin.R
+import androidx.appcompat.app.AppCompatActivity
+import xyz.fairportstudios.popularin.databinding.ReusableEmptyAccountBinding
 
 class EmptyAccountActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.reusable_empty_account)
+        val viewBinding = ReusableEmptyAccountBinding.inflate(layoutInflater)
+        setContentView(viewBinding.root)
 
         // Context
         val context = this
 
-        // Binding
-        val buttonSignIn = findViewById<Button>(R.id.button_rea_sign_in)
-        val buttonSignUp = findViewById<Button>(R.id.button_rea_sign_up)
-
         // Activity
-        buttonSignIn.setOnClickListener { gotoSignIn(context) }
+        viewBinding.signInButton.setOnClickListener { gotoSignIn(context) }
 
-        buttonSignUp.setOnClickListener { gotoSignUp(context) }
+        viewBinding.signUpButton.setOnClickListener { gotoSignUp(context) }
     }
 
     private fun gotoSignIn(context: Context) {

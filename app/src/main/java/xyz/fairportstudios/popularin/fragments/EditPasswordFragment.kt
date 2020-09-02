@@ -10,15 +10,12 @@ import android.text.style.RelativeSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputEditText
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.activities.MainActivity
 import xyz.fairportstudios.popularin.apis.popularin.put.UpdatePasswordRequest
+import xyz.fairportstudios.popularin.databinding.FragmentEditPasswordBinding
 
 class EditPasswordFragment : Fragment() {
     // Member
@@ -26,42 +23,36 @@ class EditPasswordFragment : Fragment() {
     private lateinit var mNewPassword: String
     private lateinit var mConfirmPassword: String
 
-    // View
-    private lateinit var mButtonSavePassword: Button
-    private lateinit var mAnchorLayout: LinearLayout
-    private lateinit var mInputCurrentPassword: TextInputEditText
-    private lateinit var mInputNewPassword: TextInputEditText
-    private lateinit var mInputConfirmPassword: TextInputEditText
+    // View binding
+    private var _mViewBinding: FragmentEditPasswordBinding? = null
+    private val mViewBinding get() = _mViewBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_edit_password, container, false)
+        _mViewBinding = FragmentEditPasswordBinding.inflate(inflater, container, false)
 
         // Context
         val context = requireActivity()
 
-        // Binding
-        mButtonSavePassword = view.findViewById(R.id.button_fepw_save_password)
-        mAnchorLayout = view.findViewById(R.id.anchor_fepw_layout)
-        mInputCurrentPassword = view.findViewById(R.id.input_fepw_current_password)
-        mInputNewPassword = view.findViewById(R.id.input_fepw_new_password)
-        mInputConfirmPassword = view.findViewById(R.id.input_fepw_confirm_password)
-        val textWelcomeMessage = view.findViewById<TextView>(R.id.text_fepw_welcome)
-
         // Pesan
-        textWelcomeMessage.text = getWelcomeMessage()
+        mViewBinding.welcomeMessage.text = getWelcomeMessage()
 
         // Text watcher
-        mInputCurrentPassword.addTextChangedListener(mEditPasswordWatcher)
-        mInputNewPassword.addTextChangedListener(mEditPasswordWatcher)
-        mInputConfirmPassword.addTextChangedListener(mEditPasswordWatcher)
+        mViewBinding.inputCurrentPassword.addTextChangedListener(mEditPasswordWatcher)
+        mViewBinding.inputNewPassword.addTextChangedListener(mEditPasswordWatcher)
+        mViewBinding.inputConfirmPassword.addTextChangedListener(mEditPasswordWatcher)
 
         // Activity
-        mButtonSavePassword.setOnClickListener {
+        mViewBinding.savePasswordButton.setOnClickListener {
             setSavePasswordButtonState(false)
             savePassword(context)
         }
 
-        return view
+        return mViewBinding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _mViewBinding = null
     }
 
     private val mEditPasswordWatcher = object : TextWatcher {
@@ -74,10 +65,10 @@ class EditPasswordFragment : Fragment() {
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            mCurrentPassword = mInputCurrentPassword.text.toString()
-            mNewPassword = mInputNewPassword.text.toString()
-            mConfirmPassword = mInputConfirmPassword.text.toString()
-            mButtonSavePassword.isEnabled = mCurrentPassword.isNotEmpty() && mNewPassword.isNotEmpty() && mConfirmPassword.isNotEmpty()
+            mCurrentPassword = mViewBinding.inputCurrentPassword.text.toString()
+            mNewPassword = mViewBinding.inputNewPassword.text.toString()
+            mConfirmPassword = mViewBinding.inputConfirmPassword.text.toString()
+            mViewBinding.savePasswordButton.isEnabled = mCurrentPassword.isNotEmpty() && mNewPassword.isNotEmpty() && mConfirmPassword.isNotEmpty()
         }
     }
 
@@ -92,15 +83,15 @@ class EditPasswordFragment : Fragment() {
     private fun passwordValidated(): Boolean {
         return when {
             mNewPassword.length < 8 -> {
-                Snackbar.make(mAnchorLayout, R.string.validate_new_password_length, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_new_password_length, Snackbar.LENGTH_LONG).show()
                 false
             }
             mConfirmPassword != mNewPassword -> {
-                Snackbar.make(mAnchorLayout, R.string.validate_confirm_password_un_match_new_password, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_confirm_password_un_match_new_password, Snackbar.LENGTH_LONG).show()
                 false
             }
             mNewPassword == mCurrentPassword -> {
-                Snackbar.make(mAnchorLayout, R.string.validate_new_password_match_current_password, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_new_password_match_current_password, Snackbar.LENGTH_LONG).show()
                 false
             }
             else -> true
@@ -108,10 +99,10 @@ class EditPasswordFragment : Fragment() {
     }
 
     private fun setSavePasswordButtonState(state: Boolean) {
-        mButtonSavePassword.isEnabled = state
+        mViewBinding.savePasswordButton.isEnabled = state
         when (state) {
-            true -> mButtonSavePassword.text = getString(R.string.save_password)
-            false -> mButtonSavePassword.text = getString(R.string.loading)
+            true -> mViewBinding.savePasswordButton.text = getString(R.string.save_password)
+            false -> mViewBinding.savePasswordButton.text = getString(R.string.loading)
         }
     }
 
@@ -128,17 +119,17 @@ class EditPasswordFragment : Fragment() {
 
                     override fun onInvalidCurrentPassword() {
                         setSavePasswordButtonState(true)
-                        Snackbar.make(mAnchorLayout, R.string.invalid_current_password, Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(mViewBinding.anchorLayout, R.string.invalid_current_password, Snackbar.LENGTH_LONG).show()
                     }
 
                     override fun onFailed(message: String) {
                         setSavePasswordButtonState(true)
-                        Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
 
                     override fun onError(message: String) {
                         setSavePasswordButtonState(true)
-                        Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                 })
             }

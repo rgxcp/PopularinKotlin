@@ -2,22 +2,17 @@ package xyz.fairportstudios.popularin.activities
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
-import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.adapters.FilmAdapter
 import xyz.fairportstudios.popularin.apis.popularin.get.UserWatchlistRequest
+import xyz.fairportstudios.popularin.databinding.ReusableToolbarRecyclerBinding
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.Film
 import xyz.fairportstudios.popularin.preferences.Auth
@@ -39,30 +34,16 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
     private lateinit var mFilmAdapter: FilmAdapter
     private lateinit var mUserWatchlistRequest: UserWatchlistRequest
 
-    // View
-    private lateinit var mProgressBar: ProgressBar
-    private lateinit var mLoadMoreBar: ProgressBar
-    private lateinit var mRecyclerFilm: RecyclerView
-    private lateinit var mAnchorLayout: RelativeLayout
-    private lateinit var mSwipeRefresh: SwipeRefreshLayout
-    private lateinit var mTextMessage: TextView
+    // View binding
+    private lateinit var mViewBinding: ReusableToolbarRecyclerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.reusable_toolbar_recycler)
+        mViewBinding = ReusableToolbarRecyclerBinding.inflate(layoutInflater)
+        setContentView(mViewBinding.root)
 
         // Context
         mContext = this
-
-        // Binding
-        mProgressBar = findViewById(R.id.pbr_rtr_layout)
-        mLoadMoreBar = findViewById(R.id.lbr_rtr_layout)
-        mRecyclerFilm = findViewById(R.id.recycler_rtr_layout)
-        mAnchorLayout = findViewById(R.id.anchor_rtr_layout)
-        mSwipeRefresh = findViewById(R.id.swipe_refresh_rtr_layout)
-        mTextMessage = findViewById(R.id.text_aud_message)
-        val nestedScrollView = findViewById<NestedScrollView>(R.id.nested_scroll_rtr_layout)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar_rtr_layout)
 
         // Extra
         val userID = intent.getIntExtra(Popularin.USER_ID, 0)
@@ -75,20 +56,20 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
         val handler = Handler()
 
         // Toolbar
-        toolbar.title = getString(R.string.watchlist)
+        mViewBinding.toolbar.title = getString(R.string.watchlist)
 
         // Mendapatkan data awal
         mUserWatchlistRequest = UserWatchlistRequest(mContext, userID)
         getUserWatchlist(mStartPage, false)
 
         // Activity
-        toolbar.setNavigationOnClickListener { onBackPressed() }
+        mViewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+        mViewBinding.nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mLoadMoreBar.visibility = View.VISIBLE
+                    mViewBinding.loadMoreBar.visibility = View.VISIBLE
                     handler.postDelayed({
                         getUserWatchlist(mCurrentPage, false)
                     }, 1000)
@@ -96,9 +77,9 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
             }
         }
 
-        mSwipeRefresh.setOnRefreshListener {
+        mViewBinding.swipeRefresh.setOnRefreshListener {
             mIsLoading = true
-            mSwipeRefresh.isRefreshing = true
+            mViewBinding.swipeRefresh.isRefreshing = true
             getUserWatchlist(mStartPage, true)
         }
     }
@@ -139,12 +120,12 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
                         val insertIndex = mFilmList.size
                         mFilmList.addAll(insertIndex, filmList)
                         setAdapter()
-                        mProgressBar.visibility = View.GONE
+                        mViewBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mTextMessage.visibility = View.GONE
+                mViewBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -155,10 +136,10 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
                         mFilmList.clear()
                         mFilmAdapter.notifyDataSetChanged()
                     }
-                    false -> mProgressBar.visibility = View.GONE
+                    false -> mViewBinding.progressBar.visibility = View.GONE
                 }
-                mTextMessage.visibility = View.VISIBLE
-                mTextMessage.text = when (mIsSelf) {
+                mViewBinding.errorMessage.visibility = View.VISIBLE
+                mViewBinding.errorMessage.text = when (mIsSelf) {
                     true -> getString(R.string.empty_self_watchlist_film)
                     false -> getString(R.string.empty_user_watchlist)
                 }
@@ -167,13 +148,13 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mLoadMoreBar.visibility = View.GONE
-                        Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                        mViewBinding.loadMoreBar.visibility = View.GONE
+                        Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mProgressBar.visibility = View.GONE
-                        mTextMessage.visibility = View.VISIBLE
-                        mTextMessage.text = message
+                        mViewBinding.progressBar.visibility = View.GONE
+                        mViewBinding.errorMessage.visibility = View.VISIBLE
+                        mViewBinding.errorMessage.text = message
                     }
                 }
             }
@@ -181,8 +162,8 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
 
         // Memberhentikan loading
         mIsLoading = false
-        if (refreshPage) mSwipeRefresh.isRefreshing = false
-        mLoadMoreBar.visibility = when (page == mTotalPage) {
+        if (refreshPage) mViewBinding.swipeRefresh.isRefreshing = false
+        mViewBinding.loadMoreBar.visibility = when (page == mTotalPage) {
             true -> View.GONE
             false -> View.INVISIBLE
         }
@@ -190,9 +171,9 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
 
     private fun setAdapter() {
         mFilmAdapter = FilmAdapter(mContext, mFilmList, this)
-        mRecyclerFilm.adapter = mFilmAdapter
-        mRecyclerFilm.layoutManager = LinearLayoutManager(mContext)
-        mRecyclerFilm.visibility = View.VISIBLE
+        mViewBinding.recyclerView.adapter = mFilmAdapter
+        mViewBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
+        mViewBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun showFilmModal(id: Int, title: String, year: String, poster: String) {

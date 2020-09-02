@@ -2,18 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/anchor_aud_layout"
+    android:id="@+id/anchor_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.UserDetailActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar_aud_layout"
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_aud_layout"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorBackground"
@@ -22,28 +22,28 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <ProgressBar
-        android:id="@+id/pbr_aud_layout"
+        android:id="@+id/progress_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/app_bar_aud_layout"
+        android:layout_below="@id/app_bar"
         android:padding="170dp" />
 
     <TextView
-        android:id="@+id/text_aud_message"
+        android:id="@+id/error_message"
         style="@style/TextMessagePrimary"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/app_bar_aud_layout"
+        android:layout_below="@id/app_bar"
         android:visibility="gone" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_aud_layout"
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/app_bar_aud_layout">
+        android:layout_below="@id/app_bar">
 
         <ScrollView
-            android:id="@+id/scroll_aud_layout"
+            android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="none"
@@ -61,7 +61,7 @@
                     android:layout_gravity="center">
 
                     <ImageView
-                        android:id="@+id/image_aud_profile"
+                        android:id="@+id/user_profile"
                         android:layout_width="90dp"
                         android:layout_height="90dp"
                         android:background="@color/colorSurface"
@@ -69,7 +69,7 @@
                 </com.github.florent37.shapeofview.shapes.CircleView>
 
                 <TextView
-                    android:id="@+id/text_aud_full_name"
+                    android:id="@+id/full_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -83,7 +83,7 @@
                     android:textSize="17sp" />
 
                 <TextView
-                    android:id="@+id/text_aud_username"
+                    android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -96,7 +96,7 @@
                     android:textSize="15sp" />
 
                 <TextView
-                    android:id="@+id/text_aud_follow_me"
+                    android:id="@+id/follow_me"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -117,7 +117,7 @@
                     android:weightSum="5">
 
                     <LinearLayout
-                        android:id="@+id/layout_aud_total_review"
+                        android:id="@+id/total_review_layout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -126,7 +126,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/text_aud_total_review"
+                            android:id="@+id/total_review"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
@@ -148,7 +148,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/layout_aud_total_favorite"
+                        android:id="@+id/total_favorite_layout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -157,7 +157,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/text_aud_total_favorite"
+                            android:id="@+id/total_favorite"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
@@ -179,7 +179,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/layout_aud_total_watchlist"
+                        android:id="@+id/total_watchlist_layout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -188,7 +188,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/text_aud_total_watchlist"
+                            android:id="@+id/total_watchlist"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
@@ -210,7 +210,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/layout_aud_total_follower"
+                        android:id="@+id/total_follower_layout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -219,7 +219,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/text_aud_total_follower"
+                            android:id="@+id/total_follower"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
@@ -241,7 +241,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/layout_aud_total_following"
+                        android:id="@+id/total_following_layout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -250,7 +250,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/text_aud_total_following"
+                            android:id="@+id/total_following"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
@@ -273,7 +273,7 @@
                 </LinearLayout>
 
                 <Button
-                    android:id="@+id/button_aud_follow"
+                    android:id="@+id/follow_button"
                     style="@style/ButtonPrimary"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -297,13 +297,13 @@
                     android:layout_marginTop="4dp">
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_aud_recent_favorite"
+                        android:id="@+id/recycler_view_recent_favorite"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:visibility="gone" />
 
                     <ImageView
-                        android:id="@+id/image_aud_empty_recent_favorite"
+                        android:id="@+id/empty_recent_favorite_image"
                         android:layout_width="match_parent"
                         android:layout_height="150dp"
                         android:layout_marginHorizontal="16dp"
@@ -330,13 +330,13 @@
                     android:layout_marginTop="4dp">
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_aud_recent_review"
+                        android:id="@+id/recycler_view_recent_review"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:visibility="gone" />
 
                     <ImageView
-                        android:id="@+id/image_aud_empty_recent_review"
+                        android:id="@+id/empty_recent_review_image"
                         android:layout_width="match_parent"
                         android:layout_height="150dp"
                         android:layout_marginHorizontal="16dp"

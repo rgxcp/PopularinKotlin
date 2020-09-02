@@ -23,7 +23,7 @@
         android:textSize="17sp" />
 
     <Button
-        android:id="@+id/button_rea_sign_in"
+        android:id="@+id/sign_in_button"
         style="@style/ButtonPrimary"
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -31,7 +31,7 @@
         android:text="@string/sign_in" />
 
     <Button
-        android:id="@+id/button_rea_sign_up"
+        android:id="@+id/sign_up_button"
         style="@style/ButtonOutlinedPrimary"
         android:layout_width="match_parent"
         android:layout_height="60dp"

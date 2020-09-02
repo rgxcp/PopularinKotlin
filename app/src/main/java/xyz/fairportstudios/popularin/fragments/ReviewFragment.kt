@@ -7,14 +7,9 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.activities.EmptyAccountActivity
@@ -25,6 +20,7 @@ import xyz.fairportstudios.popularin.adapters.ReviewAdapter
 import xyz.fairportstudios.popularin.apis.popularin.delete.UnlikeReviewRequest
 import xyz.fairportstudios.popularin.apis.popularin.get.ReviewRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.LikeReviewRequest
+import xyz.fairportstudios.popularin.databinding.ReusableRecyclerBinding
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.Review
 import xyz.fairportstudios.popularin.preferences.Auth
@@ -48,28 +44,15 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
     private lateinit var mReviewAdapter: ReviewAdapter
     private lateinit var mReviewRequest: ReviewRequest
 
-    // View
-    private lateinit var mAnchorLayout: CoordinatorLayout
-    private lateinit var mProgressBar: ProgressBar
-    private lateinit var mLoadMoreBar: ProgressBar
-    private lateinit var mRecyclerReview: RecyclerView
-    private lateinit var mSwipeRefresh: SwipeRefreshLayout
-    private lateinit var mTextMessage: TextView
+    // View binding
+    private var _mViewBinding: ReusableRecyclerBinding? = null
+    private val mViewBinding get() = _mViewBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.reusable_recycler, container, false)
+        _mViewBinding = ReusableRecyclerBinding.inflate(inflater, container, false)
 
         // Context
         mContext = requireActivity()
-
-        // Binding
-        mAnchorLayout = view.findViewById(R.id.anchor_rr_layout)
-        mProgressBar = view.findViewById(R.id.pbr_rr_layout)
-        mLoadMoreBar = view.findViewById(R.id.lbr_rr_layout)
-        mRecyclerReview = view.findViewById(R.id.recycler_rr_layout)
-        mSwipeRefresh = view.findViewById(R.id.swipe_refresh_rr_layout)
-        mTextMessage = view.findViewById(R.id.text_rr_message)
-        val nestedScrollView = view.findViewById<NestedScrollView>(R.id.nested_scroll_rr_layout)
 
         // Auth
         mAuth = Auth(mContext)
@@ -83,11 +66,11 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
         getReview(mStartPage, false)
 
         // Activity
-        nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+        mViewBinding.nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mLoadMoreBar.visibility = View.VISIBLE
+                    mViewBinding.loadMoreBar.visibility = View.VISIBLE
                     handler.postDelayed({
                         getReview(mCurrentPage, false)
                     }, 1000)
@@ -95,17 +78,18 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
             }
         }
 
-        mSwipeRefresh.setOnRefreshListener {
+        mViewBinding.swipeRefresh.setOnRefreshListener {
             mIsLoading = true
-            mSwipeRefresh.isRefreshing = true
+            mViewBinding.swipeRefresh.isRefreshing = true
             getReview(mStartPage, true)
         }
 
-        return view
+        return mViewBinding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _mViewBinding = null
         resetState()
     }
 
@@ -175,12 +159,12 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
                         val insertIndex = mReviewList.size
                         mReviewList.addAll(insertIndex, reviewList)
                         setAdapter()
-                        mProgressBar.visibility = View.GONE
+                        mViewBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mTextMessage.visibility = View.GONE
+                mViewBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -191,27 +175,27 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
                         mReviewList.clear()
                         mReviewAdapter.notifyDataSetChanged()
                     }
-                    false -> mProgressBar.visibility = View.GONE
+                    false -> mViewBinding.progressBar.visibility = View.GONE
                 }
-                mTextMessage.visibility = View.VISIBLE
-                mTextMessage.text = getString(R.string.empty_review)
+                mViewBinding.errorMessage.visibility = View.VISIBLE
+                mViewBinding.errorMessage.text = getString(R.string.empty_review)
             }
 
             override fun onError(message: String) {
                 if (!mIsLoadFirstTimeSuccess) {
-                    mProgressBar.visibility = View.GONE
-                    mTextMessage.visibility = View.VISIBLE
-                    mTextMessage.text = getString(R.string.empty_review)
+                    mViewBinding.progressBar.visibility = View.GONE
+                    mViewBinding.errorMessage.visibility = View.VISIBLE
+                    mViewBinding.errorMessage.text = getString(R.string.empty_review)
                 }
-                mLoadMoreBar.visibility = View.GONE
-                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                mViewBinding.loadMoreBar.visibility = View.GONE
+                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 
         // Memberhentikan loading
         mIsLoading = false
-        if (refreshPage) mSwipeRefresh.isRefreshing = false
-        mLoadMoreBar.visibility = when (page == mTotalPage) {
+        if (refreshPage) mViewBinding.swipeRefresh.isRefreshing = false
+        mViewBinding.loadMoreBar.visibility = when (page == mTotalPage) {
             true -> View.GONE
             false -> View.INVISIBLE
         }
@@ -219,9 +203,9 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
 
     private fun setAdapter() {
         mReviewAdapter = ReviewAdapter(mContext, mReviewList, this)
-        mRecyclerReview.adapter = mReviewAdapter
-        mRecyclerReview.layoutManager = LinearLayoutManager(mContext)
-        mRecyclerReview.visibility = View.VISIBLE
+        mViewBinding.recyclerView.adapter = mReviewAdapter
+        mViewBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
+        mViewBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun resetState() {
@@ -242,7 +226,7 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
             }
 
             override fun onError(message: String) {
-                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 
@@ -262,7 +246,7 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
             }
 
             override fun onError(message: String) {
-                Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 

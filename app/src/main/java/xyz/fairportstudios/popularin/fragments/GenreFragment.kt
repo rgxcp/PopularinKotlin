@@ -6,14 +6,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.activities.DiscoverFilmActivity
 import xyz.fairportstudios.popularin.adapters.GenreGridAdapter
+import xyz.fairportstudios.popularin.databinding.ReusableRecyclerBinding
 import xyz.fairportstudios.popularin.models.Genre
 import xyz.fairportstudios.popularin.statics.Popularin
 
@@ -22,28 +20,28 @@ class GenreFragment : Fragment(), GenreGridAdapter.OnClickListener {
     private lateinit var mGenreList: ArrayList<Genre>
     private lateinit var mContext: Context
 
-    // View
-    private lateinit var mProgressBar: ProgressBar
-    private lateinit var mRecyclerGenre: RecyclerView
+    // View binding
+    private var _mViewBinding: ReusableRecyclerBinding? = null
+    private val mViewBinding get() = _mViewBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.reusable_recycler, container, false)
+        _mViewBinding = ReusableRecyclerBinding.inflate(inflater, container, false)
 
         // Context
         mContext = requireActivity()
-
-        // Binding
-        mProgressBar = view.findViewById(R.id.pbr_rr_layout)
-        mRecyclerGenre = view.findViewById(R.id.recycler_rr_layout)
-        val swipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh_rr_layout)
 
         // Menampilkan genre
         showGenre()
 
         // Activity
-        swipeRefresh.setOnRefreshListener { swipeRefresh.isRefreshing = false }
+        mViewBinding.swipeRefresh.setOnRefreshListener { mViewBinding.swipeRefresh.isRefreshing = false }
 
-        return view
+        return mViewBinding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _mViewBinding = null
     }
 
     override fun onGenreItemClick(position: Int) {
@@ -54,7 +52,7 @@ class GenreFragment : Fragment(), GenreGridAdapter.OnClickListener {
     private fun showGenre() {
         loadGenre()
         setAdapter()
-        mProgressBar.visibility = View.GONE
+        mViewBinding.progressBar.visibility = View.GONE
     }
 
     private fun loadGenre() {
@@ -79,10 +77,10 @@ class GenreFragment : Fragment(), GenreGridAdapter.OnClickListener {
 
     private fun setAdapter() {
         val genreGridAdapter = GenreGridAdapter(mContext, mGenreList, this)
-        mRecyclerGenre.adapter = genreGridAdapter
-        mRecyclerGenre.layoutManager = GridLayoutManager(mContext, 2)
-        mRecyclerGenre.hasFixedSize()
-        mRecyclerGenre.visibility = View.VISIBLE
+        mViewBinding.recyclerView.adapter = genreGridAdapter
+        mViewBinding.recyclerView.layoutManager = GridLayoutManager(mContext, 2)
+        mViewBinding.recyclerView.hasFixedSize()
+        mViewBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun gotoDiscoverFilm(id: Int, title: String) {

@@ -7,7 +7,7 @@
     tools:context=".activities.MainActivity">
 
     <androidx.appcompat.widget.SearchView
-        android:id="@+id/search_fs_layout"
+        android:id="@+id/search_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
@@ -17,24 +17,24 @@
         app:queryHint="@string/search_hint" />
 
     <LinearLayout
-        android:id="@+id/layout_fs_search_in"
+        android:id="@+id/search_in_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/search_fs_layout"
+        android:layout_below="@+id/search_view"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
         android:orientation="vertical"
         android:visibility="gone">
 
         <com.google.android.material.chip.Chip
-            android:id="@+id/chip_fs_in_film"
+            android:id="@+id/in_film_chip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorOnBackground"
             android:textSize="15sp" />
 
         <com.google.android.material.chip.Chip
-            android:id="@+id/chip_fs_in_user"
+            android:id="@+id/in_user_chip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorOnBackground"
@@ -42,28 +42,28 @@
     </LinearLayout>
 
     <ProgressBar
-        android:id="@+id/pbr_fs_layout"
+        android:id="@+id/progress_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/search_fs_layout"
+        android:layout_below="@+id/search_view"
         android:layout_marginTop="8dp"
         android:padding="170dp"
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/text_fs_message"
+        android:id="@+id/error_message"
         style="@style/TextMessagePrimary"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/search_fs_layout"
+        android:layout_below="@+id/search_view"
         android:layout_marginTop="8dp"
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_fs_layout"
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/search_fs_layout"
+        android:layout_below="@+id/search_view"
         android:layout_marginTop="8dp"
         android:visibility="gone" />
 

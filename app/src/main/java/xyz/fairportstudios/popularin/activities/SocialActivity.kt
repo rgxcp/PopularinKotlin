@@ -1,13 +1,11 @@
 package xyz.fairportstudios.popularin.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.viewpager.widget.ViewPager
-import com.google.android.material.tabs.TabLayout
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.adapters.PagerAdapter
+import xyz.fairportstudios.popularin.databinding.ReusableToolbarPagerBinding
 import xyz.fairportstudios.popularin.fragments.FollowerFragment
 import xyz.fairportstudios.popularin.fragments.FollowingFragment
 import xyz.fairportstudios.popularin.fragments.MutualFragment
@@ -17,15 +15,11 @@ import xyz.fairportstudios.popularin.statics.Popularin
 class SocialActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.reusable_toolbar_pager)
+        val viewBinding = ReusableToolbarPagerBinding.inflate(layoutInflater)
+        setContentView(viewBinding.root)
 
         // Context
         val context = this
-
-        // Binding
-        val tabLayout = findViewById<TabLayout>(R.id.tab_rtp_layout)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar_rtp_layout)
-        val viewPager = findViewById<ViewPager>(R.id.pager_rtp_layout)
 
         // Extra
         val userID = intent.getIntExtra(Popularin.USER_ID, 0)
@@ -37,7 +31,7 @@ class SocialActivity : AppCompatActivity() {
         val isSelf = auth.isSelf(userID, auth.getAuthID())
 
         // Toolbar
-        toolbar.title = getString(R.string.social)
+        viewBinding.toolbar.title = getString(R.string.social)
 
         // Limit page yang akan ditampilkan
         val screenPageLimit = when (isAuth && !isSelf) {
@@ -50,12 +44,12 @@ class SocialActivity : AppCompatActivity() {
         pagerAdapter.addFragment(FollowerFragment(userID, isSelf), getString(R.string.follower))
         pagerAdapter.addFragment(FollowingFragment(userID, isSelf), getString(R.string.following))
         if (isAuth && !isSelf) pagerAdapter.addFragment(MutualFragment(userID), getString(R.string.mutual))
-        viewPager.adapter = pagerAdapter
-        viewPager.offscreenPageLimit = screenPageLimit
-        viewPager.currentItem = viewPagerIndex
-        tabLayout.setupWithViewPager(viewPager)
+        viewBinding.viewPager.adapter = pagerAdapter
+        viewBinding.viewPager.offscreenPageLimit = screenPageLimit
+        viewBinding.viewPager.currentItem = viewPagerIndex
+        viewBinding.tabLayout.setupWithViewPager(viewBinding.viewPager)
 
         // Activity
-        toolbar.setNavigationOnClickListener { onBackPressed() }
+        viewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
     }
 }

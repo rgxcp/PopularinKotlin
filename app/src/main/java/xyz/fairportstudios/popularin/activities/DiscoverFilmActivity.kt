@@ -5,19 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
-import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.adapters.FilmGridAdapter
 import xyz.fairportstudios.popularin.apis.tmdb.get.DiscoverFilmRequest
+import xyz.fairportstudios.popularin.databinding.ReusableToolbarRecyclerBinding
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.Film
 import xyz.fairportstudios.popularin.services.ParseDate
@@ -37,30 +31,16 @@ class DiscoverFilmActivity : AppCompatActivity(), FilmGridAdapter.OnClickListene
     private lateinit var mDiscoverFilmRequest: DiscoverFilmRequest
     private lateinit var mFilmGridAdapter: FilmGridAdapter
 
-    // View
-    private lateinit var mProgressBar: ProgressBar
-    private lateinit var mLoadMoreBar: ProgressBar
-    private lateinit var mRecyclerFilm: RecyclerView
-    private lateinit var mAnchorLayout: RelativeLayout
-    private lateinit var mSwipeRefresh: SwipeRefreshLayout
-    private lateinit var mTextMessage: TextView
+    // View binding
+    private lateinit var mViewBinding: ReusableToolbarRecyclerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.reusable_toolbar_recycler)
+        mViewBinding = ReusableToolbarRecyclerBinding.inflate(layoutInflater)
+        setContentView(mViewBinding.root)
 
         // Context
         mContext = this
-
-        // Binding
-        mProgressBar = findViewById(R.id.pbr_rtr_layout)
-        mLoadMoreBar = findViewById(R.id.lbr_rtr_layout)
-        mRecyclerFilm = findViewById(R.id.recycler_rtr_layout)
-        mAnchorLayout = findViewById(R.id.anchor_rtr_layout)
-        mSwipeRefresh = findViewById(R.id.swipe_refresh_rtr_layout)
-        mTextMessage = findViewById(R.id.text_aud_message)
-        val nestedScrollView = findViewById<NestedScrollView>(R.id.nested_scroll_rtr_layout)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar_rtr_layout)
 
         // Extra
         val genreID = intent.getIntExtra(Popularin.GENRE_ID, 0)
@@ -70,20 +50,20 @@ class DiscoverFilmActivity : AppCompatActivity(), FilmGridAdapter.OnClickListene
         val handler = Handler()
 
         // Toolbar
-        toolbar.title = genreTitle
+        mViewBinding.toolbar.title = genreTitle
 
         // Mendapatkan data awal
         mDiscoverFilmRequest = DiscoverFilmRequest(mContext, genreID)
         discoverFilm(mStartPage, false)
 
         // Activity
-        toolbar.setNavigationOnClickListener { onBackPressed() }
+        mViewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+        mViewBinding.nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mLoadMoreBar.visibility = View.VISIBLE
+                    mViewBinding.loadMoreBar.visibility = View.VISIBLE
                     handler.postDelayed({
                         discoverFilm(mCurrentPage, false)
                     }, 1000)
@@ -91,9 +71,9 @@ class DiscoverFilmActivity : AppCompatActivity(), FilmGridAdapter.OnClickListene
             }
         }
 
-        mSwipeRefresh.setOnRefreshListener {
+        mViewBinding.swipeRefresh.setOnRefreshListener {
             mIsLoading = true
-            mSwipeRefresh.isRefreshing = true
+            mViewBinding.swipeRefresh.isRefreshing = true
             discoverFilm(mStartPage, true)
         }
     }
@@ -129,8 +109,8 @@ class DiscoverFilmActivity : AppCompatActivity(), FilmGridAdapter.OnClickListene
                         val insertIndex = mFilmList.size
                         mFilmList.addAll(insertIndex, filmList)
                         setAdapter()
-                        mProgressBar.visibility = View.GONE
-                        mTextMessage.visibility = View.GONE
+                        mViewBinding.progressBar.visibility = View.GONE
+                        mViewBinding.errorMessage.visibility = View.GONE
                         mTotalPage = totalPage
                         mIsLoadFirstTimeSuccess = true
                     }
@@ -141,13 +121,13 @@ class DiscoverFilmActivity : AppCompatActivity(), FilmGridAdapter.OnClickListene
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mLoadMoreBar.visibility = View.GONE
-                        Snackbar.make(mAnchorLayout, message, Snackbar.LENGTH_LONG).show()
+                        mViewBinding.loadMoreBar.visibility = View.GONE
+                        Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mProgressBar.visibility = View.GONE
-                        mTextMessage.visibility = View.VISIBLE
-                        mTextMessage.text = message
+                        mViewBinding.progressBar.visibility = View.GONE
+                        mViewBinding.errorMessage.visibility = View.VISIBLE
+                        mViewBinding.errorMessage.text = message
                     }
                 }
             }
@@ -155,8 +135,8 @@ class DiscoverFilmActivity : AppCompatActivity(), FilmGridAdapter.OnClickListene
 
         // Memberhentikan loading
         mIsLoading = false
-        if (refreshPage) mSwipeRefresh.isRefreshing = false
-        mLoadMoreBar.visibility = when (page == mTotalPage) {
+        if (refreshPage) mViewBinding.swipeRefresh.isRefreshing = false
+        mViewBinding.loadMoreBar.visibility = when (page == mTotalPage) {
             true -> View.GONE
             false -> View.INVISIBLE
         }
@@ -164,9 +144,9 @@ class DiscoverFilmActivity : AppCompatActivity(), FilmGridAdapter.OnClickListene
 
     private fun setAdapter() {
         mFilmGridAdapter = FilmGridAdapter(mContext, mFilmList, this)
-        mRecyclerFilm.adapter = mFilmGridAdapter
-        mRecyclerFilm.layoutManager = GridLayoutManager(mContext, 4)
-        mRecyclerFilm.visibility = View.VISIBLE
+        mViewBinding.recyclerView.adapter = mFilmGridAdapter
+        mViewBinding.recyclerView.layoutManager = GridLayoutManager(mContext, 4)
+        mViewBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun showFilmModal(id: Int, title: String, year: String, poster: String) {

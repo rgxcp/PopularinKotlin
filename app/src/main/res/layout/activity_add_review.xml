@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/anchor_adr_layout"
+    android:id="@+id/anchor_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_adr_layout"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorBackground"
@@ -29,27 +29,27 @@
         android:paddingHorizontal="16dp">
 
         <TextView
-            android:id="@+id/text_adr_title"
+            android:id="@+id/film_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_marginEnd="16dp"
-            android:layout_toStartOf="@+id/sov_adr_layout"
+            android:layout_toStartOf="@+id/sov_film_poster"
             android:fontFamily="@font/jost_medium"
             android:textColor="@color/colorOnBackground"
             android:textSize="17sp" />
 
         <TextView
-            android:id="@+id/text_adr_year"
+            android:id="@+id/film_year"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_adr_title"
+            android:layout_below="@id/film_title"
             android:layout_marginTop="4dp"
             android:fontFamily="@font/jost_regular"
             android:textSize="15sp" />
 
         <com.github.florent37.shapeofview.shapes.RoundRectView
-            android:id="@+id/sov_adr_layout"
+            android:id="@+id/sov_film_poster"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -61,7 +61,7 @@
             app:shape_roundRect_topRightRadius="2dp">
 
             <ImageView
-                android:id="@+id/image_adr_poster"
+                android:id="@+id/film_poster"
                 android:layout_width="40dp"
                 android:layout_height="60dp"
                 android:background="@color/colorSurface"
@@ -85,14 +85,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_toStartOf="@id/text_adr_watch_date"
+            android:layout_toStartOf="@id/watch_date"
             android:fontFamily="@font/jost_regular"
             android:text="@string/watch_date"
             android:textColor="@color/colorOnBackground"
             android:textSize="15sp" />
 
         <TextView
-            android:id="@+id/text_adr_watch_date"
+            android:id="@+id/watch_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -118,14 +118,14 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_toStartOf="@id/rbr_adr_layout"
+            android:layout_toStartOf="@id/rating_bar"
             android:fontFamily="@font/jost_regular"
             android:text="@string/rating"
             android:textColor="@color/colorOnBackground"
             android:textSize="15sp" />
 
         <RatingBar
-            android:id="@+id/rbr_adr_layout"
+            android:id="@+id/rating_bar"
             android:layout_width="wrap_content"
             android:layout_height="45dp"
             android:layout_alignParentEnd="true"
@@ -140,7 +140,7 @@
         android:background="@color/colorSurface" />
 
     <EditText
-        android:id="@+id/input_adr_review"
+        android:id="@+id/input_review"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:autofillHints="@null"
