@@ -21,10 +21,8 @@
 ### 2.0.0
 - Moving the codebase from Java to Kotlin
 - Adding progress bar while load more
-- Updating constraint layout to 2.0.0
+- Implementing view binding
 ### 1.1.0
-- Updating gradle version to 4.0.1
-- Updating swipe refresh layout version to 1.1.0
 - Adding genre list in timeline fragment
 ### 1.0.0
 - Firing up initial version of Popularin!
