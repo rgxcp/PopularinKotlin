@@ -19,7 +19,7 @@ class SearchFilmRequest(private val context: Context) {
     fun sendRequest(query: String, callback: Callback) {
         val requestURL = "${TMDbAPI.SEARCH_FILM}?api_key=${APIKey.TMDB_API_KEY}&language=id&query=$query&region=ID"
 
-        val searchFilm = JsonObjectRequest(Request.Method.GET, requestURL, null, Response.Listener { response ->
+        val searchFilm = JsonObjectRequest(Request.Method.GET, requestURL, null, { response ->
             when (response.getInt("total_results") > 0) {
                 true -> {
                     val filmList = ArrayList<Film>()
@@ -52,7 +52,7 @@ class SearchFilmRequest(private val context: Context) {
                 }
                 false -> callback.onNotFound()
             }
-        }, Response.ErrorListener { error ->
+        }, { error ->
             error.printStackTrace()
             when (error) {
                 is NetworkError, is TimeoutError -> callback.onError(context.getString(R.string.network_error))

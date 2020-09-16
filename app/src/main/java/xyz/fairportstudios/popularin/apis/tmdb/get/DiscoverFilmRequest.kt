@@ -18,7 +18,7 @@ class DiscoverFilmRequest(private val context: Context, private val genreID: Int
     fun sendRequest(page: Int, callback: Callback) {
         val requestURL = "${TMDbAPI.DISCOVER}?api_key=${APIKey.TMDB_API_KEY}&language=id&region=ID&sort_by=popularity.desc&page=$page&with_genres=$genreID&with_original_language=id"
 
-        val discoverFilm = JsonObjectRequest(Request.Method.GET, requestURL, null, Response.Listener { response ->
+        val discoverFilm = JsonObjectRequest(Request.Method.GET, requestURL, null, { response ->
             val filmList = ArrayList<Film>()
             val resultArray = response.getJSONArray("results")
             val totalPage = response.getInt("total_pages")
@@ -41,7 +41,7 @@ class DiscoverFilmRequest(private val context: Context, private val genreID: Int
             }
 
             callback.onSuccess(totalPage, filmList)
-        }, Response.ErrorListener { error ->
+        }, { error ->
             error.printStackTrace()
             when (error) {
                 is NetworkError, is TimeoutError -> callback.onError(context.getString(R.string.network_error))

@@ -19,7 +19,7 @@ class CreditDetailRequest(private val context: Context, private val creditID: In
     fun sendRequest(callback: Callback) {
         val requestURL = "${TMDbAPI.CREDIT}$creditID?api_key=${APIKey.TMDB_API_KEY}&language=id&append_to_response=movie_credits"
 
-        val creditDetail = JsonObjectRequest(Request.Method.GET, requestURL, null, Response.Listener { response ->
+        val creditDetail = JsonObjectRequest(Request.Method.GET, requestURL, null, { response ->
             val movieCreditObject = response.getJSONObject("movie_credits")
             val castArray = movieCreditObject.getJSONArray("cast")
             val crewArray = movieCreditObject.getJSONArray("crew")
@@ -82,7 +82,7 @@ class CreditDetailRequest(private val context: Context, private val creditID: In
             }
 
             callback.onSuccess(creditDetail, filmAsCastList, filmAsCrewList)
-        }, Response.ErrorListener { error ->
+        }, { error ->
             error.printStackTrace()
             when (error) {
                 is NetworkError, is TimeoutError -> callback.onError(context.getString(R.string.network_error))

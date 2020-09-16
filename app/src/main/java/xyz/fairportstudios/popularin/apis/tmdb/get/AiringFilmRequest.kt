@@ -19,7 +19,7 @@ class AiringFilmRequest(private val context: Context) {
     fun sendRequest(callback: Callback) {
         val requestURL = "${TMDbAPI.AIRING}?api_key=${APIKey.TMDB_API_KEY}&language=id&region=ID"
 
-        val airingFilm = JsonObjectRequest(Request.Method.GET, requestURL, null, Response.Listener { response ->
+        val airingFilm = JsonObjectRequest(Request.Method.GET, requestURL, null, { response ->
             when (response.getInt("total_results") > 0) {
                 true -> {
                     val filmList = ArrayList<Film>()
@@ -52,7 +52,7 @@ class AiringFilmRequest(private val context: Context) {
                 }
                 false -> callback.onNotFound()
             }
-        }, Response.ErrorListener { error ->
+        }, { error ->
             error.printStackTrace()
             when (error) {
                 is NetworkError, is TimeoutError -> callback.onError(context.getString(R.string.network_error))
