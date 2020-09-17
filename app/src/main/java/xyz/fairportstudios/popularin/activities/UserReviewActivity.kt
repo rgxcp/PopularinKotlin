@@ -102,7 +102,7 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapter.OnClickListene
     override fun onUserReviewFilmPosterLongClick(position: Int) {
         val currentItem = mUserReviewList[position]
         val year = ParseDate.getYear(currentItem.releaseDate)
-        showFilmModal(currentItem.id, currentItem.title, year, currentItem.poster)
+        showFilmModal(currentItem.tmdbID, currentItem.title, year, currentItem.poster)
     }
 
     override fun onUserReviewLikeClick(position: Int) {

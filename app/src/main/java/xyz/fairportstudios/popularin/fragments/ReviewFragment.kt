@@ -112,7 +112,7 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
     override fun onReviewFilmPosterLongClick(position: Int) {
         val currentItem = mReviewList[position]
         val year = ParseDate.getYear(currentItem.releaseDate)
-        showFilmModal(currentItem.id, currentItem.title, year, currentItem.poster)
+        showFilmModal(currentItem.tmdbID, currentItem.title, year, currentItem.poster)
     }
 
     override fun onReviewLikeClick(position: Int) {
