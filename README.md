@@ -18,11 +18,13 @@
 3. Simply open this [link](https://bit.ly/Popularin "Popularin on Play Store").
 
 ## Changelog
+### 2.1.0
+- Implementing view binding
+- Implementing data binding
+- Fixing film self request on film modal
 ### 2.0.0
 - Moving the codebase from Java to Kotlin
 - Adding progress bar while load more
-- Implementing view binding
-- Implementing data binding
 ### 1.1.0
 - Adding genre list in timeline fragment
 ### 1.0.0
