@@ -6,14 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.apis.tmdb.get.CreditDetailRequest
 import xyz.fairportstudios.popularin.databinding.FragmentCreditBioBinding
 import xyz.fairportstudios.popularin.models.CreditDetail
 import xyz.fairportstudios.popularin.models.Film
 import xyz.fairportstudios.popularin.services.ParseBio
-import xyz.fairportstudios.popularin.statics.TMDbAPI
 
 class CreditBioFragment(private val creditID: Int) : Fragment() {
     // Primitive
@@ -52,6 +50,7 @@ class CreditBioFragment(private val creditID: Int) : Fragment() {
         if (mIsResumeFirstTime) {
             // Mendapatkan data
             mIsResumeFirstTime = false
+            mViewBinding.isLoading = true
             getCreditBio()
         }
     }
@@ -65,16 +64,10 @@ class CreditBioFragment(private val creditID: Int) : Fragment() {
         val creditDetailRequest = CreditDetailRequest(mContext, creditID)
         creditDetailRequest.sendRequest(object : CreditDetailRequest.Callback {
             override fun onSuccess(creditDetail: CreditDetail, filmAsCastList: ArrayList<Film>, filmAsCrewList: ArrayList<Film>) {
-                // Parsing
-                val bio = ParseBio.getBioForHumans(creditDetail)
-                val profile = "${TMDbAPI.BASE_SMALL_IMAGE_URL}${creditDetail.profilePath}"
-
-                // Isi
-                mViewBinding.bio.text = bio
-                Glide.with(mContext).load(profile).into(mViewBinding.creditProfile)
-                mViewBinding.progressBar.visibility = View.GONE
-                mViewBinding.errorMessage.visibility = View.GONE
-                mViewBinding.bioLayout.visibility = View.VISIBLE
+                mViewBinding.profilePath = creditDetail.profilePath
+                mViewBinding.bioForHumans = ParseBio.getBioForHumans(creditDetail)
+                mViewBinding.isLoading = false
+                mViewBinding.loadSuccess = true
                 mIsLoadFirstTimeSuccess = true
             }
 
@@ -82,9 +75,9 @@ class CreditBioFragment(private val creditID: Int) : Fragment() {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     false -> {
-                        mViewBinding.progressBar.visibility = View.GONE
-                        mViewBinding.errorMessage.visibility = View.VISIBLE
-                        mViewBinding.errorMessage.text = message
+                        mViewBinding.isLoading = false
+                        mViewBinding.loadSuccess = false
+                        mViewBinding.message = message
                     }
                 }
             }

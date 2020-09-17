@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.activities.EmptyAccountActivity
@@ -21,26 +20,19 @@ import xyz.fairportstudios.popularin.databinding.FragmentReviewDetailBinding
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.ReviewDetail
 import xyz.fairportstudios.popularin.preferences.Auth
-import xyz.fairportstudios.popularin.services.ConvertRating
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
-import xyz.fairportstudios.popularin.statics.TMDbAPI
 
 class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
     // Primitive
     private var mIsResumeFirstTime = true
     private var mIsLoading = true
     private var mIsLoadFirstTimeSuccess = false
-    private var mIsLiked = false
-    private var mUserID = 0
-    private var mFilmID = 0
-    private var mTotalLike = 0
 
     // Member
     private lateinit var mContext: Context
-    private lateinit var mFilmTitle: String
+    private lateinit var mReviewDetail: ReviewDetail
     private lateinit var mFilmYear: String
-    private lateinit var mFilmPoster: String
 
     // View binding
     private var _mViewBinding: FragmentReviewDetailBinding? = null
@@ -69,7 +61,7 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
             when (isAuth && !mIsLoading) {
                 true -> {
                     mIsLoading = true
-                    when (mIsLiked) {
+                    when (mReviewDetail.isLiked) {
                         true -> unlikeReview()
                         false -> likeReview()
                     }
@@ -94,6 +86,7 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
         if (mIsResumeFirstTime) {
             // Mendapatkan data
             mIsResumeFirstTime = false
+            mViewBinding.isLoading = true
             getReviewDetail()
         }
     }
@@ -107,36 +100,12 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
         val reviewDetailRequest = ReviewDetailRequest(mContext, reviewID)
         reviewDetailRequest.sendRequest(object : ReviewDetailRequest.Callback {
             override fun onSuccess(reviewDetail: ReviewDetail) {
-                // Like status
-                mIsLiked = reviewDetail.isLiked
-                if (mIsLiked) {
-                    mViewBinding.likeStatus.text = getString(R.string.liked)
-                    mViewBinding.likeImage.setImageResource(R.drawable.ic_fill_heart)
-                }
-
-                // Parsing
-                mUserID = reviewDetail.userID
-                mFilmID = reviewDetail.tmdbID
-                mTotalLike = reviewDetail.totalLike
-                mFilmTitle = reviewDetail.title
-                mFilmPoster = reviewDetail.poster
-                mFilmYear = ParseDate.getYear(reviewDetail.releaseDate)
-                val reviewStar = ConvertRating.getStar(reviewDetail.rating)
-                val reviewDate = ParseDate.getDateForHumans(reviewDetail.reviewDate)
-                val poster = "${TMDbAPI.BASE_SMALL_IMAGE_URL}$mFilmPoster"
-
-                // Isi
-                mViewBinding.username.text = reviewDetail.username
-                mViewBinding.filmTitleYear.text = String.format("%s (%s)", mFilmTitle, mFilmYear)
-                mViewBinding.reviewDate.text = reviewDate
-                mViewBinding.reviewDetail.text = reviewDetail.reviewDetail
-                mViewBinding.totalLike.text = String.format("Total %s", mTotalLike)
-                reviewStar?.let { mViewBinding.starImage.setImageResource(it) }
-                Glide.with(mContext).load(reviewDetail.profilePicture).into(mViewBinding.userProfile)
-                Glide.with(mContext).load(poster).into(mViewBinding.filmPoster)
-                mViewBinding.errorMessage.visibility = View.GONE
-                mViewBinding.progressBar.visibility = View.GONE
-                mViewBinding.scrollView.visibility = View.VISIBLE
+                mReviewDetail = reviewDetail
+                mFilmYear = ParseDate.getYear(mReviewDetail.releaseDate)
+                mViewBinding.reviewDetail = mReviewDetail
+                mViewBinding.filmYear = mFilmYear
+                mViewBinding.isLoading = false
+                mViewBinding.loadSuccess = true
                 mIsLoadFirstTimeSuccess = true
             }
 
@@ -144,9 +113,9 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     false -> {
-                        mViewBinding.progressBar.visibility = View.GONE
-                        mViewBinding.errorMessage.visibility = View.VISIBLE
-                        mViewBinding.errorMessage.text = message
+                        mViewBinding.isLoading = false
+                        mViewBinding.loadSuccess = false
+                        mViewBinding.message = message
                     }
                 }
             }
@@ -158,20 +127,20 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
     }
 
     private fun setLikeState(state: Boolean) {
-        mIsLiked = state
-        when (mIsLiked) {
+        mReviewDetail.isLiked = state
+        when (mReviewDetail.isLiked) {
             true -> {
-                mTotalLike++
+                mReviewDetail.totalLike++
                 mViewBinding.likeStatus.text = getString(R.string.liked)
                 mViewBinding.likeImage.setImageResource(R.drawable.ic_fill_heart)
             }
             false -> {
-                mTotalLike--
+                mReviewDetail.totalLike--
                 mViewBinding.likeStatus.text = getString(R.string.like)
                 mViewBinding.likeImage.setImageResource(R.drawable.ic_outline_heart)
             }
         }
-        mViewBinding.totalLike.text = String.format("Total %s", mTotalLike)
+        mViewBinding.totalLike.text = String.format("Total %s", mReviewDetail.totalLike)
     }
 
     private fun likeReview() {
@@ -207,19 +176,19 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
     }
 
     private fun showFilmModal() {
-        val filmModal = FilmModal(mFilmID, mFilmTitle, mFilmYear, mFilmPoster)
+        val filmModal = FilmModal(mReviewDetail.tmdbID, mReviewDetail.title, mFilmYear, mReviewDetail.poster)
         filmModal.show(requireFragmentManager(), Popularin.FILM_MODAL)
     }
 
     private fun gotoUserDetail() {
         val intent = Intent(mContext, UserDetailActivity::class.java)
-        intent.putExtra(Popularin.USER_ID, mUserID)
+        intent.putExtra(Popularin.USER_ID, mReviewDetail.userID)
         startActivity(intent)
     }
 
     private fun gotoFilmDetail() {
         val intent = Intent(mContext, FilmDetailActivity::class.java)
-        intent.putExtra(Popularin.FILM_ID, mFilmID)
+        intent.putExtra(Popularin.FILM_ID, mReviewDetail.tmdbID)
         startActivity(intent)
     }
 

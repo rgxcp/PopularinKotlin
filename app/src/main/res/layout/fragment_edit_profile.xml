@@ -1,79 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/anchor_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="32dp"
-    tools:context=".activities.EditProfileActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/welcome_message"
-        style="@style/TextWelcomePrimary"
+    <data>
+
+        <variable
+            name="selfDetail"
+            type="xyz.fairportstudios.popularin.models.SelfDetail" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/anchor_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/edit_profile_welcome_message" />
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        tools:context=".activities.EditProfileActivity">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:hint="@string/full_name"
-        app:startIconDrawable="@drawable/ic_outline_account">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_full_name"
+        <TextView
+            android:id="@+id/welcome_message"
+            style="@style/TextWelcomePrimary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:text="@string/edit_profile_welcome_message" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/username"
-        app:startIconDrawable="@drawable/ic_outline_username">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_username"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginTop="24dp"
+            android:hint="@string/full_name"
+            app:startIconDrawable="@drawable/ic_outline_account">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/email"
-        app:startIconDrawable="@drawable/ic_outline_email">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_full_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:text="@{selfDetail.fullName}" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_email"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginTop="16dp"
+            android:hint="@string/username"
+            app:startIconDrawable="@drawable/ic_outline_username">
 
-    <Button
-        android:id="@+id/save_profile_button"
-        style="@style/ButtonPrimary"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="24dp"
-        android:enabled="false"
-        android:text="@string/save_profile" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:text="@{selfDetail.username}" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/edit_password_button"
-        style="@style/ButtonTextDanger"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="4dp"
-        android:text="@string/edit_password" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/email"
+            app:startIconDrawable="@drawable/ic_outline_email">
 
-</LinearLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:text="@{selfDetail.email}" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/save_profile_button"
+            style="@style/ButtonPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="24dp"
+            android:enabled="false"
+            android:text="@string/save_profile" />
+
+        <Button
+            android:id="@+id/edit_password_button"
+            style="@style/ButtonTextDanger"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/edit_password" />
+
+    </LinearLayout>
+</layout>

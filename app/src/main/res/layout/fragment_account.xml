@@ -1,340 +1,376 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/anchor_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activities.MainActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="isLoading"
+            type="Boolean" />
+
+        <variable
+            name="loadSuccess"
+            type="Boolean" />
+
+        <variable
+            name="message"
+            type="String" />
+
+        <variable
+            name="accountDetail"
+            type="xyz.fairportstudios.popularin.models.AccountDetail" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/anchor_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="170dp" />
+        tools:context=".activities.MainActivity">
 
-    <TextView
-        android:id="@+id/error_message"
-        style="@style/TextMessagePrimary"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ScrollView
-            android:id="@+id/scroll_view"
+        <ProgressBar
+            android:id="@+id/progress_bar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="none"
-            android:visibility="gone">
+            android:padding="170dp"
+            android:visibility="@{isLoading ? View.VISIBLE : View.GONE}" />
 
-            <LinearLayout
+        <TextView
+            android:id="@+id/error_message"
+            style="@style/TextMessagePrimary"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@{message}"
+            android:visibility="@{loadSuccess ? View.GONE : View.VISIBLE}" />
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ScrollView
+                android:id="@+id/scroll_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingVertical="16dp">
-
-                <com.github.florent37.shapeofview.shapes.CircleView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center">
-
-                    <ImageView
-                        android:id="@+id/user_profile"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:background="@color/colorSurface"
-                        android:contentDescription="@null" />
-                </com.github.florent37.shapeofview.shapes.CircleView>
-
-                <TextView
-                    android:id="@+id/full_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginHorizontal="48dp"
-                    android:layout_marginTop="8dp"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/jost_medium"
-                    android:maxLines="1"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorOnBackground"
-                    android:textSize="17sp" />
-
-                <TextView
-                    android:id="@+id/username"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginHorizontal="48dp"
-                    android:layout_marginTop="4dp"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/jost_regular"
-                    android:maxLines="1"
-                    android:textAlignment="center"
-                    android:textSize="15sp" />
+                android:layout_height="match_parent"
+                android:scrollbars="none"
+                android:visibility="@{loadSuccess ? View.VISIBLE : View.GONE}">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="16dp"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal"
-                    android:weightSum="5">
+                    android:orientation="vertical"
+                    android:paddingVertical="16dp">
 
-                    <LinearLayout
-                        android:id="@+id/total_review_layout"
-                        android:layout_width="0dp"
+                    <com.github.florent37.shapeofview.shapes.CircleView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="?attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:layout_gravity="center">
 
-                        <TextView
-                            android:id="@+id/total_review"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:fontFamily="@font/jost_medium"
-                            android:maxLines="1"
-                            android:textColor="@color/colorOnBackground"
-                            android:textSize="15sp" />
+                        <ImageView
+                            android:id="@+id/user_profile"
+                            android:layout_width="90dp"
+                            android:layout_height="90dp"
+                            android:background="@color/colorSurface"
+                            android:contentDescription="@null"
+                            app:profilePictureURL="@{accountDetail.profilePicture}" />
+                    </com.github.florent37.shapeofview.shapes.CircleView>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:ellipsize="end"
-                            android:fontFamily="@font/jost_regular"
-                            android:maxLines="1"
-                            android:text="@string/review"
-                            android:textColor="@color/colorOnBackground"
-                            android:textSize="15sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/total_favorite_layout"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="?attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/total_favorite"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:fontFamily="@font/jost_medium"
-                            android:maxLines="1"
-                            android:textColor="@color/colorOnBackground"
-                            android:textSize="15sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:ellipsize="end"
-                            android:fontFamily="@font/jost_regular"
-                            android:maxLines="1"
-                            android:text="@string/favorite"
-                            android:textColor="@color/colorOnBackground"
-                            android:textSize="15sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/total_watchlist_layout"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="?attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/total_watchlist"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:fontFamily="@font/jost_medium"
-                            android:maxLines="1"
-                            android:textColor="@color/colorOnBackground"
-                            android:textSize="15sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:ellipsize="end"
-                            android:fontFamily="@font/jost_regular"
-                            android:maxLines="1"
-                            android:text="@string/watchlist"
-                            android:textColor="@color/colorOnBackground"
-                            android:textSize="15sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/total_follower_layout"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="?attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/total_follower"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:fontFamily="@font/jost_medium"
-                            android:maxLines="1"
-                            android:textColor="@color/colorOnBackground"
-                            android:textSize="15sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:ellipsize="end"
-                            android:fontFamily="@font/jost_regular"
-                            android:maxLines="1"
-                            android:text="@string/follower"
-                            android:textColor="@color/colorOnBackground"
-                            android:textSize="15sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/total_following_layout"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="?attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/total_following"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:fontFamily="@font/jost_medium"
-                            android:maxLines="1"
-                            android:textColor="@color/colorOnBackground"
-                            android:textSize="15sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:ellipsize="end"
-                            android:fontFamily="@font/jost_regular"
-                            android:maxLines="1"
-                            android:text="@string/following"
-                            android:textColor="@color/colorOnBackground"
-                            android:textSize="15sp" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="16dp"
-                    android:weightSum="2">
-
-                    <Button
-                        android:id="@+id/edit_profile_button"
-                        style="@style/ButtonPrimary"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_marginEnd="4dp"
-                        android:layout_weight="1"
-                        android:text="@string/edit_profile" />
-
-                    <Button
-                        android:id="@+id/sign_out_button"
-                        style="@style/ButtonOutlinedDanger"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="4dp"
-                        android:layout_weight="1"
-                        android:text="@string/sign_out" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:fontFamily="@font/jost_regular"
-                    android:text="@string/recent_favorite"
-                    android:textColor="@color/colorOnBackground"
-                    android:textSize="15sp" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_view_recent_favorite"
+                    <TextView
+                        android:id="@+id/full_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone" />
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="48dp"
+                        android:layout_marginTop="8dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/jost_medium"
+                        android:maxLines="1"
+                        android:text="@{accountDetail.fullName}"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorOnBackground"
+                        android:textSize="17sp" />
 
-                    <ImageView
-                        android:id="@+id/empty_recent_favorite_image"
+                    <TextView
+                        android:id="@+id/username"
                         android:layout_width="match_parent"
-                        android:layout_height="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="48dp"
+                        android:layout_marginTop="4dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/jost_regular"
+                        android:maxLines="1"
+                        android:text="@{String.format(`@%s`, accountDetail.username)}"
+                        android:textAlignment="center"
+                        android:textSize="15sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginHorizontal="16dp"
-                        android:background="@drawable/bg_rounded_gray"
-                        android:contentDescription="@null"
-                        android:padding="8dp"
-                        android:src="@drawable/vc_empty_result"
-                        android:visibility="visible" />
-                </RelativeLayout>
+                        android:layout_marginTop="16dp"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal"
+                        android:weightSum="5">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:fontFamily="@font/jost_regular"
-                    android:text="@string/recent_review"
-                    android:textColor="@color/colorOnBackground"
-                    android:textSize="15sp" />
+                        <LinearLayout
+                            android:id="@+id/total_review_layout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="?attr/selectableItemBackground"
+                            android:gravity="center"
+                            android:orientation="vertical">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp">
+                            <TextView
+                                android:id="@+id/total_review"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/jost_medium"
+                                android:maxLines="1"
+                                android:text="@{String.valueOf(accountDetail.totalReview)}"
+                                android:textColor="@color/colorOnBackground"
+                                android:textSize="15sp" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_view_recent_review"
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/jost_regular"
+                                android:maxLines="1"
+                                android:text="@string/review"
+                                android:textColor="@color/colorOnBackground"
+                                android:textSize="15sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/total_favorite_layout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="?attr/selectableItemBackground"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/total_favorite"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/jost_medium"
+                                android:maxLines="1"
+                                android:text="@{String.valueOf(accountDetail.totalFavorite)}"
+                                android:textColor="@color/colorOnBackground"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/jost_regular"
+                                android:maxLines="1"
+                                android:text="@string/favorite"
+                                android:textColor="@color/colorOnBackground"
+                                android:textSize="15sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/total_watchlist_layout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="?attr/selectableItemBackground"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/total_watchlist"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/jost_medium"
+                                android:maxLines="1"
+                                android:text="@{String.valueOf(accountDetail.totalWatchlist)}"
+                                android:textColor="@color/colorOnBackground"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/jost_regular"
+                                android:maxLines="1"
+                                android:text="@string/watchlist"
+                                android:textColor="@color/colorOnBackground"
+                                android:textSize="15sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/total_follower_layout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="?attr/selectableItemBackground"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/total_follower"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/jost_medium"
+                                android:maxLines="1"
+                                android:text="@{String.valueOf(accountDetail.totalFollower)}"
+                                android:textColor="@color/colorOnBackground"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/jost_regular"
+                                android:maxLines="1"
+                                android:text="@string/follower"
+                                android:textColor="@color/colorOnBackground"
+                                android:textSize="15sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/total_following_layout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="?attr/selectableItemBackground"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/total_following"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/jost_medium"
+                                android:maxLines="1"
+                                android:text="@{String.valueOf(accountDetail.totalFollowing)}"
+                                android:textColor="@color/colorOnBackground"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/jost_regular"
+                                android:maxLines="1"
+                                android:text="@string/following"
+                                android:textColor="@color/colorOnBackground"
+                                android:textSize="15sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone" />
-
-                    <ImageView
-                        android:id="@+id/empty_recent_review_image"
-                        android:layout_width="match_parent"
-                        android:layout_height="150dp"
                         android:layout_marginHorizontal="16dp"
-                        android:background="@drawable/bg_rounded_gray"
-                        android:contentDescription="@null"
-                        android:padding="8dp"
-                        android:src="@drawable/vc_empty_result"
-                        android:visibility="visible" />
-                </RelativeLayout>
-            </LinearLayout>
-        </ScrollView>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                        android:layout_marginTop="16dp"
+                        android:weightSum="2">
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+                        <Button
+                            android:id="@+id/edit_profile_button"
+                            style="@style/ButtonPrimary"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginEnd="4dp"
+                            android:layout_weight="1"
+                            android:text="@string/edit_profile" />
+
+                        <Button
+                            android:id="@+id/sign_out_button"
+                            style="@style/ButtonOutlinedDanger"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="4dp"
+                            android:layout_weight="1"
+                            android:text="@string/sign_out" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="@font/jost_regular"
+                        android:text="@string/recent_favorite"
+                        android:textColor="@color/colorOnBackground"
+                        android:textSize="15sp" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recycler_view_recent_favorite"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="@{accountDetail.hasRecentFavorite &amp;&amp; loadSuccess ? View.VISIBLE : View.GONE}" />
+
+                        <ImageView
+                            android:id="@+id/empty_recent_favorite_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:layout_marginHorizontal="16dp"
+                            android:background="@drawable/bg_rounded_gray"
+                            android:contentDescription="@null"
+                            android:padding="8dp"
+                            android:src="@drawable/vc_empty_result"
+                            android:visibility="@{accountDetail.hasRecentFavorite ? View.GONE : View.VISIBLE}" />
+                    </RelativeLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="@font/jost_regular"
+                        android:text="@string/recent_review"
+                        android:textColor="@color/colorOnBackground"
+                        android:textSize="15sp" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recycler_view_recent_review"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="@{accountDetail.hasRecentReview &amp;&amp; loadSuccess ? View.VISIBLE : View.GONE}"
+                            tools:listitem="@layout/recycler_recent_review" />
+
+                        <ImageView
+                            android:id="@+id/empty_recent_review_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:layout_marginHorizontal="16dp"
+                            android:background="@drawable/bg_rounded_gray"
+                            android:contentDescription="@null"
+                            android:padding="8dp"
+                            android:src="@drawable/vc_empty_result"
+                            android:visibility="@{accountDetail.hasRecentReview ? View.GONE : View.VISIBLE}" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </ScrollView>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

@@ -28,10 +28,10 @@ class FilmModal(
     private val filmPoster: String
 ) : BottomSheetDialogFragment() {
     // Primitive
-    private var mInReview = false
-    private var mInFavorite = false
-    private var mInWatchlist = false
     private var mLastRate = 0.0f
+
+    // Member
+    private lateinit var mFilmSelf: FilmSelf
 
     // View binding
     private var _mViewBinding: ModalFilmBinding? = null
@@ -47,8 +47,8 @@ class FilmModal(
         val isAuth = Auth(context).isAuth()
 
         // Isi
-        mViewBinding.filmTitle.text = filmTitle
-        mViewBinding.filmYear.text = filmYear
+        mViewBinding.title = filmTitle
+        mViewBinding.year = filmYear
 
         // Mendapatkan status film
         if (isAuth) {
@@ -67,7 +67,7 @@ class FilmModal(
         mViewBinding.favoriteImage.setOnClickListener {
             when (isAuth) {
                 true -> {
-                    when (mInFavorite) {
+                    when (mFilmSelf.inFavorite) {
                         true -> removeFromFavorite(context)
                         false -> addToFavorite(context)
                     }
@@ -80,7 +80,7 @@ class FilmModal(
         mViewBinding.watchlistImage.setOnClickListener {
             when (isAuth) {
                 true -> {
-                    when (mInWatchlist) {
+                    when (mFilmSelf.inWatchlist) {
                         true -> removeFromWatchlist(context)
                         false -> addToWatchlist(context)
                     }
@@ -118,21 +118,9 @@ class FilmModal(
         val filmSelfRequest = FilmSelfRequest(context, filmID)
         filmSelfRequest.sendRequest(object : FilmSelfRequest.Callback {
             override fun onSuccess(filmSelf: FilmSelf) {
-                mInReview = filmSelf.inReview
-                mInFavorite = filmSelf.inFavorite
-                mInWatchlist = filmSelf.inWatchlist
-                mLastRate = filmSelf.lastRate.toFloat()
-                mViewBinding.ratingBar.rating = mLastRate
-
-                if (mInReview) {
-                    mViewBinding.reviewImage.setImageResource(R.drawable.ic_fill_eye)
-                }
-                if (mInFavorite) {
-                    mViewBinding.favoriteImage.setImageResource(R.drawable.ic_fill_heart)
-                }
-                if (mInWatchlist) {
-                    mViewBinding.watchlistImage.setImageResource(R.drawable.ic_fill_watchlist)
-                }
+                mFilmSelf = filmSelf
+                mViewBinding.filmSelf = mFilmSelf
+                mLastRate = mFilmSelf.lastRate.toFloat()
             }
 
             override fun onError(message: String) {

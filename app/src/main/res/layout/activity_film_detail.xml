@@ -1,365 +1,401 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activities.FilmDetailActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="isLoading"
+            type="Boolean" />
+
+        <variable
+            name="loadSuccess"
+            type="Boolean" />
+
+        <variable
+            name="message"
+            type="String" />
+
+        <variable
+            name="filmDetail"
+            type="xyz.fairportstudios.popularin.models.FilmDetail" />
+
+        <variable
+            name="filmMetadata"
+            type="xyz.fairportstudios.popularin.models.FilmMetadata" />
+    </data>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="170dp" />
+        tools:context=".activities.FilmDetailActivity">
 
-    <TextView
-        android:id="@+id/error_message"
-        style="@style/TextMessagePrimary"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
-
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/anchor_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
-
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.appbar.CollapsingToolbarLayout
-                android:id="@+id/collapsing_toolbar"
-                style="@style/CollapsingToolbarPrimary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:contentScrim="@color/colorBackground"
-                app:layout_scrollFlags="exitUntilCollapsed|scroll|snap">
-
-                <ImageView
-                    android:id="@+id/film_poster"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:background="@color/colorSurface"
-                    android:contentDescription="@null"
-                    android:scaleType="centerCrop"
-                    app:layout_collapseMode="parallax" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:background="@drawable/bg_gradient_black" />
-
-                <ImageView
-                    android:id="@+id/play_image"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_fill_play"
-                    app:layout_collapseMode="parallax" />
-
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    app:layout_collapseMode="pin"
-                    app:navigationIcon="@drawable/ic_fill_back" />
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swipe_refresh"
+        <ProgressBar
+            android:id="@+id/progress_bar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:padding="170dp"
+            android:visibility="@{isLoading ? View.VISIBLE : View.GONE}" />
 
-            <androidx.core.widget.NestedScrollView
+        <TextView
+            android:id="@+id/error_message"
+            style="@style/TextMessagePrimary"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@{message}"
+            android:visibility="@{loadSuccess ? View.GONE : View.VISIBLE}" />
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/anchor_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="@{loadSuccess ? View.VISIBLE : View.GONE}">
+
+            <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <LinearLayout
+                <com.google.android.material.appbar.CollapsingToolbarLayout
+                    android:id="@+id/collapsing_toolbar"
+                    style="@style/CollapsingToolbarPrimary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingVertical="16dp">
+                    app:contentScrim="@color/colorBackground"
+                    app:layout_scrollFlags="exitUntilCollapsed|scroll|snap">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:fontFamily="@font/jost_medium"
-                        android:text="@string/genre"
-                        android:textColor="@color/colorOnBackground"
-                        android:textSize="17sp" />
+                    <ImageView
+                        android:id="@+id/film_poster"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:background="@color/colorSurface"
+                        android:contentDescription="@null"
+                        android:scaleType="centerCrop"
+                        app:largeTMDbPictureURL="@{filmDetail.posterPath}"
+                        app:layout_collapseMode="parallax" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/genre_chip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="4dp"
-                        android:textColor="@color/colorOnBackground"
-                        android:textSize="15sp" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:background="@drawable/bg_gradient_black" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
-                        android:fontFamily="@font/jost_medium"
-                        android:text="@string/runtime"
-                        android:textColor="@color/colorOnBackground"
-                        android:textSize="17sp" />
+                    <ImageView
+                        android:id="@+id/play_image"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center"
+                        android:background="?attr/selectableItemBackground"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_fill_play"
+                        app:layout_collapseMode="parallax" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/runtime_chip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="4dp"
-                        android:textColor="@color/colorOnBackground"
-                        android:textSize="15sp" />
+                    <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize"
+                        app:layout_collapseMode="pin"
+                        app:navigationIcon="@drawable/ic_fill_back"
+                        app:title="@{filmDetail.originalTitle}" />
+                </com.google.android.material.appbar.CollapsingToolbarLayout>
+            </com.google.android.material.appbar.AppBarLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
-                        android:fontFamily="@font/jost_medium"
-                        android:text="@string/rating"
-                        android:textColor="@color/colorOnBackground"
-                        android:textSize="17sp" />
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipe_refresh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/rating_chip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/zero_rating"
-                        android:textColor="@color/colorOnBackground"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
-                        android:fontFamily="@font/jost_medium"
-                        android:text="@string/metadata"
-                        android:textColor="@color/colorOnBackground"
-                        android:textSize="17sp" />
+                <androidx.core.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
-                        android:layout_marginTop="16dp"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal"
-                        android:weightSum="3">
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <ImageView
-                                android:id="@+id/review_image"
-                                android:layout_width="35dp"
-                                android:layout_height="35dp"
-                                android:layout_centerHorizontal="true"
-                                android:background="?attr/selectableItemBackgroundBorderless"
-                                android:contentDescription="@null"
-                                android:src="@drawable/ic_outline_eye"
-                                app:tint="@color/colorAccent" />
-
-                            <TextView
-                                android:id="@+id/total_review"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@id/review_image"
-                                android:layout_centerHorizontal="true"
-                                android:layout_marginTop="8dp"
-                                android:fontFamily="@font/jost_regular"
-                                android:text="@string/zero_review"
-                                android:textColor="@color/colorOnBackground"
-                                android:textSize="15sp" />
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <ImageView
-                                android:id="@+id/favorite_image"
-                                android:layout_width="35dp"
-                                android:layout_height="35dp"
-                                android:layout_centerHorizontal="true"
-                                android:background="?attr/selectableItemBackgroundBorderless"
-                                android:contentDescription="@null"
-                                android:src="@drawable/ic_outline_heart"
-                                app:tint="@color/colorAccent" />
-
-                            <TextView
-                                android:id="@+id/total_favorite"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/favorite_image"
-                                android:layout_centerHorizontal="true"
-                                android:layout_marginTop="8dp"
-                                android:fontFamily="@font/jost_regular"
-                                android:text="@string/zero_favorite"
-                                android:textColor="@color/colorOnBackground"
-                                android:textSize="15sp" />
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <ImageView
-                                android:id="@+id/watchlist_image"
-                                android:layout_width="35dp"
-                                android:layout_height="35dp"
-                                android:layout_centerHorizontal="true"
-                                android:background="?attr/selectableItemBackgroundBorderless"
-                                android:contentDescription="@null"
-                                android:src="@drawable/ic_outline_watchlist"
-                                app:tint="@color/colorAccent" />
-
-                            <TextView
-                                android:id="@+id/total_watchlist"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/watchlist_image"
-                                android:layout_centerHorizontal="true"
-                                android:layout_marginTop="8dp"
-                                android:fontFamily="@font/jost_regular"
-                                android:text="@string/zero_watchlist"
-                                android:textColor="@color/colorOnBackground"
-                                android:textSize="15sp" />
-                        </RelativeLayout>
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
-                        android:fontFamily="@font/jost_medium"
-                        android:text="@string/overview"
-                        android:textColor="@color/colorOnBackground"
-                        android:textSize="17sp" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
-                        android:layout_marginTop="8dp">
+                        android:orientation="vertical"
+                        android:paddingVertical="16dp">
 
                         <TextView
-                            android:id="@+id/overview"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/jost_regular"
+                            android:layout_marginStart="16dp"
+                            android:fontFamily="@font/jost_medium"
+                            android:text="@string/genre"
+                            android:textColor="@color/colorOnBackground"
+                            android:textSize="17sp" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/genre_chip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="4dp"
                             android:textColor="@color/colorOnBackground"
                             android:textSize="15sp"
-                            android:visibility="gone" />
+                            app:genreForHumans="@{filmDetail.genreID}" />
 
-                        <ImageView
-                            android:id="@+id/empty_overview_image"
-                            android:layout_width="match_parent"
-                            android:layout_height="100dp"
-                            android:background="@drawable/bg_rounded_gray"
-                            android:contentDescription="@null"
-                            android:padding="8dp"
-                            android:src="@drawable/vc_empty_result" />
-                    </RelativeLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/jost_medium"
+                            android:text="@string/runtime"
+                            android:textColor="@color/colorOnBackground"
+                            android:textSize="17sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
-                        android:fontFamily="@font/jost_medium"
-                        android:text="@string/cast"
-                        android:textColor="@color/colorOnBackground"
-                        android:textSize="17sp" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/runtime_chip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/colorOnBackground"
+                            android:textSize="15sp"
+                            app:runtimeForHumans="@{filmDetail.runtime}" />
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/jost_medium"
+                            android:text="@string/rating"
+                            android:textColor="@color/colorOnBackground"
+                            android:textSize="17sp" />
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recycler_view_cast"
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/rating_chip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="4dp"
+                            android:text="@{String.format(`%s/5`, filmMetadata.averageRating)}"
+                            android:textColor="@color/colorOnBackground"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/jost_medium"
+                            android:text="@string/metadata"
+                            android:textColor="@color/colorOnBackground"
+                            android:textSize="17sp" />
+
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:visibility="gone" />
-
-                        <ImageView
-                            android:id="@+id/empty_cast_image"
-                            android:layout_width="match_parent"
-                            android:layout_height="100dp"
                             android:layout_marginHorizontal="16dp"
-                            android:background="@drawable/bg_rounded_gray"
-                            android:contentDescription="@null"
-                            android:padding="8dp"
-                            android:src="@drawable/vc_empty_result"
-                            android:visibility="visible" />
-                    </RelativeLayout>
+                            android:layout_marginTop="16dp"
+                            android:baselineAligned="false"
+                            android:orientation="horizontal"
+                            android:weightSum="3">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
-                        android:fontFamily="@font/jost_medium"
-                        android:text="@string/crew"
-                        android:textColor="@color/colorOnBackground"
-                        android:textSize="17sp" />
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1">
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp">
+                                <ImageView
+                                    android:id="@+id/review_image"
+                                    android:layout_width="35dp"
+                                    android:layout_height="35dp"
+                                    android:layout_centerHorizontal="true"
+                                    android:background="?attr/selectableItemBackgroundBorderless"
+                                    android:contentDescription="@null"
+                                    android:src="@drawable/ic_outline_eye"
+                                    app:tint="@color/colorAccent" />
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recycler_view_crew"
+                                <TextView
+                                    android:id="@+id/total_review"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@id/review_image"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_marginTop="8dp"
+                                    android:fontFamily="@font/jost_regular"
+                                    android:text="@{String.format(`%d Ulasan`, filmMetadata.totalReview)}"
+                                    android:textColor="@color/colorOnBackground"
+                                    android:textSize="15sp" />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1">
+
+                                <ImageView
+                                    android:id="@+id/favorite_image"
+                                    android:layout_width="35dp"
+                                    android:layout_height="35dp"
+                                    android:layout_centerHorizontal="true"
+                                    android:background="?attr/selectableItemBackgroundBorderless"
+                                    android:contentDescription="@null"
+                                    android:src="@drawable/ic_outline_heart"
+                                    app:tint="@color/colorAccent" />
+
+                                <TextView
+                                    android:id="@+id/total_favorite"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/favorite_image"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_marginTop="8dp"
+                                    android:fontFamily="@font/jost_regular"
+                                    android:text="@{String.format(`%d Favorit`, filmMetadata.totalFavorite)}"
+                                    android:textColor="@color/colorOnBackground"
+                                    android:textSize="15sp" />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1">
+
+                                <ImageView
+                                    android:id="@+id/watchlist_image"
+                                    android:layout_width="35dp"
+                                    android:layout_height="35dp"
+                                    android:layout_centerHorizontal="true"
+                                    android:background="?attr/selectableItemBackgroundBorderless"
+                                    android:contentDescription="@null"
+                                    android:src="@drawable/ic_outline_watchlist"
+                                    app:tint="@color/colorAccent" />
+
+                                <TextView
+                                    android:id="@+id/total_watchlist"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/watchlist_image"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_marginTop="8dp"
+                                    android:fontFamily="@font/jost_regular"
+                                    android:text="@{String.format(`%d Watchlist`, filmMetadata.totalWatchlist)}"
+                                    android:textColor="@color/colorOnBackground"
+                                    android:textSize="15sp" />
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/jost_medium"
+                            android:text="@string/overview"
+                            android:textColor="@color/colorOnBackground"
+                            android:textSize="17sp" />
+
+                        <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:visibility="gone" />
-
-                        <ImageView
-                            android:id="@+id/empty_crew_image"
-                            android:layout_width="match_parent"
-                            android:layout_height="100dp"
                             android:layout_marginHorizontal="16dp"
-                            android:background="@drawable/bg_rounded_gray"
-                            android:contentDescription="@null"
-                            android:padding="8dp"
-                            android:src="@drawable/vc_empty_result"
-                            android:visibility="visible" />
-                    </RelativeLayout>
-                </LinearLayout>
-            </androidx.core.widget.NestedScrollView>
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                            android:layout_marginTop="8dp">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
-            style="@style/FABPrimary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_fill_add" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                            <TextView
+                                android:id="@+id/overview"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/jost_regular"
+                                android:text="@{filmDetail.overview}"
+                                android:textColor="@color/colorOnBackground"
+                                android:textSize="15sp"
+                                android:visibility="@{filmDetail.hasOverview ? View.VISIBLE : View.GONE}" />
 
-</RelativeLayout>
+                            <ImageView
+                                android:id="@+id/empty_overview_image"
+                                android:layout_width="match_parent"
+                                android:layout_height="100dp"
+                                android:background="@drawable/bg_rounded_gray"
+                                android:contentDescription="@null"
+                                android:padding="8dp"
+                                android:src="@drawable/vc_empty_result"
+                                android:visibility="@{filmDetail.hasOverview ? View.GONE : View.VISIBLE}" />
+                        </RelativeLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/jost_medium"
+                            android:text="@string/cast"
+                            android:textColor="@color/colorOnBackground"
+                            android:textSize="17sp" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp">
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/recycler_view_cast"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:visibility="@{filmDetail.hasCast &amp;&amp; loadSuccess ? View.VISIBLE : View.GONE}" />
+
+                            <ImageView
+                                android:id="@+id/empty_cast_image"
+                                android:layout_width="match_parent"
+                                android:layout_height="100dp"
+                                android:layout_marginHorizontal="16dp"
+                                android:background="@drawable/bg_rounded_gray"
+                                android:contentDescription="@null"
+                                android:padding="8dp"
+                                android:src="@drawable/vc_empty_result"
+                                android:visibility="@{filmDetail.hasCast ? View.GONE : View.VISIBLE}" />
+                        </RelativeLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/jost_medium"
+                            android:text="@string/crew"
+                            android:textColor="@color/colorOnBackground"
+                            android:textSize="17sp" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp">
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/recycler_view_crew"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:visibility="@{filmDetail.hasCrew &amp;&amp; loadSuccess ? View.VISIBLE : View.GONE}" />
+
+                            <ImageView
+                                android:id="@+id/empty_crew_image"
+                                android:layout_width="match_parent"
+                                android:layout_height="100dp"
+                                android:layout_marginHorizontal="16dp"
+                                android:background="@drawable/bg_rounded_gray"
+                                android:contentDescription="@null"
+                                android:padding="8dp"
+                                android:src="@drawable/vc_empty_result"
+                                android:visibility="@{filmDetail.hasCrew ? View.GONE : View.VISIBLE}" />
+                        </RelativeLayout>
+                    </LinearLayout>
+                </androidx.core.widget.NestedScrollView>
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab"
+                style="@style/FABPrimary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:src="@drawable/ic_fill_add" />
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    </RelativeLayout>
+</layout>

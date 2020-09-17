@@ -3,11 +3,9 @@ package xyz.fairportstudios.popularin.activities
 import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
-import android.view.View
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.apis.popularin.get.ReviewDetailRequest
@@ -17,7 +15,6 @@ import xyz.fairportstudios.popularin.dialogs.WatchDatePickerDialog
 import xyz.fairportstudios.popularin.models.ReviewDetail
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
-import xyz.fairportstudios.popularin.statics.TMDbAPI
 import java.text.DateFormat
 import java.util.Calendar
 
@@ -28,8 +25,7 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
     // Member
     private lateinit var mCalendar: Calendar
-    private lateinit var mWatchDate: String
-    private lateinit var mReview: String
+    private lateinit var mReviewDetail: ReviewDetail
 
     // View binding
     private lateinit var mViewBinding: ActivityEditReviewBinding
@@ -49,6 +45,7 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         mCalendar = Calendar.getInstance()
 
         // Menampilkan ulasan awal
+        mViewBinding.isLoading = true
         getCurrentReview(context, reviewID)
 
         // Activity
@@ -71,7 +68,7 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, day: Int) {
-        mWatchDate = "$year-${month + 1}-$day"
+        mReviewDetail.watchDate = "$year-${month + 1}-$day"
         mCalendar.set(Calendar.YEAR, year)
         mCalendar.set(Calendar.MONTH, month)
         mCalendar.set(Calendar.DAY_OF_MONTH, day)
@@ -82,29 +79,19 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         val reviewDetailRequest = ReviewDetailRequest(context, id)
         reviewDetailRequest.sendRequest(object : ReviewDetailRequest.Callback {
             override fun onSuccess(reviewDetail: ReviewDetail) {
-                // Menampilkan tanggal tonton awal
-                getCurrentWatchDate(reviewDetail.watchDate)
-
-                // Parsing
-                mRating = reviewDetail.rating.toFloat()
-                mReview = reviewDetail.reviewDetail
-                val filmYear = ParseDate.getYear(reviewDetail.releaseDate)
-                val filmPoster = "${TMDbAPI.BASE_SMALL_IMAGE_URL}${reviewDetail.poster}"
-
-                // Isi
-                mViewBinding.filmTitle.text = reviewDetail.title
-                mViewBinding.filmYear.text = filmYear
-                mViewBinding.ratingBar.rating = mRating
-                mViewBinding.inputReview.setText(mReview)
-                Glide.with(context).load(filmPoster).into(mViewBinding.filmPoster)
-                mViewBinding.progressBar.visibility = View.GONE
-                mViewBinding.editReviewLayout.visibility = View.VISIBLE
+                mReviewDetail = reviewDetail
+                mRating = mReviewDetail.rating.toFloat()
+                mViewBinding.reviewDetail = mReviewDetail
+                mViewBinding.year = ParseDate.getYear(mReviewDetail.releaseDate)
+                mViewBinding.isLoading = false
+                mViewBinding.loadSuccess = true
+                getCurrentWatchDate(mReviewDetail.watchDate)
             }
 
             override fun onError(message: String) {
-                mViewBinding.progressBar.visibility = View.GONE
-                mViewBinding.errorMessage.visibility = View.VISIBLE
-                mViewBinding.errorMessage.text = message
+                mViewBinding.isLoading = false
+                mViewBinding.loadSuccess = false
+                mViewBinding.message = message
             }
         })
 
@@ -116,7 +103,7 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         val year = ParseDate.getYear(watchDate).toInt()
         val month = ParseDate.getMonth(watchDate).toInt() - 1
         val day = ParseDate.getDay(watchDate).toInt()
-        mWatchDate = "$year-${month + 1}-$day"
+        mReviewDetail.watchDate = "$year-${month + 1}-$day"
         mCalendar.set(Calendar.YEAR, year)
         mCalendar.set(Calendar.MONTH, month)
         mCalendar.set(Calendar.DAY_OF_MONTH, day)
@@ -139,8 +126,8 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     private fun reviewValidated(): Boolean {
-        mReview = mViewBinding.inputReview.text.toString()
-        return when (mReview.isEmpty()) {
+        mReviewDetail.reviewDetail = mViewBinding.inputReview.text.toString()
+        return when (mReviewDetail.reviewDetail.isEmpty()) {
             true -> {
                 Snackbar.make(mViewBinding.anchorLayout, R.string.validate_review, Snackbar.LENGTH_LONG).show()
                 false
@@ -150,7 +137,7 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     private fun editReview(context: Context, id: Int) {
-        val updateReviewRequest = UpdateReviewRequest(context, id, mRating, mReview, mWatchDate)
+        val updateReviewRequest = UpdateReviewRequest(context, id, mRating, mReviewDetail.reviewDetail, mReviewDetail.watchDate)
         updateReviewRequest.sendRequest(object : UpdateReviewRequest.Callback {
             override fun onSuccess() {
                 onBackPressed()

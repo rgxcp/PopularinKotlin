@@ -93,9 +93,7 @@ class EditProfileFragment : Fragment() {
         val selfDetailRequest = SelfDetailRequest(context)
         selfDetailRequest.sendRequest(object : SelfDetailRequest.Callback {
             override fun onSuccess(selfDetail: SelfDetail) {
-                mViewBinding.inputFullName.setText(selfDetail.fullName)
-                mViewBinding.inputUsername.setText(selfDetail.username)
-                mViewBinding.inputEmail.setText(selfDetail.email)
+                mViewBinding.selfDetail = selfDetail
             }
 
             override fun onError(message: String) {

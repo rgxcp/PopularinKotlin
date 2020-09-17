@@ -4,12 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.adapters.CastAdapter
@@ -22,27 +20,17 @@ import xyz.fairportstudios.popularin.models.Cast
 import xyz.fairportstudios.popularin.models.Crew
 import xyz.fairportstudios.popularin.models.FilmDetail
 import xyz.fairportstudios.popularin.models.FilmMetadata
-import xyz.fairportstudios.popularin.services.ConvertGenre
-import xyz.fairportstudios.popularin.services.ConvertRuntime
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
-import xyz.fairportstudios.popularin.statics.TMDbAPI
 import java.util.Locale
 import kotlin.collections.ArrayList
 
 class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, CrewAdapter.OnClickListener {
-    // Primitive
-    private var mGenreID = 0
-
     // Member
     private lateinit var mCastList: ArrayList<Cast>
     private lateinit var mCrewList: ArrayList<Crew>
     private lateinit var mContext: Context
-    private lateinit var mGenreTitle: String
-    private lateinit var mFilmTitle: String
-    private lateinit var mFilmYear: String
-    private lateinit var mFilmPoster: String
-    private lateinit var mYoutubeKey: String
+    private lateinit var mFilmDetail: FilmDetail
 
     // View binding
     private lateinit var mViewBinding: ActivityFilmDetailBinding
@@ -63,6 +51,7 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
         mViewBinding.collapsingToolbar.setExpandedTitleTypeface(typeface)
 
         // Mendapatkan detail film
+        mViewBinding.isLoading = true
         getFilmDetail(filmID)
 
         // Mendapatkan metadata film
@@ -72,14 +61,14 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
         mViewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
         mViewBinding.playImage.setOnClickListener {
-            when (mYoutubeKey.isNotEmpty()) {
-                true -> playTrailer(mYoutubeKey)
-                false -> searchTrailer("${mFilmTitle.toLowerCase(Locale.ROOT)} trailer")
+            when (mFilmDetail.videoKey.isNotEmpty()) {
+                true -> playTrailer(mFilmDetail.videoKey)
+                false -> searchTrailer("${mFilmDetail.originalTitle.toLowerCase(Locale.ROOT)} trailer")
             }
         }
 
         mViewBinding.genreChip.setOnClickListener {
-            if (mGenreID != 0) gotoDiscoverFilm(mGenreID, mGenreTitle)
+            if (mFilmDetail.genreID != 0) gotoDiscoverFilm(mFilmDetail.genreID, mViewBinding.genreChip.text.toString())
         }
 
         mViewBinding.reviewImage.setOnClickListener { gotoFilmReview(filmID) }
@@ -110,51 +99,31 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
         val filmDetailRequest = FilmDetailRequest(mContext, id)
         filmDetailRequest.sendRequest(object : FilmDetailRequest.Callback {
             override fun onSuccess(filmDetail: FilmDetail, castList: ArrayList<Cast>, crewList: ArrayList<Crew>) {
-                // Parsing
-                mGenreID = filmDetail.genreID
-                mFilmTitle = filmDetail.originalTitle
-                mFilmPoster = filmDetail.posterPath
-                mYoutubeKey = filmDetail.videoKey
-                mGenreTitle = ConvertGenre.getGenreForHumans(mGenreID).toString()
-                mFilmYear = ParseDate.getYear(filmDetail.releaseDate)
-                val overview = filmDetail.overview
-                val runtime = ConvertRuntime.getRuntimeForHumans(filmDetail.runtime)
-                val poster = "${TMDbAPI.BASE_LARGE_IMAGE_URL}$mFilmPoster"
-
                 // Detail
-                mViewBinding.toolbar.title = mFilmTitle
-                mViewBinding.genreChip.text = mGenreTitle
-                mViewBinding.runtimeChip.text = runtime
-                if (overview.isNotEmpty()) {
-                    mViewBinding.emptyOverviewImage.visibility = View.GONE
-                    mViewBinding.overview.visibility = View.VISIBLE
-                    mViewBinding.overview.text = overview
-                }
-                Glide.with(mContext).load(poster).into(mViewBinding.filmPoster)
-                mViewBinding.progressBar.visibility = View.GONE
-                mViewBinding.anchorLayout.visibility = View.VISIBLE
+                mFilmDetail = filmDetail
+                mViewBinding.filmDetail = mFilmDetail
+                mViewBinding.isLoading = false
+                mViewBinding.loadSuccess = true
 
                 // Cast
-                if (castList.isNotEmpty()) {
+                if (mFilmDetail.hasCast) {
                     mCastList = ArrayList()
                     mCastList.addAll(castList)
                     setCastAdapter()
-                    mViewBinding.emptyCastImage.visibility = View.GONE
                 }
 
                 // Crew
-                if (crewList.isNotEmpty()) {
+                if (mFilmDetail.hasCrew) {
                     mCrewList = ArrayList()
                     mCrewList.addAll(crewList)
                     setCrewAdapter()
-                    mViewBinding.emptyCrewImage.visibility = View.GONE
                 }
             }
 
             override fun onError(message: String) {
-                mViewBinding.progressBar.visibility = View.GONE
-                mViewBinding.errorMessage.visibility = View.VISIBLE
-                mViewBinding.errorMessage.text = message
+                mViewBinding.isLoading = false
+                mViewBinding.loadSuccess = false
+                mViewBinding.message = message
             }
         })
     }
@@ -163,10 +132,7 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
         val filmMetadataRequest = FilmMetadataRequest(mContext, id)
         filmMetadataRequest.sendRequest(object : FilmMetadataRequest.Callback {
             override fun onSuccess(filmMetadata: FilmMetadata) {
-                mViewBinding.ratingChip.text = String.format("%s/5", filmMetadata.averageRating)
-                mViewBinding.totalReview.text = String.format("%d Ulasan", filmMetadata.totalReview)
-                mViewBinding.totalFavorite.text = String.format("%d Favorit", filmMetadata.totalFavorite)
-                mViewBinding.totalWatchlist.text = String.format("%d Watchlist", filmMetadata.totalWatchlist)
+                mViewBinding.filmMetadata = filmMetadata
             }
 
             override fun onNotFound() {
@@ -187,7 +153,6 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
         mViewBinding.recyclerViewCast.adapter = castAdapter
         mViewBinding.recyclerViewCast.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
         mViewBinding.recyclerViewCast.hasFixedSize()
-        mViewBinding.recyclerViewCast.visibility = View.VISIBLE
     }
 
     private fun setCrewAdapter() {
@@ -195,11 +160,11 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
         mViewBinding.recyclerViewCrew.adapter = crewAdapter
         mViewBinding.recyclerViewCrew.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
         mViewBinding.recyclerViewCrew.hasFixedSize()
-        mViewBinding.recyclerViewCrew.visibility = View.VISIBLE
     }
 
     private fun showFilmModal(id: Int) {
-        val filmModal = FilmModal(id, mFilmTitle, mFilmYear, mFilmPoster)
+        val filmYear = ParseDate.getYear(mFilmDetail.releaseDate)
+        val filmModal = FilmModal(id, mFilmDetail.originalTitle, filmYear, mFilmDetail.posterPath)
         filmModal.show(supportFragmentManager, Popularin.FILM_MODAL)
     }
 

@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.activities.EditProfileActivity
 import xyz.fairportstudios.popularin.activities.FilmDetailActivity
@@ -55,6 +54,7 @@ class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, Recen
         val authID = auth.getAuthID()
 
         // Mendapatkan data
+        mViewBinding.isLoading = true
         getAccountDetail(authID)
 
         // Activity
@@ -114,17 +114,9 @@ class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, Recen
         val accountDetailRequest = AccountDetailRequest(mContext, id)
         accountDetailRequest.sendRequest(object : AccountDetailRequest.Callback {
             override fun onSuccess(accountDetail: AccountDetail) {
-                mViewBinding.fullName.text = accountDetail.fullName
-                mViewBinding.username.text = String.format("@%s", accountDetail.username)
-                mViewBinding.totalReview.text = accountDetail.totalReview.toString()
-                mViewBinding.totalFavorite.text = accountDetail.totalFavorite.toString()
-                mViewBinding.totalWatchlist.text = accountDetail.totalWatchlist.toString()
-                mViewBinding.totalFollower.text = accountDetail.totalFollower.toString()
-                mViewBinding.totalFollowing.text = accountDetail.totalFollowing.toString()
-                Glide.with(mContext).load(accountDetail.profilePicture).into(mViewBinding.userProfile)
-                mViewBinding.progressBar.visibility = View.GONE
-                mViewBinding.errorMessage.visibility = View.GONE
-                mViewBinding.scrollView.visibility = View.VISIBLE
+                mViewBinding.accountDetail = accountDetail
+                mViewBinding.isLoading = false
+                mViewBinding.loadSuccess = true
                 mIsLoadFirstTimeSuccess = true
             }
 
@@ -132,23 +124,21 @@ class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, Recen
                 mRecentFavoriteList = ArrayList()
                 mRecentFavoriteList.addAll(recentFavoriteList)
                 setRecentFavoriteAdapter()
-                mViewBinding.emptyRecentFavoriteImage.visibility = View.GONE
             }
 
             override fun onHasRecentReview(recentReviewList: ArrayList<RecentReview>) {
                 mRecentReviewList = ArrayList()
                 mRecentReviewList.addAll(recentReviewList)
                 setRecentReviewAdapter()
-                mViewBinding.emptyRecentReviewImage.visibility = View.GONE
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     false -> {
-                        mViewBinding.progressBar.visibility = View.GONE
-                        mViewBinding.errorMessage.visibility = View.VISIBLE
-                        mViewBinding.errorMessage.text = message
+                        mViewBinding.isLoading = false
+                        mViewBinding.loadSuccess = false
+                        mViewBinding.message = message
                     }
                 }
             }
@@ -163,7 +153,6 @@ class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, Recen
         mViewBinding.recyclerViewRecentFavorite.adapter = recentFavoriteAdapter
         mViewBinding.recyclerViewRecentFavorite.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
         mViewBinding.recyclerViewRecentFavorite.hasFixedSize()
-        mViewBinding.recyclerViewRecentFavorite.visibility = View.VISIBLE
     }
 
     private fun setRecentReviewAdapter() {
@@ -171,7 +160,6 @@ class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, Recen
         mViewBinding.recyclerViewRecentReview.adapter = recentReviewAdapter
         mViewBinding.recyclerViewRecentReview.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
         mViewBinding.recyclerViewRecentReview.hasFixedSize()
-        mViewBinding.recyclerViewRecentReview.visibility = View.VISIBLE
     }
 
     private fun showFilmModal(id: Int, title: String, year: String, poster: String) {

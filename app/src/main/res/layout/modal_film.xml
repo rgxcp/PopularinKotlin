@@ -1,150 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/colorBackground"
-    android:orientation="vertical"
-    android:paddingVertical="8dp">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/film_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:ellipsize="end"
-        android:fontFamily="@font/jost_medium"
-        android:maxLines="1"
-        android:textColor="@color/colorOnBackground"
-        android:textSize="17sp" />
+    <data>
 
-    <TextView
-        android:id="@+id/film_year"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:fontFamily="@font/jost_regular"
-        android:textSize="15sp" />
+        <variable
+            name="title"
+            type="String" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/colorSurface" />
+        <variable
+            name="year"
+            type="String" />
+
+        <variable
+            name="filmSelf"
+            type="xyz.fairportstudios.popularin.models.FilmSelf" />
+    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:baselineAligned="false"
-        android:orientation="horizontal"
-        android:weightSum="3">
+        android:background="@color/colorBackground"
+        android:orientation="vertical"
+        android:paddingVertical="8dp">
 
-        <RelativeLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/film_title"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_marginHorizontal="16dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/jost_medium"
+            android:maxLines="1"
+            android:text="@{title}"
+            android:textColor="@color/colorOnBackground"
+            android:textSize="17sp" />
 
-            <ImageView
-                android:id="@+id/review_image"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_centerHorizontal="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_outline_eye"
-                app:tint="@color/colorAccent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/review_image"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/jost_regular"
-                android:text="@string/review"
-                android:textColor="@color/colorOnBackground"
-                android:textSize="15sp" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/film_year"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/jost_regular"
+            android:text="@{year}"
+            android:textSize="15sp" />
 
-            <ImageView
-                android:id="@+id/favorite_image"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_centerHorizontal="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_outline_heart"
-                app:tint="@color/colorAccent" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/colorSurface" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/favorite_image"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/jost_regular"
-                android:text="@string/favorite"
-                android:textColor="@color/colorOnBackground"
-                android:textSize="15sp" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_marginTop="16dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:weightSum="3">
 
-            <ImageView
-                android:id="@+id/watchlist_image"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_centerHorizontal="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_outline_watchlist"
-                app:tint="@color/colorAccent" />
-
-            <TextView
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/watchlist_image"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/jost_regular"
-                android:text="@string/watchlist"
-                android:textColor="@color/colorOnBackground"
-                android:textSize="15sp" />
-        </RelativeLayout>
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/review_image"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@null"
+                    android:src="@{filmSelf.inReview ? @drawable/ic_fill_eye : @drawable/ic_outline_eye}"
+                    app:tint="@color/colorAccent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/review_image"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/jost_regular"
+                    android:text="@string/review"
+                    android:textColor="@color/colorOnBackground"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/favorite_image"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@null"
+                    android:src="@{filmSelf.inFavorite ? @drawable/ic_fill_heart : @drawable/ic_outline_heart}"
+                    app:tint="@color/colorAccent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/favorite_image"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/jost_regular"
+                    android:text="@string/favorite"
+                    android:textColor="@color/colorOnBackground"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/watchlist_image"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@null"
+                    android:src="@{filmSelf.inWatchlist ? @drawable/ic_fill_watchlist : @drawable/ic_outline_watchlist}"
+                    app:tint="@color/colorAccent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/watchlist_image"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/jost_regular"
+                    android:text="@string/watchlist"
+                    android:textColor="@color/colorOnBackground"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/colorSurface" />
+
+        <RatingBar
+            android:id="@+id/rating_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="12dp"
+            android:numStars="5"
+            android:stepSize="0.5"
+            app:rating="@{filmSelf.lastRate}" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/jost_regular"
+            android:text="@string/rating"
+            android:textColor="@color/colorOnBackground"
+            android:textSize="15sp" />
+
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/colorSurface" />
-
-    <RatingBar
-        android:id="@+id/rating_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="12dp"
-        android:numStars="5"
-        android:stepSize="0.5" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:fontFamily="@font/jost_regular"
-        android:text="@string/rating"
-        android:textColor="@color/colorOnBackground"
-        android:textSize="15sp" />
-
-</LinearLayout>
+</layout>
