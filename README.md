@@ -22,6 +22,7 @@
 - Moving the codebase from Java to Kotlin
 - Adding progress bar while load more
 - Implementing view binding
+- Implementing data binding
 ### 1.1.0
 - Adding genre list in timeline fragment
 ### 1.0.0
