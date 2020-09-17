@@ -26,6 +26,7 @@ import xyz.fairportstudios.popularin.databinding.FragmentTimelineBinding
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.Genre
 import xyz.fairportstudios.popularin.models.Review
+import xyz.fairportstudios.popularin.services.LoadGenre
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
@@ -206,22 +207,7 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
 
     private fun loadGenre() {
         mGenreList = ArrayList()
-        mGenreList.add(Genre(28, R.drawable.img_action, getString(R.string.genre_action)))
-        mGenreList.add(Genre(16, R.drawable.img_animation, getString(R.string.genre_animation)))
-        mGenreList.add(Genre(99, R.drawable.img_documentary, getString(R.string.genre_documentary)))
-        mGenreList.add(Genre(18, R.drawable.img_drama, getString(R.string.genre_drama)))
-        mGenreList.add(Genre(14, R.drawable.img_fantasy, getString(R.string.genre_fantasy)))
-        mGenreList.add(Genre(878, R.drawable.img_fiction, getString(R.string.genre_fiction)))
-        mGenreList.add(Genre(27, R.drawable.img_horror, getString(R.string.genre_horror)))
-        mGenreList.add(Genre(80, R.drawable.img_crime, getString(R.string.genre_crime)))
-        mGenreList.add(Genre(10751, R.drawable.img_family, getString(R.string.genre_family)))
-        mGenreList.add(Genre(35, R.drawable.img_comedy, getString(R.string.genre_comedy)))
-        mGenreList.add(Genre(9648, R.drawable.img_mystery, getString(R.string.genre_mystery)))
-        mGenreList.add(Genre(10752, R.drawable.img_war, getString(R.string.genre_war)))
-        mGenreList.add(Genre(12, R.drawable.img_adventure, getString(R.string.genre_adventure)))
-        mGenreList.add(Genre(10749, R.drawable.img_romance, getString(R.string.genre_romance)))
-        mGenreList.add(Genre(36, R.drawable.img_history, getString(R.string.genre_history)))
-        mGenreList.add(Genre(53, R.drawable.img_thriller, getString(R.string.genre_thriller)))
+        LoadGenre.getAllGenre(mContext, mGenreList)
     }
 
     private fun setGenreAdapter() {
