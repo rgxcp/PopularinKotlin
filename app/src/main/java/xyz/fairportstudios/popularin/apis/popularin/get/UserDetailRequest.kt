@@ -35,11 +35,16 @@ class UserDetailRequest(private val context: Context, private val userID: Int) {
                     val activityObject = resultObject.getJSONObject("activity")
                     val totalFavorite = metadataObject.getInt("total_favorite")
                     val totalReview = metadataObject.getInt("total_review")
+                    val hasRecentFavorite = totalFavorite > 0
+                    val hasRecentReview = totalReview > 0
 
                     // Detail
                     val userDetail = UserDetail(
+                        metadataObject.getBoolean("is_self"),
                         metadataObject.getBoolean("is_follower"),
                         metadataObject.getBoolean("is_following"),
+                        hasRecentFavorite,
+                        hasRecentReview,
                         totalReview,
                         totalFavorite,
                         metadataObject.getInt("total_watchlist"),
@@ -52,7 +57,7 @@ class UserDetailRequest(private val context: Context, private val userID: Int) {
                     callback.onSuccess(userDetail)
 
                     // Favorite
-                    if (totalFavorite > 0) {
+                    if (hasRecentFavorite) {
                         val recentFavoriteList = ArrayList<RecentFavorite>()
                         val recentFavoriteArray = activityObject.getJSONArray("recent_favorites")
 
@@ -72,7 +77,7 @@ class UserDetailRequest(private val context: Context, private val userID: Int) {
                     }
 
                     // Review
-                    if (totalReview > 0) {
+                    if (hasRecentReview) {
                         val recentReviewList = ArrayList<RecentReview>()
                         val recentReviewArray = activityObject.getJSONArray("recent_reviews")
 

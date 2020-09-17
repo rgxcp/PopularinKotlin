@@ -6,6 +6,8 @@ data class AccountDetail(
     val totalWatchlist: Int,
     val totalFollower: Int,
     val totalFollowing: Int,
+    val hasRecentFavorite: Boolean,
+    val hasRecentReview: Boolean,
     val fullName: String,
     val username: String,
     val profilePicture: String

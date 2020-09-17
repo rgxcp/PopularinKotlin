@@ -28,6 +28,10 @@ class FilmDetailRequest(private val context: Context, private val filmID: Int) {
             val castArray = creditObject.getJSONArray("cast")
             val crewArray = creditObject.getJSONArray("crew")
             val videoArray = videoObject.getJSONArray("results")
+            val overview = response.getString("overview")
+            val hasOverview = overview.isNotEmpty()
+            val hasCast = !castArray.isNull(0)
+            val hasCrew = !crewArray.isNull(0)
             val runtime = try {
                 response.getInt("runtime")
             } catch (nullRuntime: JSONException) {
@@ -46,16 +50,19 @@ class FilmDetailRequest(private val context: Context, private val filmID: Int) {
             val filmDetail = FilmDetail(
                 genreID,
                 runtime,
+                hasOverview,
+                hasCast,
+                hasCrew,
                 response.getString("original_title"),
                 response.getString("release_date"),
-                response.getString("overview"),
+                overview,
                 response.getString("poster_path"),
                 videoKey
             )
 
             // Cast
             val castList = ArrayList<Cast>()
-            if (!castArray.isNull(0)) {
+            if (hasCast) {
                 for (index in 0 until castArray.length()) {
                     val indexObject = castArray.getJSONObject(index)
                     val cast = Cast(
@@ -70,7 +77,7 @@ class FilmDetailRequest(private val context: Context, private val filmID: Int) {
 
             // Crew
             val crewList = ArrayList<Crew>()
-            if (!crewArray.isNull(0)) {
+            if (hasCrew) {
                 for (index in 0 until crewArray.length()) {
                     val indexObject = crewArray.getJSONObject(index)
                     val crew = Crew(

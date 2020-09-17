@@ -34,6 +34,8 @@ class AccountDetailRequest(private val context: Context, private val userID: Int
                     val activityObject = resultObject.getJSONObject("activity")
                     val totalFavorite = metadataObject.getInt("total_favorite")
                     val totalReview = metadataObject.getInt("total_review")
+                    val hasRecentFavorite = totalFavorite > 0
+                    val hasRecentReview = totalReview > 0
 
                     // Detail
                     val accountDetail = AccountDetail(
@@ -42,6 +44,8 @@ class AccountDetailRequest(private val context: Context, private val userID: Int
                         metadataObject.getInt("total_watchlist"),
                         metadataObject.getInt("total_follower"),
                         metadataObject.getInt("total_following"),
+                        hasRecentFavorite,
+                        hasRecentReview,
                         userObject.getString("full_name"),
                         userObject.getString("username"),
                         userObject.getString("profile_picture")
@@ -49,7 +53,7 @@ class AccountDetailRequest(private val context: Context, private val userID: Int
                     callback.onSuccess(accountDetail)
 
                     // Favorite
-                    if (totalFavorite > 0) {
+                    if (hasRecentFavorite) {
                         val recentFavoriteList = ArrayList<RecentFavorite>()
                         val recentFavoriteArray = activityObject.getJSONArray("recent_favorites")
 
@@ -69,7 +73,7 @@ class AccountDetailRequest(private val context: Context, private val userID: Int
                     }
 
                     // Review
-                    if (totalReview > 0) {
+                    if (hasRecentReview) {
                         val recentReviewList = ArrayList<RecentReview>()
                         val recentReviewArray = activityObject.getJSONArray("recent_reviews")
 
