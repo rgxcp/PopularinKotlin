@@ -12,27 +12,27 @@ import xyz.fairportstudios.popularin.activities.SignUpActivity
 import xyz.fairportstudios.popularin.databinding.ReusableEmptyAccountBinding
 
 class EmptyAccountFragment : Fragment() {
-    // View binding
-    private var _mViewBinding: ReusableEmptyAccountBinding? = null
-    private val mViewBinding get() = _mViewBinding!!
+    // Binding
+    private var _mBinding: ReusableEmptyAccountBinding? = null
+    private val mBinding get() = _mBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _mViewBinding = ReusableEmptyAccountBinding.inflate(inflater, container, false)
+        _mBinding = ReusableEmptyAccountBinding.inflate(inflater, container, false)
 
         // Context
         val context = requireActivity()
 
         // Activity
-        mViewBinding.signInButton.setOnClickListener { gotoSignIn(context) }
+        mBinding.signInButton.setOnClickListener { gotoSignIn(context) }
 
-        mViewBinding.signUpButton.setOnClickListener { gotoSignUp(context) }
+        mBinding.signUpButton.setOnClickListener { gotoSignUp(context) }
 
-        return mViewBinding.root
+        return mBinding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _mViewBinding = null
+        _mBinding = null
     }
 
     private fun gotoSignIn(context: Context) {

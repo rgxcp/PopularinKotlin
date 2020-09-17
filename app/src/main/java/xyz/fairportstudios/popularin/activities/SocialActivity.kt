@@ -15,8 +15,8 @@ import xyz.fairportstudios.popularin.statics.Popularin
 class SocialActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewBinding = ReusableToolbarPagerBinding.inflate(layoutInflater)
-        setContentView(viewBinding.root)
+        val binding = ReusableToolbarPagerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Context
         val context = this
@@ -31,7 +31,7 @@ class SocialActivity : AppCompatActivity() {
         val isSelf = auth.isSelf(userID, auth.getAuthID())
 
         // Toolbar
-        viewBinding.toolbar.title = getString(R.string.social)
+        binding.toolbar.title = getString(R.string.social)
 
         // Limit page yang akan ditampilkan
         val screenPageLimit = when (isAuth && !isSelf) {
@@ -44,12 +44,12 @@ class SocialActivity : AppCompatActivity() {
         pagerAdapter.addFragment(FollowerFragment(userID, isSelf), getString(R.string.follower))
         pagerAdapter.addFragment(FollowingFragment(userID, isSelf), getString(R.string.following))
         if (isAuth && !isSelf) pagerAdapter.addFragment(MutualFragment(userID), getString(R.string.mutual))
-        viewBinding.viewPager.adapter = pagerAdapter
-        viewBinding.viewPager.offscreenPageLimit = screenPageLimit
-        viewBinding.viewPager.currentItem = viewPagerIndex
-        viewBinding.tabLayout.setupWithViewPager(viewBinding.viewPager)
+        binding.viewPager.adapter = pagerAdapter
+        binding.viewPager.offscreenPageLimit = screenPageLimit
+        binding.viewPager.currentItem = viewPagerIndex
+        binding.tabLayout.setupWithViewPager(binding.viewPager)
 
         // Activity
-        viewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
+        binding.toolbar.setNavigationOnClickListener { onBackPressed() }
     }
 }

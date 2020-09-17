@@ -40,12 +40,12 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
     private lateinit var mFilmReviewAdapter: FilmReviewAdapter
     private lateinit var mLikedFilmReviewRequest: LikedFilmReviewRequest
 
-    // View binding
-    private var _mViewBinding: ReusableRecyclerBinding? = null
-    private val mViewBinding get() = _mViewBinding!!
+    // Binding
+    private var _mBinding: ReusableRecyclerBinding? = null
+    private val mBinding get() = _mBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _mViewBinding = ReusableRecyclerBinding.inflate(inflater, container, false)
+        _mBinding = ReusableRecyclerBinding.inflate(inflater, container, false)
 
         // Context
         mContext = requireActivity()
@@ -57,11 +57,11 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
         val handler = Handler()
 
         // Activity
-        mViewBinding.nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+        mBinding.nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mViewBinding.loadMoreBar.visibility = View.VISIBLE
+                    mBinding.loadMoreBar.visibility = View.VISIBLE
                     handler.postDelayed({
                         getLikedFilmReview(mCurrentPage, false)
                     }, 1000)
@@ -69,13 +69,13 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
             }
         }
 
-        mViewBinding.swipeRefresh.setOnRefreshListener {
+        mBinding.swipeRefresh.setOnRefreshListener {
             mIsLoading = true
-            mViewBinding.swipeRefresh.isRefreshing = true
+            mBinding.swipeRefresh.isRefreshing = true
             getLikedFilmReview(mStartPage, true)
         }
 
-        return mViewBinding.root
+        return mBinding.root
     }
 
     override fun onResume() {
@@ -90,7 +90,7 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _mViewBinding = null
+        _mBinding = null
     }
 
     override fun onFilmReviewItemClick(position: Int) {
@@ -143,12 +143,12 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
                         val insertIndex = mFilmReviewList.size
                         mFilmReviewList.addAll(insertIndex, filmReviewList)
                         setAdapter()
-                        mViewBinding.progressBar.visibility = View.GONE
+                        mBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mViewBinding.errorMessage.visibility = View.GONE
+                mBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -159,22 +159,22 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
                         mFilmReviewList.clear()
                         mFilmReviewAdapter.notifyDataSetChanged()
                     }
-                    false -> mViewBinding.progressBar.visibility = View.GONE
+                    false -> mBinding.progressBar.visibility = View.GONE
                 }
-                mViewBinding.errorMessage.visibility = View.VISIBLE
-                mViewBinding.errorMessage.text = getString(R.string.empty_liked_film_review)
+                mBinding.errorMessage.visibility = View.VISIBLE
+                mBinding.errorMessage.text = getString(R.string.empty_liked_film_review)
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mViewBinding.loadMoreBar.visibility = View.GONE
-                        Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                        mBinding.loadMoreBar.visibility = View.GONE
+                        Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mViewBinding.progressBar.visibility = View.GONE
-                        mViewBinding.errorMessage.visibility = View.VISIBLE
-                        mViewBinding.errorMessage.text = message
+                        mBinding.progressBar.visibility = View.GONE
+                        mBinding.errorMessage.visibility = View.VISIBLE
+                        mBinding.errorMessage.text = message
                     }
                 }
             }
@@ -182,8 +182,8 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
 
         // Memberhentikan loading
         mIsLoading = false
-        if (refreshPage) mViewBinding.swipeRefresh.isRefreshing = false
-        mViewBinding.loadMoreBar.visibility = when (page == mTotalPage) {
+        if (refreshPage) mBinding.swipeRefresh.isRefreshing = false
+        mBinding.loadMoreBar.visibility = when (page == mTotalPage) {
             true -> View.GONE
             false -> View.INVISIBLE
         }
@@ -191,9 +191,9 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
 
     private fun setAdapter() {
         mFilmReviewAdapter = FilmReviewAdapter(mContext, mFilmReviewList, this)
-        mViewBinding.recyclerView.adapter = mFilmReviewAdapter
-        mViewBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
-        mViewBinding.recyclerView.visibility = View.VISIBLE
+        mBinding.recyclerView.adapter = mFilmReviewAdapter
+        mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
+        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun likeReview(id: Int, position: Int) {
@@ -208,7 +208,7 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
             }
 
             override fun onError(message: String) {
-                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 
@@ -228,7 +228,7 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
             }
 
             override fun onError(message: String) {
-                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 

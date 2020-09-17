@@ -32,13 +32,13 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
     private lateinit var mContext: Context
     private lateinit var mUserDetail: UserDetail
 
-    // View binding
-    private lateinit var mViewBinding: ActivityUserDetailBinding
+    // Binding
+    private lateinit var mBinding: ActivityUserDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mViewBinding = ActivityUserDetailBinding.inflate(layoutInflater)
-        setContentView(mViewBinding.root)
+        mBinding = ActivityUserDetailBinding.inflate(layoutInflater)
+        setContentView(mBinding.root)
 
         // Context
         mContext = this
@@ -50,23 +50,23 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
         val isAuth = Auth(mContext).isAuth()
 
         // Mendapatkan data
-        mViewBinding.isLoading = true
+        mBinding.isLoading = true
         getUserDetail(userID)
 
         // Activity
-        mViewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
+        mBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        mViewBinding.totalReviewLayout.setOnClickListener { gotoUserReview(userID) }
+        mBinding.totalReviewLayout.setOnClickListener { gotoUserReview(userID) }
 
-        mViewBinding.totalFavoriteLayout.setOnClickListener { gotoUserFavorite(userID) }
+        mBinding.totalFavoriteLayout.setOnClickListener { gotoUserFavorite(userID) }
 
-        mViewBinding.totalWatchlistLayout.setOnClickListener { gotoUserWatchlist(userID) }
+        mBinding.totalWatchlistLayout.setOnClickListener { gotoUserWatchlist(userID) }
 
-        mViewBinding.totalFollowerLayout.setOnClickListener { gotoUserSocial(userID, 0) }
+        mBinding.totalFollowerLayout.setOnClickListener { gotoUserSocial(userID, 0) }
 
-        mViewBinding.totalFollowingLayout.setOnClickListener { gotoUserSocial(userID, 1) }
+        mBinding.totalFollowingLayout.setOnClickListener { gotoUserSocial(userID, 1) }
 
-        mViewBinding.followButton.setOnClickListener {
+        mBinding.followButton.setOnClickListener {
             when {
                 isAuth && !mUserDetail.isSelf -> {
                     when (mUserDetail.isFollowing) {
@@ -85,8 +85,8 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
             }
         }
 
-        mViewBinding.swipeRefresh.setOnRefreshListener {
-            mViewBinding.swipeRefresh.isRefreshing = true
+        mBinding.swipeRefresh.setOnRefreshListener {
+            mBinding.swipeRefresh.isRefreshing = true
             getUserDetail(userID)
         }
     }
@@ -118,11 +118,11 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
         userDetailRequest.sendRequest(object : UserDetailRequest.Callback {
             override fun onSuccess(userDetail: UserDetail) {
                 mUserDetail = userDetail
-                mViewBinding.userDetail = mUserDetail
-                mViewBinding.isLoading = false
-                mViewBinding.loadSuccess = true
+                mBinding.userDetail = mUserDetail
+                mBinding.isLoading = false
+                mBinding.loadSuccess = true
                 mIsLoadFirstTimeSuccess = true
-                if (mUserDetail.isSelf) mViewBinding.followButton.text = getString(R.string.edit_profile)
+                if (mUserDetail.isSelf) mBinding.followButton.text = getString(R.string.edit_profile)
             }
 
             override fun onHasRecentFavorite(recentFavoriteList: ArrayList<RecentFavorite>) {
@@ -139,32 +139,32 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
-                    true -> Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                    true -> Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     false -> {
-                        mViewBinding.isLoading = false
-                        mViewBinding.loadSuccess = false
-                        mViewBinding.message = message
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = false
+                        mBinding.message = message
                     }
                 }
             }
         })
 
         // Memberhentikan loading
-        mViewBinding.swipeRefresh.isRefreshing = false
+        mBinding.swipeRefresh.isRefreshing = false
     }
 
     private fun setRecentFavoriteAdapter() {
         val recentFavoriteAdapter = RecentFavoriteAdapter(mContext, mRecentFavoriteList, this)
-        mViewBinding.recyclerViewRecentFavorite.adapter = recentFavoriteAdapter
-        mViewBinding.recyclerViewRecentFavorite.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
-        mViewBinding.recyclerViewRecentFavorite.hasFixedSize()
+        mBinding.recyclerViewRecentFavorite.adapter = recentFavoriteAdapter
+        mBinding.recyclerViewRecentFavorite.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
+        mBinding.recyclerViewRecentFavorite.hasFixedSize()
     }
 
     private fun setRecentReviewAdapter() {
         val recentReviewAdapter = RecentReviewAdapter(mContext, mRecentReviewList, this)
-        mViewBinding.recyclerViewRecentReview.adapter = recentReviewAdapter
-        mViewBinding.recyclerViewRecentReview.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
-        mViewBinding.recyclerViewRecentReview.hasFixedSize()
+        mBinding.recyclerViewRecentReview.adapter = recentReviewAdapter
+        mBinding.recyclerViewRecentReview.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
+        mBinding.recyclerViewRecentReview.hasFixedSize()
     }
 
     private fun setFollowingState(state: Boolean) {
@@ -173,15 +173,15 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
             true -> mUserDetail.totalFollower++
             false -> mUserDetail.totalFollower--
         }
-        mViewBinding.totalFollower.text = mUserDetail.totalFollower.toString()
+        mBinding.totalFollower.text = mUserDetail.totalFollower.toString()
     }
 
     private fun setFollowButtonState(state: Boolean, followingStateEnum: Enum<FollowingState>) {
-        mViewBinding.followButton.isEnabled = state
+        mBinding.followButton.isEnabled = state
         when (followingStateEnum) {
-            FollowingState.FOLLOWING -> mViewBinding.followButton.text = getString(R.string.following)
-            FollowingState.NOT_FOLLOWING -> mViewBinding.followButton.text = getString(R.string.follow)
-            else -> mViewBinding.followButton.text = getString(R.string.loading)
+            FollowingState.FOLLOWING -> mBinding.followButton.text = getString(R.string.following)
+            FollowingState.NOT_FOLLOWING -> mBinding.followButton.text = getString(R.string.follow)
+            else -> mBinding.followButton.text = getString(R.string.loading)
         }
     }
 
@@ -199,7 +199,7 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
 
             override fun onError(message: String) {
                 setFollowButtonState(true, FollowingState.NOT_FOLLOWING)
-                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
     }
@@ -214,7 +214,7 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
 
             override fun onError(message: String) {
                 setFollowButtonState(true, FollowingState.FOLLOWING)
-                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
     }

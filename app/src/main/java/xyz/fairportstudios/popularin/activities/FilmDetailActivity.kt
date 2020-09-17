@@ -32,13 +32,13 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
     private lateinit var mContext: Context
     private lateinit var mFilmDetail: FilmDetail
 
-    // View binding
-    private lateinit var mViewBinding: ActivityFilmDetailBinding
+    // Binding
+    private lateinit var mBinding: ActivityFilmDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mViewBinding = ActivityFilmDetailBinding.inflate(layoutInflater)
-        setContentView(mViewBinding.root)
+        mBinding = ActivityFilmDetailBinding.inflate(layoutInflater)
+        setContentView(mBinding.root)
 
         // Context
         mContext = this
@@ -48,39 +48,39 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
 
         // Mengatur jenis font untuk collapsing toolbar
         val typeface = ResourcesCompat.getFont(mContext, R.font.monument_extended_regular)
-        mViewBinding.collapsingToolbar.setExpandedTitleTypeface(typeface)
+        mBinding.collapsingToolbar.setExpandedTitleTypeface(typeface)
 
         // Mendapatkan detail film
-        mViewBinding.isLoading = true
+        mBinding.isLoading = true
         getFilmDetail(filmID)
 
         // Mendapatkan metadata film
         getFilmMetadata(filmID)
 
         // Activity
-        mViewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
+        mBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        mViewBinding.playImage.setOnClickListener {
+        mBinding.playImage.setOnClickListener {
             when (mFilmDetail.videoKey.isNotEmpty()) {
                 true -> playTrailer(mFilmDetail.videoKey)
                 false -> searchTrailer("${mFilmDetail.originalTitle.toLowerCase(Locale.ROOT)} trailer")
             }
         }
 
-        mViewBinding.genreChip.setOnClickListener {
-            if (mFilmDetail.genreID != 0) gotoDiscoverFilm(mFilmDetail.genreID, mViewBinding.genreChip.text.toString())
+        mBinding.genreChip.setOnClickListener {
+            if (mFilmDetail.genreID != 0) gotoDiscoverFilm(mFilmDetail.genreID, mBinding.genreChip.text.toString())
         }
 
-        mViewBinding.reviewImage.setOnClickListener { gotoFilmReview(filmID) }
+        mBinding.reviewImage.setOnClickListener { gotoFilmReview(filmID) }
 
-        mViewBinding.favoriteImage.setOnClickListener { gotoFavoritedBy(filmID) }
+        mBinding.favoriteImage.setOnClickListener { gotoFavoritedBy(filmID) }
 
-        mViewBinding.watchlistImage.setOnClickListener { gotoWatchlistedBy(filmID) }
+        mBinding.watchlistImage.setOnClickListener { gotoWatchlistedBy(filmID) }
 
-        mViewBinding.fab.setOnClickListener { showFilmModal(filmID) }
+        mBinding.fab.setOnClickListener { showFilmModal(filmID) }
 
-        mViewBinding.swipeRefresh.setOnRefreshListener {
-            mViewBinding.swipeRefresh.isRefreshing = true
+        mBinding.swipeRefresh.setOnRefreshListener {
+            mBinding.swipeRefresh.isRefreshing = true
             getFilmMetadata(filmID)
         }
     }
@@ -101,9 +101,9 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
             override fun onSuccess(filmDetail: FilmDetail, castList: ArrayList<Cast>, crewList: ArrayList<Crew>) {
                 // Detail
                 mFilmDetail = filmDetail
-                mViewBinding.filmDetail = mFilmDetail
-                mViewBinding.isLoading = false
-                mViewBinding.loadSuccess = true
+                mBinding.filmDetail = mFilmDetail
+                mBinding.isLoading = false
+                mBinding.loadSuccess = true
 
                 // Cast
                 if (mFilmDetail.hasCast) {
@@ -121,9 +121,9 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
             }
 
             override fun onError(message: String) {
-                mViewBinding.isLoading = false
-                mViewBinding.loadSuccess = false
-                mViewBinding.message = message
+                mBinding.isLoading = false
+                mBinding.loadSuccess = false
+                mBinding.message = message
             }
         })
     }
@@ -132,7 +132,7 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
         val filmMetadataRequest = FilmMetadataRequest(mContext, id)
         filmMetadataRequest.sendRequest(object : FilmMetadataRequest.Callback {
             override fun onSuccess(filmMetadata: FilmMetadata) {
-                mViewBinding.filmMetadata = filmMetadata
+                mBinding.filmMetadata = filmMetadata
             }
 
             override fun onNotFound() {
@@ -140,26 +140,26 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
             }
 
             override fun onError(message: String) {
-                Snackbar.make(mViewBinding.anchorLayout, R.string.failed_retrieve_metadata, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, R.string.failed_retrieve_metadata, Snackbar.LENGTH_LONG).show()
             }
         })
 
         // Memberhentikan loading
-        mViewBinding.swipeRefresh.isRefreshing = false
+        mBinding.swipeRefresh.isRefreshing = false
     }
 
     private fun setCastAdapter() {
         val castAdapter = CastAdapter(mContext, mCastList, this)
-        mViewBinding.recyclerViewCast.adapter = castAdapter
-        mViewBinding.recyclerViewCast.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
-        mViewBinding.recyclerViewCast.hasFixedSize()
+        mBinding.recyclerViewCast.adapter = castAdapter
+        mBinding.recyclerViewCast.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
+        mBinding.recyclerViewCast.hasFixedSize()
     }
 
     private fun setCrewAdapter() {
         val crewAdapter = CrewAdapter(mContext, mCrewList, this)
-        mViewBinding.recyclerViewCrew.adapter = crewAdapter
-        mViewBinding.recyclerViewCrew.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
-        mViewBinding.recyclerViewCrew.hasFixedSize()
+        mBinding.recyclerViewCrew.adapter = crewAdapter
+        mBinding.recyclerViewCrew.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
+        mBinding.recyclerViewCrew.hasFixedSize()
     }
 
     private fun showFilmModal(id: Int) {

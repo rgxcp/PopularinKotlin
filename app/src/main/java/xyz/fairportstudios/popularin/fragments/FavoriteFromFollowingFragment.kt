@@ -34,12 +34,12 @@ class FavoriteFromFollowingFragment(private val filmID: Int) : Fragment(), UserA
     private lateinit var mFavoriteFromFollowingRequest: FavoriteFromFollowingRequest
     private lateinit var mUserAdapter: UserAdapter
 
-    // View binding
-    private var _mViewBinding: ReusableRecyclerBinding? = null
-    private val mViewBinding get() = _mViewBinding!!
+    // Binding
+    private var _mBinding: ReusableRecyclerBinding? = null
+    private val mBinding get() = _mBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _mViewBinding = ReusableRecyclerBinding.inflate(inflater, container, false)
+        _mBinding = ReusableRecyclerBinding.inflate(inflater, container, false)
 
         // Context
         mContext = requireActivity()
@@ -48,11 +48,11 @@ class FavoriteFromFollowingFragment(private val filmID: Int) : Fragment(), UserA
         val handler = Handler()
 
         // Activity
-        mViewBinding.nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+        mBinding.nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mViewBinding.loadMoreBar.visibility = View.VISIBLE
+                    mBinding.loadMoreBar.visibility = View.VISIBLE
                     handler.postDelayed({
                         getFavoriteFromFollowing(mCurrentPage, false)
                     }, 1000)
@@ -60,13 +60,13 @@ class FavoriteFromFollowingFragment(private val filmID: Int) : Fragment(), UserA
             }
         }
 
-        mViewBinding.swipeRefresh.setOnRefreshListener {
+        mBinding.swipeRefresh.setOnRefreshListener {
             mIsLoading = true
-            mViewBinding.swipeRefresh.isRefreshing = true
+            mBinding.swipeRefresh.isRefreshing = true
             getFavoriteFromFollowing(mStartPage, true)
         }
 
-        return mViewBinding.root
+        return mBinding.root
     }
 
     override fun onResume() {
@@ -81,7 +81,7 @@ class FavoriteFromFollowingFragment(private val filmID: Int) : Fragment(), UserA
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _mViewBinding = null
+        _mBinding = null
     }
 
     override fun onUserItemClick(position: Int) {
@@ -109,12 +109,12 @@ class FavoriteFromFollowingFragment(private val filmID: Int) : Fragment(), UserA
                         val insertIndex = mUserList.size
                         mUserList.addAll(insertIndex, userList)
                         setAdapter()
-                        mViewBinding.progressBar.visibility = View.GONE
+                        mBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mViewBinding.errorMessage.visibility = View.GONE
+                mBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -125,22 +125,22 @@ class FavoriteFromFollowingFragment(private val filmID: Int) : Fragment(), UserA
                         mUserList.clear()
                         mUserAdapter.notifyDataSetChanged()
                     }
-                    false -> mViewBinding.progressBar.visibility = View.GONE
+                    false -> mBinding.progressBar.visibility = View.GONE
                 }
-                mViewBinding.errorMessage.visibility = View.VISIBLE
-                mViewBinding.errorMessage.text = getString(R.string.empty_film_favorite_from_following)
+                mBinding.errorMessage.visibility = View.VISIBLE
+                mBinding.errorMessage.text = getString(R.string.empty_film_favorite_from_following)
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mViewBinding.loadMoreBar.visibility = View.GONE
-                        Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                        mBinding.loadMoreBar.visibility = View.GONE
+                        Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mViewBinding.progressBar.visibility = View.GONE
-                        mViewBinding.errorMessage.visibility = View.VISIBLE
-                        mViewBinding.errorMessage.text = message
+                        mBinding.progressBar.visibility = View.GONE
+                        mBinding.errorMessage.visibility = View.VISIBLE
+                        mBinding.errorMessage.text = message
                     }
                 }
             }
@@ -148,8 +148,8 @@ class FavoriteFromFollowingFragment(private val filmID: Int) : Fragment(), UserA
 
         // Memberhentikan loading
         mIsLoading = false
-        if (refreshPage) mViewBinding.swipeRefresh.isRefreshing = false
-        mViewBinding.loadMoreBar.visibility = when (page == mTotalPage) {
+        if (refreshPage) mBinding.swipeRefresh.isRefreshing = false
+        mBinding.loadMoreBar.visibility = when (page == mTotalPage) {
             true -> View.GONE
             false -> View.INVISIBLE
         }
@@ -157,9 +157,9 @@ class FavoriteFromFollowingFragment(private val filmID: Int) : Fragment(), UserA
 
     private fun setAdapter() {
         mUserAdapter = UserAdapter(mContext, mUserList, this)
-        mViewBinding.recyclerView.adapter = mUserAdapter
-        mViewBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
-        mViewBinding.recyclerView.visibility = View.VISIBLE
+        mBinding.recyclerView.adapter = mUserAdapter
+        mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
+        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun gotoUserDetail(id: Int) {

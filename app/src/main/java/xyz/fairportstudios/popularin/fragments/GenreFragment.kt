@@ -20,12 +20,12 @@ class GenreFragment : Fragment(), GenreGridAdapter.OnClickListener {
     private lateinit var mGenreList: ArrayList<Genre>
     private lateinit var mContext: Context
 
-    // View binding
-    private var _mViewBinding: ReusableRecyclerBinding? = null
-    private val mViewBinding get() = _mViewBinding!!
+    // Binding
+    private var _mBinding: ReusableRecyclerBinding? = null
+    private val mBinding get() = _mBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _mViewBinding = ReusableRecyclerBinding.inflate(inflater, container, false)
+        _mBinding = ReusableRecyclerBinding.inflate(inflater, container, false)
 
         // Context
         mContext = requireActivity()
@@ -34,14 +34,14 @@ class GenreFragment : Fragment(), GenreGridAdapter.OnClickListener {
         showGenre()
 
         // Activity
-        mViewBinding.swipeRefresh.setOnRefreshListener { mViewBinding.swipeRefresh.isRefreshing = false }
+        mBinding.swipeRefresh.setOnRefreshListener { mBinding.swipeRefresh.isRefreshing = false }
 
-        return mViewBinding.root
+        return mBinding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _mViewBinding = null
+        _mBinding = null
     }
 
     override fun onGenreItemClick(position: Int) {
@@ -52,7 +52,7 @@ class GenreFragment : Fragment(), GenreGridAdapter.OnClickListener {
     private fun showGenre() {
         loadGenre()
         setAdapter()
-        mViewBinding.progressBar.visibility = View.GONE
+        mBinding.progressBar.visibility = View.GONE
     }
 
     private fun loadGenre() {
@@ -77,10 +77,10 @@ class GenreFragment : Fragment(), GenreGridAdapter.OnClickListener {
 
     private fun setAdapter() {
         val genreGridAdapter = GenreGridAdapter(mContext, mGenreList, this)
-        mViewBinding.recyclerView.adapter = genreGridAdapter
-        mViewBinding.recyclerView.layoutManager = GridLayoutManager(mContext, 2)
-        mViewBinding.recyclerView.hasFixedSize()
-        mViewBinding.recyclerView.visibility = View.VISIBLE
+        mBinding.recyclerView.adapter = genreGridAdapter
+        mBinding.recyclerView.layoutManager = GridLayoutManager(mContext, 2)
+        mBinding.recyclerView.hasFixedSize()
+        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun gotoDiscoverFilm(id: Int, title: String) {

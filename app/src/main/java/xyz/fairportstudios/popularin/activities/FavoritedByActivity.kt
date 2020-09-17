@@ -36,8 +36,8 @@ class FavoritedByActivity : AppCompatActivity(), UserAdapter.OnClickListener {
     private lateinit var mFavoriteFromAllRequest: FavoriteFromAllRequest
     private lateinit var mUserAdapter: UserAdapter
 
-    // View binding
-    private lateinit var mViewBinding: ReusableToolbarRecyclerBinding
+    // Binding
+    private lateinit var mBinding: ReusableToolbarRecyclerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,27 +68,27 @@ class FavoritedByActivity : AppCompatActivity(), UserAdapter.OnClickListener {
                 viewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
             }
             false -> {
-                mViewBinding = ReusableToolbarRecyclerBinding.inflate(layoutInflater)
-                setContentView(mViewBinding.root)
+                mBinding = ReusableToolbarRecyclerBinding.inflate(layoutInflater)
+                setContentView(mBinding.root)
 
                 // Handler
                 val handler = Handler()
 
                 // Toolbar
-                mViewBinding.toolbar.title = getString(R.string.favorited_by)
+                mBinding.toolbar.title = getString(R.string.favorited_by)
 
                 // Mendapatkan data awal
                 mFavoriteFromAllRequest = FavoriteFromAllRequest(mContext, filmID)
                 getFavoriteFromAll(mStartPage, false)
 
                 // Activity
-                mViewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
+                mBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
-                mViewBinding.nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+                mBinding.nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
                     if (scrollY > oldScrollY) {
                         if (!mIsLoading && mCurrentPage <= mTotalPage) {
                             mIsLoading = true
-                            mViewBinding.loadMoreBar.visibility = View.VISIBLE
+                            mBinding.loadMoreBar.visibility = View.VISIBLE
                             handler.postDelayed({
                                 getFavoriteFromAll(mCurrentPage, false)
                             }, 1000)
@@ -96,9 +96,9 @@ class FavoritedByActivity : AppCompatActivity(), UserAdapter.OnClickListener {
                     }
                 }
 
-                mViewBinding.swipeRefresh.setOnRefreshListener {
+                mBinding.swipeRefresh.setOnRefreshListener {
                     mIsLoading = true
-                    mViewBinding.swipeRefresh.isRefreshing = true
+                    mBinding.swipeRefresh.isRefreshing = true
                     getFavoriteFromAll(mStartPage, true)
                 }
             }
@@ -130,12 +130,12 @@ class FavoritedByActivity : AppCompatActivity(), UserAdapter.OnClickListener {
                         val insertIndex = mUserList.size
                         mUserList.addAll(insertIndex, userList)
                         setAdapter()
-                        mViewBinding.progressBar.visibility = View.GONE
+                        mBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mViewBinding.errorMessage.visibility = View.GONE
+                mBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -146,22 +146,22 @@ class FavoritedByActivity : AppCompatActivity(), UserAdapter.OnClickListener {
                         mUserList.clear()
                         mUserAdapter.notifyDataSetChanged()
                     }
-                    false -> mViewBinding.progressBar.visibility = View.GONE
+                    false -> mBinding.progressBar.visibility = View.GONE
                 }
-                mViewBinding.errorMessage.visibility = View.VISIBLE
-                mViewBinding.errorMessage.text = getString(R.string.empty_film_favorite)
+                mBinding.errorMessage.visibility = View.VISIBLE
+                mBinding.errorMessage.text = getString(R.string.empty_film_favorite)
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mViewBinding.loadMoreBar.visibility = View.GONE
-                        Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                        mBinding.loadMoreBar.visibility = View.GONE
+                        Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mViewBinding.progressBar.visibility = View.GONE
-                        mViewBinding.errorMessage.visibility = View.VISIBLE
-                        mViewBinding.errorMessage.text = message
+                        mBinding.progressBar.visibility = View.GONE
+                        mBinding.errorMessage.visibility = View.VISIBLE
+                        mBinding.errorMessage.text = message
                     }
                 }
             }
@@ -169,8 +169,8 @@ class FavoritedByActivity : AppCompatActivity(), UserAdapter.OnClickListener {
 
         // Memberhentikan loading
         mIsLoading = false
-        if (refreshPage) mViewBinding.swipeRefresh.isRefreshing = false
-        mViewBinding.loadMoreBar.visibility = when (page == mTotalPage) {
+        if (refreshPage) mBinding.swipeRefresh.isRefreshing = false
+        mBinding.loadMoreBar.visibility = when (page == mTotalPage) {
             true -> View.GONE
             false -> View.INVISIBLE
         }
@@ -178,9 +178,9 @@ class FavoritedByActivity : AppCompatActivity(), UserAdapter.OnClickListener {
 
     private fun setAdapter() {
         mUserAdapter = UserAdapter(mContext, mUserList, this)
-        mViewBinding.recyclerView.adapter = mUserAdapter
-        mViewBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
-        mViewBinding.recyclerView.visibility = View.VISIBLE
+        mBinding.recyclerView.adapter = mUserAdapter
+        mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
+        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun gotoUserDetail(id: Int) {

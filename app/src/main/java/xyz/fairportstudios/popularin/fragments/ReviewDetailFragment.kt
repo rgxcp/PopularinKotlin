@@ -34,12 +34,12 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
     private lateinit var mReviewDetail: ReviewDetail
     private lateinit var mFilmYear: String
 
-    // View binding
-    private var _mViewBinding: FragmentReviewDetailBinding? = null
-    private val mViewBinding get() = _mViewBinding!!
+    // Binding
+    private var _mBinding: FragmentReviewDetailBinding? = null
+    private val mBinding get() = _mBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _mViewBinding = FragmentReviewDetailBinding.inflate(inflater, container, false)
+        _mBinding = FragmentReviewDetailBinding.inflate(inflater, container, false)
 
         // Context
         mContext = requireActivity()
@@ -48,16 +48,16 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
         val isAuth = Auth(mContext).isAuth()
 
         // Activity
-        mViewBinding.userProfile.setOnClickListener { gotoUserDetail() }
+        mBinding.userProfile.setOnClickListener { gotoUserDetail() }
 
-        mViewBinding.filmPoster.setOnClickListener { gotoFilmDetail() }
+        mBinding.filmPoster.setOnClickListener { gotoFilmDetail() }
 
-        mViewBinding.filmPoster.setOnLongClickListener {
+        mBinding.filmPoster.setOnLongClickListener {
             showFilmModal()
             return@setOnLongClickListener true
         }
 
-        mViewBinding.likeImage.setOnClickListener {
+        mBinding.likeImage.setOnClickListener {
             when (isAuth && !mIsLoading) {
                 true -> {
                     mIsLoading = true
@@ -70,15 +70,15 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
             }
         }
 
-        mViewBinding.totalLike.setOnClickListener { gotoLikedBy() }
+        mBinding.totalLike.setOnClickListener { gotoLikedBy() }
 
-        mViewBinding.swipeRefresh.setOnRefreshListener {
+        mBinding.swipeRefresh.setOnRefreshListener {
             mIsLoading = true
-            mViewBinding.swipeRefresh.isRefreshing = true
+            mBinding.swipeRefresh.isRefreshing = true
             getReviewDetail()
         }
 
-        return mViewBinding.root
+        return mBinding.root
     }
 
     override fun onResume() {
@@ -86,14 +86,14 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
         if (mIsResumeFirstTime) {
             // Mendapatkan data
             mIsResumeFirstTime = false
-            mViewBinding.isLoading = true
+            mBinding.isLoading = true
             getReviewDetail()
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _mViewBinding = null
+        _mBinding = null
     }
 
     private fun getReviewDetail() {
@@ -102,20 +102,20 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
             override fun onSuccess(reviewDetail: ReviewDetail) {
                 mReviewDetail = reviewDetail
                 mFilmYear = ParseDate.getYear(mReviewDetail.releaseDate)
-                mViewBinding.reviewDetail = mReviewDetail
-                mViewBinding.filmYear = mFilmYear
-                mViewBinding.isLoading = false
-                mViewBinding.loadSuccess = true
+                mBinding.reviewDetail = mReviewDetail
+                mBinding.filmYear = mFilmYear
+                mBinding.isLoading = false
+                mBinding.loadSuccess = true
                 mIsLoadFirstTimeSuccess = true
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
-                    true -> Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                    true -> Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     false -> {
-                        mViewBinding.isLoading = false
-                        mViewBinding.loadSuccess = false
-                        mViewBinding.message = message
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = false
+                        mBinding.message = message
                     }
                 }
             }
@@ -123,7 +123,7 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
 
         // Memberhentikan loading
         mIsLoading = false
-        mViewBinding.swipeRefresh.isRefreshing = false
+        mBinding.swipeRefresh.isRefreshing = false
     }
 
     private fun setLikeState(state: Boolean) {
@@ -131,16 +131,16 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
         when (mReviewDetail.isLiked) {
             true -> {
                 mReviewDetail.totalLike++
-                mViewBinding.likeStatus.text = getString(R.string.liked)
-                mViewBinding.likeImage.setImageResource(R.drawable.ic_fill_heart)
+                mBinding.likeStatus.text = getString(R.string.liked)
+                mBinding.likeImage.setImageResource(R.drawable.ic_fill_heart)
             }
             false -> {
                 mReviewDetail.totalLike--
-                mViewBinding.likeStatus.text = getString(R.string.like)
-                mViewBinding.likeImage.setImageResource(R.drawable.ic_outline_heart)
+                mBinding.likeStatus.text = getString(R.string.like)
+                mBinding.likeImage.setImageResource(R.drawable.ic_outline_heart)
             }
         }
-        mViewBinding.totalLike.text = String.format("Total %s", mReviewDetail.totalLike)
+        mBinding.totalLike.text = String.format("Total %s", mReviewDetail.totalLike)
     }
 
     private fun likeReview() {
@@ -151,7 +151,7 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
             }
 
             override fun onError(message: String) {
-                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 
@@ -167,7 +167,7 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
             }
 
             override fun onError(message: String) {
-                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 

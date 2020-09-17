@@ -18,13 +18,13 @@ class ReviewActivity : AppCompatActivity() {
     // Primitive
     private var mIsLoading = false
 
-    // View binding
-    private lateinit var mViewBinding: ReusableToolbarPagerBinding
+    // Binding
+    private lateinit var mBinding: ReusableToolbarPagerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mViewBinding = ReusableToolbarPagerBinding.inflate(layoutInflater)
-        setContentView(mViewBinding.root)
+        mBinding = ReusableToolbarPagerBinding.inflate(layoutInflater)
+        setContentView(mBinding.root)
 
         // Context
         val context = this
@@ -35,24 +35,24 @@ class ReviewActivity : AppCompatActivity() {
         val isSelf = intent.getBooleanExtra(Popularin.IS_SELF, false)
 
         // Toolbar
-        mViewBinding.toolbar.title = getString(R.string.review)
+        mBinding.toolbar.title = getString(R.string.review)
         if (isSelf) addToolbarMenu(context, reviewID)
 
         // Tab pager
         val pagerAdapter = PagerAdapter(supportFragmentManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
         pagerAdapter.addFragment(ReviewDetailFragment(reviewID), getString(R.string.detail))
         pagerAdapter.addFragment(ReviewCommentFragment(reviewID), getString(R.string.comment))
-        mViewBinding.viewPager.adapter = pagerAdapter
-        mViewBinding.viewPager.currentItem = viewPagerIndex
-        mViewBinding.tabLayout.setupWithViewPager(mViewBinding.viewPager)
+        mBinding.viewPager.adapter = pagerAdapter
+        mBinding.viewPager.currentItem = viewPagerIndex
+        mBinding.tabLayout.setupWithViewPager(mBinding.viewPager)
 
         // Activity
-        mViewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
+        mBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
     }
 
     private fun addToolbarMenu(context: Context, id: Int) {
-        mViewBinding.toolbar.inflateMenu(R.menu.review_detail)
-        mViewBinding.toolbar.setOnMenuItemClickListener { item ->
+        mBinding.toolbar.inflateMenu(R.menu.review_detail)
+        mBinding.toolbar.setOnMenuItemClickListener { item ->
             return@setOnMenuItemClickListener when (item.itemId) {
                 R.id.menu_rd_edit -> {
                     editReview(context, id)

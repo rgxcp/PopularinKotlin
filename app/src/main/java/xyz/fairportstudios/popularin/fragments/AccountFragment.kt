@@ -39,12 +39,12 @@ class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, Recen
     private lateinit var mRecentReviewList: ArrayList<RecentReview>
     private lateinit var mContext: Context
 
-    // View binding
-    private var _mViewBinding: FragmentAccountBinding? = null
-    private val mViewBinding get() = _mViewBinding!!
+    // Binding
+    private var _mBinding: FragmentAccountBinding? = null
+    private val mBinding get() = _mBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _mViewBinding = FragmentAccountBinding.inflate(inflater, container, false)
+        _mBinding = FragmentAccountBinding.inflate(inflater, container, false)
 
         // Context
         mContext = requireActivity()
@@ -54,38 +54,38 @@ class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, Recen
         val authID = auth.getAuthID()
 
         // Mendapatkan data
-        mViewBinding.isLoading = true
+        mBinding.isLoading = true
         getAccountDetail(authID)
 
         // Activity
-        mViewBinding.totalReviewLayout.setOnClickListener { gotoAccountReview(authID) }
+        mBinding.totalReviewLayout.setOnClickListener { gotoAccountReview(authID) }
 
-        mViewBinding.totalFavoriteLayout.setOnClickListener { gotoAccountFavorite(authID) }
+        mBinding.totalFavoriteLayout.setOnClickListener { gotoAccountFavorite(authID) }
 
-        mViewBinding.totalWatchlistLayout.setOnClickListener { gotoAccountWatchlist(authID) }
+        mBinding.totalWatchlistLayout.setOnClickListener { gotoAccountWatchlist(authID) }
 
-        mViewBinding.totalFollowerLayout.setOnClickListener { gotoAccountSocial(authID, 0) }
+        mBinding.totalFollowerLayout.setOnClickListener { gotoAccountSocial(authID, 0) }
 
-        mViewBinding.totalFollowingLayout.setOnClickListener { gotoAccountSocial(authID, 1) }
+        mBinding.totalFollowingLayout.setOnClickListener { gotoAccountSocial(authID, 1) }
 
-        mViewBinding.editProfileButton.setOnClickListener { gotoEditProfile() }
+        mBinding.editProfileButton.setOnClickListener { gotoEditProfile() }
 
-        mViewBinding.signOutButton.setOnClickListener {
+        mBinding.signOutButton.setOnClickListener {
             auth.delAuth()
             signOut()
         }
 
-        mViewBinding.swipeRefresh.setOnRefreshListener {
-            mViewBinding.swipeRefresh.isRefreshing = true
+        mBinding.swipeRefresh.setOnRefreshListener {
+            mBinding.swipeRefresh.isRefreshing = true
             getAccountDetail(authID)
         }
 
-        return mViewBinding.root
+        return mBinding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _mViewBinding = null
+        _mBinding = null
     }
 
     override fun onRecentFavoriteItemClick(position: Int) {
@@ -114,9 +114,9 @@ class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, Recen
         val accountDetailRequest = AccountDetailRequest(mContext, id)
         accountDetailRequest.sendRequest(object : AccountDetailRequest.Callback {
             override fun onSuccess(accountDetail: AccountDetail) {
-                mViewBinding.accountDetail = accountDetail
-                mViewBinding.isLoading = false
-                mViewBinding.loadSuccess = true
+                mBinding.accountDetail = accountDetail
+                mBinding.isLoading = false
+                mBinding.loadSuccess = true
                 mIsLoadFirstTimeSuccess = true
             }
 
@@ -134,32 +134,32 @@ class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, Recen
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
-                    true -> Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                    true -> Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     false -> {
-                        mViewBinding.isLoading = false
-                        mViewBinding.loadSuccess = false
-                        mViewBinding.message = message
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = false
+                        mBinding.message = message
                     }
                 }
             }
         })
 
         // Memberhentikan loading
-        mViewBinding.swipeRefresh.isRefreshing = false
+        mBinding.swipeRefresh.isRefreshing = false
     }
 
     private fun setRecentFavoriteAdapter() {
         val recentFavoriteAdapter = RecentFavoriteAdapter(mContext, mRecentFavoriteList, this)
-        mViewBinding.recyclerViewRecentFavorite.adapter = recentFavoriteAdapter
-        mViewBinding.recyclerViewRecentFavorite.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
-        mViewBinding.recyclerViewRecentFavorite.hasFixedSize()
+        mBinding.recyclerViewRecentFavorite.adapter = recentFavoriteAdapter
+        mBinding.recyclerViewRecentFavorite.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
+        mBinding.recyclerViewRecentFavorite.hasFixedSize()
     }
 
     private fun setRecentReviewAdapter() {
         val recentReviewAdapter = RecentReviewAdapter(mContext, mRecentReviewList, this)
-        mViewBinding.recyclerViewRecentReview.adapter = recentReviewAdapter
-        mViewBinding.recyclerViewRecentReview.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
-        mViewBinding.recyclerViewRecentReview.hasFixedSize()
+        mBinding.recyclerViewRecentReview.adapter = recentReviewAdapter
+        mBinding.recyclerViewRecentReview.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
+        mBinding.recyclerViewRecentReview.hasFixedSize()
     }
 
     private fun showFilmModal(id: Int, title: String, year: String, poster: String) {

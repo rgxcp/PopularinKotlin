@@ -27,41 +27,41 @@ class EditProfileFragment : Fragment() {
     private lateinit var mUsername: String
     private lateinit var mEmail: String
 
-    // View binding
-    private var _mViewBinding: FragmentEditProfileBinding? = null
-    private val mViewBinding get() = _mViewBinding!!
+    // Binding
+    private var _mBinding: FragmentEditProfileBinding? = null
+    private val mBinding get() = _mBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _mViewBinding = FragmentEditProfileBinding.inflate(inflater, container, false)
+        _mBinding = FragmentEditProfileBinding.inflate(inflater, container, false)
 
         // Context
         val context = requireActivity()
 
         // Pesan
-        mViewBinding.welcomeMessage.text = getWelcomeMessage()
+        mBinding.welcomeMessage.text = getWelcomeMessage()
 
         // Menampilkan data diri awal
         getSelfDetail(context)
 
         // Text watcher
-        mViewBinding.inputFullName.addTextChangedListener(mEditProfileWatcher)
-        mViewBinding.inputUsername.addTextChangedListener(mEditProfileWatcher)
-        mViewBinding.inputEmail.addTextChangedListener(mEditProfileWatcher)
+        mBinding.inputFullName.addTextChangedListener(mEditProfileWatcher)
+        mBinding.inputUsername.addTextChangedListener(mEditProfileWatcher)
+        mBinding.inputEmail.addTextChangedListener(mEditProfileWatcher)
 
         // Activity
-        mViewBinding.saveProfileButton.setOnClickListener {
+        mBinding.saveProfileButton.setOnClickListener {
             setSaveProfileButtonState(false)
             saveProfile(context)
         }
 
-        mViewBinding.editPasswordButton.setOnClickListener { gotoEditPassword() }
+        mBinding.editPasswordButton.setOnClickListener { gotoEditPassword() }
 
-        return mViewBinding.root
+        return mBinding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _mViewBinding = null
+        _mBinding = null
     }
 
     private val mEditProfileWatcher = object : TextWatcher {
@@ -74,10 +74,10 @@ class EditProfileFragment : Fragment() {
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            mFullName = mViewBinding.inputFullName.text.toString()
-            mUsername = mViewBinding.inputUsername.text.toString()
-            mEmail = mViewBinding.inputEmail.text.toString()
-            mViewBinding.saveProfileButton.isEnabled = mFullName.isNotEmpty() && mUsername.isNotEmpty() && mEmail.isNotEmpty()
+            mFullName = mBinding.inputFullName.text.toString()
+            mUsername = mBinding.inputUsername.text.toString()
+            mEmail = mBinding.inputEmail.text.toString()
+            mBinding.saveProfileButton.isEnabled = mFullName.isNotEmpty() && mUsername.isNotEmpty() && mEmail.isNotEmpty()
         }
     }
 
@@ -93,11 +93,11 @@ class EditProfileFragment : Fragment() {
         val selfDetailRequest = SelfDetailRequest(context)
         selfDetailRequest.sendRequest(object : SelfDetailRequest.Callback {
             override fun onSuccess(selfDetail: SelfDetail) {
-                mViewBinding.selfDetail = selfDetail
+                mBinding.selfDetail = selfDetail
             }
 
             override fun onError(message: String) {
-                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
     }
@@ -105,11 +105,11 @@ class EditProfileFragment : Fragment() {
     private fun usernameValidated(): Boolean {
         return when {
             mUsername.length < 5 -> {
-                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_username_length, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, R.string.validate_username_length, Snackbar.LENGTH_LONG).show()
                 false
             }
             mUsername.contains(" ") -> {
-                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_alpha_dash, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, R.string.validate_alpha_dash, Snackbar.LENGTH_LONG).show()
                 false
             }
             else -> true
@@ -119,7 +119,7 @@ class EditProfileFragment : Fragment() {
     private fun emailValidated(): Boolean {
         return when (!Patterns.EMAIL_ADDRESS.matcher(mEmail).matches()) {
             true -> {
-                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_email_format, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, R.string.validate_email_format, Snackbar.LENGTH_LONG).show()
                 false
             }
             false -> true
@@ -127,8 +127,8 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun setSaveProfileButtonState(state: Boolean) {
-        mViewBinding.saveProfileButton.isEnabled = state
-        mViewBinding.saveProfileButton.text = when (state) {
+        mBinding.saveProfileButton.isEnabled = state
+        mBinding.saveProfileButton.text = when (state) {
             true -> getString(R.string.save_profile)
             false -> getString(R.string.loading)
         }
@@ -147,12 +147,12 @@ class EditProfileFragment : Fragment() {
 
                     override fun onFailed(message: String) {
                         setSaveProfileButtonState(true)
-                        Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
 
                     override fun onError(message: String) {
                         setSaveProfileButtonState(true)
-                        Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                 })
             }

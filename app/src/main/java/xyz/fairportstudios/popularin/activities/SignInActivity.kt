@@ -22,26 +22,26 @@ class SignInActivity : AppCompatActivity() {
     private lateinit var mUsername: String
     private lateinit var mPassword: String
 
-    // View binding
-    private lateinit var mViewBinding: ActivitySignInBinding
+    // Binding
+    private lateinit var mBinding: ActivitySignInBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mViewBinding = ActivitySignInBinding.inflate(layoutInflater)
-        setContentView(mViewBinding.root)
+        mBinding = ActivitySignInBinding.inflate(layoutInflater)
+        setContentView(mBinding.root)
 
         // Context
         val context = this
 
         // Pesan
-        mViewBinding.welcomeMessage.text = getWelcomeMessage()
+        mBinding.welcomeMessage.text = getWelcomeMessage()
 
         // Text watcher
-        mViewBinding.inputUsername.addTextChangedListener(mSignInWatcher)
-        mViewBinding.inputPassword.addTextChangedListener(mSignInWatcher)
+        mBinding.inputUsername.addTextChangedListener(mSignInWatcher)
+        mBinding.inputPassword.addTextChangedListener(mSignInWatcher)
 
         // Activity
-        mViewBinding.signInButton.setOnClickListener {
+        mBinding.signInButton.setOnClickListener {
             mIsLoading = true
             setSignInButtonState(false)
             signIn(context)
@@ -62,9 +62,9 @@ class SignInActivity : AppCompatActivity() {
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            mUsername = mViewBinding.inputUsername.text.toString()
-            mPassword = mViewBinding.inputPassword.text.toString()
-            mViewBinding.signInButton.isEnabled = mUsername.isNotEmpty() && mPassword.isNotEmpty()
+            mUsername = mBinding.inputUsername.text.toString()
+            mPassword = mBinding.inputPassword.text.toString()
+            mBinding.signInButton.isEnabled = mUsername.isNotEmpty() && mPassword.isNotEmpty()
         }
     }
 
@@ -77,8 +77,8 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun setSignInButtonState(state: Boolean) {
-        mViewBinding.signInButton.isEnabled = state
-        mViewBinding.signInButton.text = when (state) {
+        mBinding.signInButton.isEnabled = state
+        mBinding.signInButton.text = when (state) {
             true -> getString(R.string.sign_in)
             false -> getString(R.string.loading)
         }
@@ -98,22 +98,22 @@ class SignInActivity : AppCompatActivity() {
 
             override fun onInvalidUsername() {
                 setSignInButtonState(true)
-                Snackbar.make(mViewBinding.anchorLayout, R.string.invalid_username, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, R.string.invalid_username, Snackbar.LENGTH_LONG).show()
             }
 
             override fun onInvalidPassword() {
                 setSignInButtonState(true)
-                Snackbar.make(mViewBinding.anchorLayout, R.string.invalid_password, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, R.string.invalid_password, Snackbar.LENGTH_LONG).show()
             }
 
             override fun onFailed(message: String) {
                 setSignInButtonState(true)
-                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
 
             override fun onError(message: String) {
                 setSignInButtonState(true)
-                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 

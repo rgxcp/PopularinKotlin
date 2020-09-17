@@ -27,13 +27,13 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     private lateinit var mCalendar: Calendar
     private lateinit var mReviewDetail: ReviewDetail
 
-    // View binding
-    private lateinit var mViewBinding: ActivityEditReviewBinding
+    // Binding
+    private lateinit var mBinding: ActivityEditReviewBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mViewBinding = ActivityEditReviewBinding.inflate(layoutInflater)
-        setContentView(mViewBinding.anchorLayout)
+        mBinding = ActivityEditReviewBinding.inflate(layoutInflater)
+        setContentView(mBinding.anchorLayout)
 
         // Context
         val context = this
@@ -45,13 +45,13 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         mCalendar = Calendar.getInstance()
 
         // Menampilkan ulasan awal
-        mViewBinding.isLoading = true
+        mBinding.isLoading = true
         getCurrentReview(context, reviewID)
 
         // Activity
-        mViewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
+        mBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        mViewBinding.toolbar.setOnMenuItemClickListener {
+        mBinding.toolbar.setOnMenuItemClickListener {
             return@setOnMenuItemClickListener when (ratingValidated() && reviewValidated() && !mIsLoading) {
                 true -> {
                     mIsLoading = true
@@ -62,9 +62,9 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             }
         }
 
-        mViewBinding.watchDate.setOnClickListener { showDatePicker() }
+        mBinding.watchDate.setOnClickListener { showDatePicker() }
 
-        mViewBinding.ratingBar.setOnRatingBarChangeListener { _, rating, _ -> mRating = rating }
+        mBinding.ratingBar.setOnRatingBarChangeListener { _, rating, _ -> mRating = rating }
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, day: Int) {
@@ -72,7 +72,7 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         mCalendar.set(Calendar.YEAR, year)
         mCalendar.set(Calendar.MONTH, month)
         mCalendar.set(Calendar.DAY_OF_MONTH, day)
-        mViewBinding.watchDate.text = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.time)
+        mBinding.watchDate.text = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.time)
     }
 
     private fun getCurrentReview(context: Context, id: Int) {
@@ -81,17 +81,17 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             override fun onSuccess(reviewDetail: ReviewDetail) {
                 mReviewDetail = reviewDetail
                 mRating = mReviewDetail.rating.toFloat()
-                mViewBinding.reviewDetail = mReviewDetail
-                mViewBinding.year = ParseDate.getYear(mReviewDetail.releaseDate)
-                mViewBinding.isLoading = false
-                mViewBinding.loadSuccess = true
+                mBinding.reviewDetail = mReviewDetail
+                mBinding.year = ParseDate.getYear(mReviewDetail.releaseDate)
+                mBinding.isLoading = false
+                mBinding.loadSuccess = true
                 getCurrentWatchDate(mReviewDetail.watchDate)
             }
 
             override fun onError(message: String) {
-                mViewBinding.isLoading = false
-                mViewBinding.loadSuccess = false
-                mViewBinding.message = message
+                mBinding.isLoading = false
+                mBinding.loadSuccess = false
+                mBinding.message = message
             }
         })
 
@@ -107,7 +107,7 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         mCalendar.set(Calendar.YEAR, year)
         mCalendar.set(Calendar.MONTH, month)
         mCalendar.set(Calendar.DAY_OF_MONTH, day)
-        mViewBinding.watchDate.text = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.time)
+        mBinding.watchDate.text = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.time)
     }
 
     private fun showDatePicker() {
@@ -118,7 +118,7 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     private fun ratingValidated(): Boolean {
         return when (mRating == 0.0f) {
             true -> {
-                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_rating, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, R.string.validate_rating, Snackbar.LENGTH_LONG).show()
                 false
             }
             false -> true
@@ -126,10 +126,10 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     private fun reviewValidated(): Boolean {
-        mReviewDetail.reviewDetail = mViewBinding.inputReview.text.toString()
+        mReviewDetail.reviewDetail = mBinding.inputReview.text.toString()
         return when (mReviewDetail.reviewDetail.isEmpty()) {
             true -> {
-                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_review, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, R.string.validate_review, Snackbar.LENGTH_LONG).show()
                 false
             }
             false -> true
@@ -145,11 +145,11 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             }
 
             override fun onFailed(message: String) {
-                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
 
             override fun onError(message: String) {
-                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 

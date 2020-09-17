@@ -29,28 +29,28 @@ class CreditFilmAsCrewFragment(private val creditID: Int) : Fragment(), FilmGrid
     private lateinit var mFilmAsCrewList: ArrayList<Film>
     private lateinit var mContext: Context
 
-    // View binding
-    private var _mViewBinding: ReusableRecyclerBinding? = null
-    private val mViewBinding get() = _mViewBinding!!
+    // Binding
+    private var _mBinding: ReusableRecyclerBinding? = null
+    private val mBinding get() = _mBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _mViewBinding = ReusableRecyclerBinding.inflate(inflater, container, false)
+        _mBinding = ReusableRecyclerBinding.inflate(inflater, container, false)
 
         // Context
         mContext = requireActivity()
 
         // Activity
-        mViewBinding.swipeRefresh.setOnRefreshListener {
+        mBinding.swipeRefresh.setOnRefreshListener {
             when (mIsLoadFirstTimeSuccess) {
-                true -> mViewBinding.swipeRefresh.isRefreshing = false
+                true -> mBinding.swipeRefresh.isRefreshing = false
                 false -> {
-                    mViewBinding.swipeRefresh.isRefreshing = true
+                    mBinding.swipeRefresh.isRefreshing = true
                     getFilmAsCrew()
                 }
             }
         }
 
-        return mViewBinding.root
+        return mBinding.root
     }
 
     override fun onResume() {
@@ -64,7 +64,7 @@ class CreditFilmAsCrewFragment(private val creditID: Int) : Fragment(), FilmGrid
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _mViewBinding = null
+        _mBinding = null
     }
 
     override fun onFilmGridItemClick(position: Int) {
@@ -87,39 +87,39 @@ class CreditFilmAsCrewFragment(private val creditID: Int) : Fragment(), FilmGrid
                         mFilmAsCrewList = ArrayList()
                         mFilmAsCrewList.addAll(filmAsCrewList)
                         setAdapter()
-                        mViewBinding.errorMessage.visibility = View.GONE
+                        mBinding.errorMessage.visibility = View.GONE
                     }
                     false -> {
-                        mViewBinding.errorMessage.visibility = View.VISIBLE
-                        mViewBinding.errorMessage.text = getString(R.string.empty_credit_film_as_crew)
+                        mBinding.errorMessage.visibility = View.VISIBLE
+                        mBinding.errorMessage.text = getString(R.string.empty_credit_film_as_crew)
                     }
                 }
-                mViewBinding.progressBar.visibility = View.GONE
+                mBinding.progressBar.visibility = View.GONE
                 mIsLoadFirstTimeSuccess = true
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
-                    true -> Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                    true -> Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     false -> {
-                        mViewBinding.progressBar.visibility = View.GONE
-                        mViewBinding.errorMessage.visibility = View.VISIBLE
-                        mViewBinding.errorMessage.text = message
+                        mBinding.progressBar.visibility = View.GONE
+                        mBinding.errorMessage.visibility = View.VISIBLE
+                        mBinding.errorMessage.text = message
                     }
                 }
             }
         })
 
         // Memberhentikan loading
-        mViewBinding.swipeRefresh.isRefreshing = false
+        mBinding.swipeRefresh.isRefreshing = false
     }
 
     private fun setAdapter() {
         val filmGridAdapter = FilmGridAdapter(mContext, mFilmAsCrewList, this)
-        mViewBinding.recyclerView.adapter = filmGridAdapter
-        mViewBinding.recyclerView.layoutManager = GridLayoutManager(mContext, 4)
-        mViewBinding.recyclerView.hasFixedSize()
-        mViewBinding.recyclerView.visibility = View.VISIBLE
+        mBinding.recyclerView.adapter = filmGridAdapter
+        mBinding.recyclerView.layoutManager = GridLayoutManager(mContext, 4)
+        mBinding.recyclerView.hasFixedSize()
+        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun showFilmModal(id: Int, title: String, year: String, poster: String) {

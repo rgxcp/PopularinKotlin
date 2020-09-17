@@ -27,13 +27,13 @@ class AddReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
     private lateinit var mWatchDate: String
     private lateinit var mReview: String
 
-    // View binding
-    private lateinit var mViewBinding: ActivityAddReviewBinding
+    // Binding
+    private lateinit var mBinding: ActivityAddReviewBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mViewBinding = ActivityAddReviewBinding.inflate(layoutInflater)
-        setContentView(mViewBinding.root)
+        mBinding = ActivityAddReviewBinding.inflate(layoutInflater)
+        setContentView(mBinding.root)
 
         // Context
         val context = this
@@ -52,15 +52,15 @@ class AddReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
         getCurrentDate()
 
         // Menampilkan info film dan rating
-        mViewBinding.filmTitle.text = filmTitle
-        mViewBinding.filmYear.text = filmYear
-        mViewBinding.ratingBar.rating = mRating
-        Glide.with(context).load(filmPoster).into(mViewBinding.filmPoster)
+        mBinding.filmTitle.text = filmTitle
+        mBinding.filmYear.text = filmYear
+        mBinding.ratingBar.rating = mRating
+        Glide.with(context).load(filmPoster).into(mBinding.filmPoster)
 
         // Activity
-        mViewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
+        mBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        mViewBinding.toolbar.setOnMenuItemClickListener {
+        mBinding.toolbar.setOnMenuItemClickListener {
             return@setOnMenuItemClickListener when (ratingValidated() && reviewValidated() && !mIsLoading) {
                 true -> {
                     mIsLoading = true
@@ -71,9 +71,9 @@ class AddReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
             }
         }
 
-        mViewBinding.watchDate.setOnClickListener { showDatePicker() }
+        mBinding.watchDate.setOnClickListener { showDatePicker() }
 
-        mViewBinding.ratingBar.setOnRatingBarChangeListener { _, rating, _ -> mRating = rating }
+        mBinding.ratingBar.setOnRatingBarChangeListener { _, rating, _ -> mRating = rating }
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, day: Int) {
@@ -81,7 +81,7 @@ class AddReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
         mCalendar.set(Calendar.YEAR, year)
         mCalendar.set(Calendar.MONTH, month)
         mCalendar.set(Calendar.DAY_OF_MONTH, day)
-        mViewBinding.watchDate.text = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.time)
+        mBinding.watchDate.text = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.time)
     }
 
     private fun getCurrentDate() {
@@ -92,7 +92,7 @@ class AddReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
         mCalendar.set(Calendar.YEAR, year)
         mCalendar.set(Calendar.MONTH, month)
         mCalendar.set(Calendar.DAY_OF_MONTH, day)
-        mViewBinding.watchDate.text = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.time)
+        mBinding.watchDate.text = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.time)
     }
 
     private fun showDatePicker() {
@@ -103,7 +103,7 @@ class AddReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
     private fun ratingValidated(): Boolean {
         return when (mRating == 0.0f) {
             true -> {
-                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_rating, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, R.string.validate_rating, Snackbar.LENGTH_LONG).show()
                 false
             }
             false -> true
@@ -111,10 +111,10 @@ class AddReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
     }
 
     private fun reviewValidated(): Boolean {
-        mReview = mViewBinding.inputReview.text.toString()
+        mReview = mBinding.inputReview.text.toString()
         return when (mReview.isEmpty()) {
             true -> {
-                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_review, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, R.string.validate_review, Snackbar.LENGTH_LONG).show()
                 false
             }
             false -> true
@@ -130,11 +130,11 @@ class AddReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
             }
 
             override fun onFailed(message: String) {
-                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
 
             override fun onError(message: String) {
-                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 

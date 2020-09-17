@@ -25,28 +25,28 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var mEmail: String
     private lateinit var mPassword: String
 
-    // View binding
-    private lateinit var mViewBinding: ActivitySignUpBinding
+    // Binding
+    private lateinit var mBinding: ActivitySignUpBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mViewBinding = ActivitySignUpBinding.inflate(layoutInflater)
-        setContentView(mViewBinding.root)
+        mBinding = ActivitySignUpBinding.inflate(layoutInflater)
+        setContentView(mBinding.root)
 
         // Context
         val context = this
 
         // Pesan
-        mViewBinding.welcomeMessage.text = getWelcomeMessage()
+        mBinding.welcomeMessage.text = getWelcomeMessage()
 
         // Text watcher
-        mViewBinding.inputFullName.addTextChangedListener(mSignUpWatcher)
-        mViewBinding.inputUsername.addTextChangedListener(mSignUpWatcher)
-        mViewBinding.inputEmail.addTextChangedListener(mSignUpWatcher)
-        mViewBinding.inputPassword.addTextChangedListener(mSignUpWatcher)
+        mBinding.inputFullName.addTextChangedListener(mSignUpWatcher)
+        mBinding.inputUsername.addTextChangedListener(mSignUpWatcher)
+        mBinding.inputEmail.addTextChangedListener(mSignUpWatcher)
+        mBinding.inputPassword.addTextChangedListener(mSignUpWatcher)
 
         // Activity
-        mViewBinding.signUpButton.setOnClickListener {
+        mBinding.signUpButton.setOnClickListener {
             mIsLoading = true
             setSignUpButtonState(false)
             signUp(context)
@@ -67,11 +67,11 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            mFullName = mViewBinding.inputFullName.text.toString()
-            mUsername = mViewBinding.inputUsername.text.toString()
-            mEmail = mViewBinding.inputEmail.text.toString()
-            mPassword = mViewBinding.inputPassword.text.toString()
-            mViewBinding.signUpButton.isEnabled = mFullName.isNotEmpty() && mUsername.isNotEmpty() && mEmail.isNotEmpty() && mPassword.isNotEmpty()
+            mFullName = mBinding.inputFullName.text.toString()
+            mUsername = mBinding.inputUsername.text.toString()
+            mEmail = mBinding.inputEmail.text.toString()
+            mPassword = mBinding.inputPassword.text.toString()
+            mBinding.signUpButton.isEnabled = mFullName.isNotEmpty() && mUsername.isNotEmpty() && mEmail.isNotEmpty() && mPassword.isNotEmpty()
         }
     }
 
@@ -86,11 +86,11 @@ class SignUpActivity : AppCompatActivity() {
     private fun usernameValidated(): Boolean {
         return when {
             mUsername.length < 5 -> {
-                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_username_length, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, R.string.validate_username_length, Snackbar.LENGTH_LONG).show()
                 false
             }
             mUsername.contains(" ") -> {
-                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_alpha_dash, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, R.string.validate_alpha_dash, Snackbar.LENGTH_LONG).show()
                 false
             }
             else -> true
@@ -100,7 +100,7 @@ class SignUpActivity : AppCompatActivity() {
     private fun emailValidated(): Boolean {
         return when (!Patterns.EMAIL_ADDRESS.matcher(mEmail).matches()) {
             true -> {
-                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_email_format, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, R.string.validate_email_format, Snackbar.LENGTH_LONG).show()
                 false
             }
             false -> true
@@ -110,11 +110,11 @@ class SignUpActivity : AppCompatActivity() {
     private fun passwordValidated(): Boolean {
         return when {
             mPassword.length < 8 -> {
-                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_password_length, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, R.string.validate_password_length, Snackbar.LENGTH_LONG).show()
                 false
             }
             mPassword == mUsername -> {
-                Snackbar.make(mViewBinding.anchorLayout, R.string.validate_username_match_password, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, R.string.validate_username_match_password, Snackbar.LENGTH_LONG).show()
                 false
             }
             else -> true
@@ -122,8 +122,8 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun setSignUpButtonState(state: Boolean) {
-        mViewBinding.signUpButton.isEnabled = state
-        mViewBinding.signUpButton.text = when (state) {
+        mBinding.signUpButton.isEnabled = state
+        mBinding.signUpButton.text = when (state) {
             true -> getString(R.string.sign_up)
             false -> getString(R.string.loading)
         }
@@ -145,12 +145,12 @@ class SignUpActivity : AppCompatActivity() {
 
                     override fun onFailed(message: String) {
                         setSignUpButtonState(true)
-                        Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
 
                     override fun onError(message: String) {
                         setSignUpButtonState(true)
-                        Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                 })
             }

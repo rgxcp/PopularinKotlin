@@ -21,28 +21,28 @@ class CreditBioFragment(private val creditID: Int) : Fragment() {
     // Member
     private lateinit var mContext: Context
 
-    // View binding
-    private var _mViewBinding: FragmentCreditBioBinding? = null
-    private val mViewBinding get() = _mViewBinding!!
+    // Binding
+    private var _mBinding: FragmentCreditBioBinding? = null
+    private val mBinding get() = _mBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _mViewBinding = FragmentCreditBioBinding.inflate(inflater, container, false)
+        _mBinding = FragmentCreditBioBinding.inflate(inflater, container, false)
 
         // Context
         mContext = requireActivity()
 
         // Activity
-        mViewBinding.swipeRefresh.setOnRefreshListener {
+        mBinding.swipeRefresh.setOnRefreshListener {
             when (mIsLoadFirstTimeSuccess) {
-                true -> mViewBinding.swipeRefresh.isRefreshing = false
+                true -> mBinding.swipeRefresh.isRefreshing = false
                 false -> {
-                    mViewBinding.swipeRefresh.isRefreshing = true
+                    mBinding.swipeRefresh.isRefreshing = true
                     getCreditBio()
                 }
             }
         }
 
-        return mViewBinding.root
+        return mBinding.root
     }
 
     override fun onResume() {
@@ -50,40 +50,40 @@ class CreditBioFragment(private val creditID: Int) : Fragment() {
         if (mIsResumeFirstTime) {
             // Mendapatkan data
             mIsResumeFirstTime = false
-            mViewBinding.isLoading = true
+            mBinding.isLoading = true
             getCreditBio()
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _mViewBinding = null
+        _mBinding = null
     }
 
     private fun getCreditBio() {
         val creditDetailRequest = CreditDetailRequest(mContext, creditID)
         creditDetailRequest.sendRequest(object : CreditDetailRequest.Callback {
             override fun onSuccess(creditDetail: CreditDetail, filmAsCastList: ArrayList<Film>, filmAsCrewList: ArrayList<Film>) {
-                mViewBinding.profilePath = creditDetail.profilePath
-                mViewBinding.bioForHumans = ParseBio.getBioForHumans(creditDetail)
-                mViewBinding.isLoading = false
-                mViewBinding.loadSuccess = true
+                mBinding.profilePath = creditDetail.profilePath
+                mBinding.bioForHumans = ParseBio.getBioForHumans(creditDetail)
+                mBinding.isLoading = false
+                mBinding.loadSuccess = true
                 mIsLoadFirstTimeSuccess = true
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
-                    true -> Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                    true -> Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     false -> {
-                        mViewBinding.isLoading = false
-                        mViewBinding.loadSuccess = false
-                        mViewBinding.message = message
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = false
+                        mBinding.message = message
                     }
                 }
             }
         })
 
         // Memberhentikan loading
-        mViewBinding.swipeRefresh.isRefreshing = false
+        mBinding.swipeRefresh.isRefreshing = false
     }
 }

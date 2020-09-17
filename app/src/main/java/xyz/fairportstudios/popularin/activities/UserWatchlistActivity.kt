@@ -34,13 +34,13 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
     private lateinit var mFilmAdapter: FilmAdapter
     private lateinit var mUserWatchlistRequest: UserWatchlistRequest
 
-    // View binding
-    private lateinit var mViewBinding: ReusableToolbarRecyclerBinding
+    // Binding
+    private lateinit var mBinding: ReusableToolbarRecyclerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mViewBinding = ReusableToolbarRecyclerBinding.inflate(layoutInflater)
-        setContentView(mViewBinding.root)
+        mBinding = ReusableToolbarRecyclerBinding.inflate(layoutInflater)
+        setContentView(mBinding.root)
 
         // Context
         mContext = this
@@ -56,20 +56,20 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
         val handler = Handler()
 
         // Toolbar
-        mViewBinding.toolbar.title = getString(R.string.watchlist)
+        mBinding.toolbar.title = getString(R.string.watchlist)
 
         // Mendapatkan data awal
         mUserWatchlistRequest = UserWatchlistRequest(mContext, userID)
         getUserWatchlist(mStartPage, false)
 
         // Activity
-        mViewBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
+        mBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        mViewBinding.nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+        mBinding.nestedScrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, oldScrollY: Int ->
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mViewBinding.loadMoreBar.visibility = View.VISIBLE
+                    mBinding.loadMoreBar.visibility = View.VISIBLE
                     handler.postDelayed({
                         getUserWatchlist(mCurrentPage, false)
                     }, 1000)
@@ -77,9 +77,9 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
             }
         }
 
-        mViewBinding.swipeRefresh.setOnRefreshListener {
+        mBinding.swipeRefresh.setOnRefreshListener {
             mIsLoading = true
-            mViewBinding.swipeRefresh.isRefreshing = true
+            mBinding.swipeRefresh.isRefreshing = true
             getUserWatchlist(mStartPage, true)
         }
     }
@@ -120,12 +120,12 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
                         val insertIndex = mFilmList.size
                         mFilmList.addAll(insertIndex, filmList)
                         setAdapter()
-                        mViewBinding.progressBar.visibility = View.GONE
+                        mBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mViewBinding.errorMessage.visibility = View.GONE
+                mBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -136,10 +136,10 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
                         mFilmList.clear()
                         mFilmAdapter.notifyDataSetChanged()
                     }
-                    false -> mViewBinding.progressBar.visibility = View.GONE
+                    false -> mBinding.progressBar.visibility = View.GONE
                 }
-                mViewBinding.errorMessage.visibility = View.VISIBLE
-                mViewBinding.errorMessage.text = when (mIsSelf) {
+                mBinding.errorMessage.visibility = View.VISIBLE
+                mBinding.errorMessage.text = when (mIsSelf) {
                     true -> getString(R.string.empty_self_watchlist_film)
                     false -> getString(R.string.empty_user_watchlist)
                 }
@@ -148,13 +148,13 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mViewBinding.loadMoreBar.visibility = View.GONE
-                        Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                        mBinding.loadMoreBar.visibility = View.GONE
+                        Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mViewBinding.progressBar.visibility = View.GONE
-                        mViewBinding.errorMessage.visibility = View.VISIBLE
-                        mViewBinding.errorMessage.text = message
+                        mBinding.progressBar.visibility = View.GONE
+                        mBinding.errorMessage.visibility = View.VISIBLE
+                        mBinding.errorMessage.text = message
                     }
                 }
             }
@@ -162,8 +162,8 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
 
         // Memberhentikan loading
         mIsLoading = false
-        if (refreshPage) mViewBinding.swipeRefresh.isRefreshing = false
-        mViewBinding.loadMoreBar.visibility = when (page == mTotalPage) {
+        if (refreshPage) mBinding.swipeRefresh.isRefreshing = false
+        mBinding.loadMoreBar.visibility = when (page == mTotalPage) {
             true -> View.GONE
             false -> View.INVISIBLE
         }
@@ -171,9 +171,9 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
 
     private fun setAdapter() {
         mFilmAdapter = FilmAdapter(mContext, mFilmList, this)
-        mViewBinding.recyclerView.adapter = mFilmAdapter
-        mViewBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
-        mViewBinding.recyclerView.visibility = View.VISIBLE
+        mBinding.recyclerView.adapter = mFilmAdapter
+        mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
+        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun showFilmModal(id: Int, title: String, year: String, poster: String) {

@@ -29,12 +29,12 @@ class AiringFragment : Fragment(), FilmAdapter.OnClickListener {
     private lateinit var mContext: Context
     private lateinit var mFilmAdapter: FilmAdapter
 
-    // View binding
-    private var _mViewBinding: ReusableRecyclerBinding? = null
-    private val mViewBinding get() = _mViewBinding!!
+    // Binding
+    private var _mBinding: ReusableRecyclerBinding? = null
+    private val mBinding get() = _mBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _mViewBinding = ReusableRecyclerBinding.inflate(inflater, container, false)
+        _mBinding = ReusableRecyclerBinding.inflate(inflater, container, false)
 
         // Context
         mContext = requireActivity()
@@ -44,17 +44,17 @@ class AiringFragment : Fragment(), FilmAdapter.OnClickListener {
         getAiringFilm(false)
 
         // Activity
-        mViewBinding.swipeRefresh.setOnRefreshListener {
-            mViewBinding.swipeRefresh.isRefreshing = true
+        mBinding.swipeRefresh.setOnRefreshListener {
+            mBinding.swipeRefresh.isRefreshing = true
             getAiringFilm(true)
         }
 
-        return mViewBinding.root
+        return mBinding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _mViewBinding = null
+        _mBinding = null
         resetState()
     }
 
@@ -92,39 +92,39 @@ class AiringFragment : Fragment(), FilmAdapter.OnClickListener {
                         val insertIndex = mFilmList.size
                         mFilmList.addAll(insertIndex, filmList)
                         setAdapter()
-                        mViewBinding.progressBar.visibility = View.GONE
+                        mBinding.progressBar.visibility = View.GONE
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mViewBinding.errorMessage.visibility = View.GONE
+                mBinding.errorMessage.visibility = View.GONE
             }
 
             override fun onNotFound() {
-                mViewBinding.progressBar.visibility = View.GONE
-                mViewBinding.errorMessage.visibility = View.VISIBLE
-                mViewBinding.errorMessage.text = getString(R.string.empty_airing_film)
+                mBinding.progressBar.visibility = View.GONE
+                mBinding.errorMessage.visibility = View.VISIBLE
+                mBinding.errorMessage.text = getString(R.string.empty_airing_film)
             }
 
             override fun onError(message: String) {
                 if (!mIsLoadFirstTimeSuccess) {
-                    mViewBinding.progressBar.visibility = View.GONE
-                    mViewBinding.errorMessage.visibility = View.VISIBLE
-                    mViewBinding.errorMessage.text = getString(R.string.empty_airing_film)
+                    mBinding.progressBar.visibility = View.GONE
+                    mBinding.errorMessage.visibility = View.VISIBLE
+                    mBinding.errorMessage.text = getString(R.string.empty_airing_film)
                 }
-                Snackbar.make(mViewBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
 
         // Memberhentikan loading
-        mViewBinding.swipeRefresh.isRefreshing = false
+        mBinding.swipeRefresh.isRefreshing = false
     }
 
     private fun setAdapter() {
         mFilmAdapter = FilmAdapter(mContext, mFilmList, this)
-        mViewBinding.recyclerView.adapter = mFilmAdapter
-        mViewBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
-        mViewBinding.recyclerView.hasFixedSize()
-        mViewBinding.recyclerView.visibility = View.VISIBLE
+        mBinding.recyclerView.adapter = mFilmAdapter
+        mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
+        mBinding.recyclerView.hasFixedSize()
+        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun resetState() {

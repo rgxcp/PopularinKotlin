@@ -37,8 +37,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(viewBinding.root)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Context
         mContext = this
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         mIsAuth = Auth(mContext).isAuth()
 
         // Bottom navigation
-        viewBinding.bottomNavigation.setOnNavigationItemSelectedListener(mListener)
+        binding.bottomNavigation.setOnNavigationItemSelectedListener(mListener)
 
         // Menampilkan fragment otomatis sesuai kondisi
         mSelectedFragment = when (mIsAuth) {

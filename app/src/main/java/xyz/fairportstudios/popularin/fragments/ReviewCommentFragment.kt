@@ -41,12 +41,12 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
     private lateinit var mCommentRequest: CommentRequest
     private lateinit var mComment: String
 
-    // View binding
-    private var _mViewBinding: FragmentReviewCommentBinding? = null
-    private val mViewBinding get() = _mViewBinding!!
+    // Binding
+    private var _mBinding: FragmentReviewCommentBinding? = null
+    private val mBinding get() = _mBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _mViewBinding = FragmentReviewCommentBinding.inflate(inflater, container, false)
+        _mBinding = FragmentReviewCommentBinding.inflate(inflater, container, false)
 
         // Context
         mContext = requireActivity()
@@ -56,10 +56,10 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
         val isAuth = mAuth.isAuth()
 
         // Text watcher
-        mViewBinding.inputComment.addTextChangedListener(mCommentWatcher)
+        mBinding.inputComment.addTextChangedListener(mCommentWatcher)
 
         // Activity
-        mViewBinding.sendImage.setOnClickListener {
+        mBinding.sendImage.setOnClickListener {
             when (isAuth && !mIsLoading) {
                 true -> {
                     mIsLoading = true
@@ -69,26 +69,26 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
             }
         }
 
-        mViewBinding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        mBinding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
                     if (!mIsLoading && mCurrentPage <= mTotalPage) {
                         mIsLoading = true
-                        mViewBinding.swipeRefresh.isRefreshing = true
+                        mBinding.swipeRefresh.isRefreshing = true
                         getComment(mCurrentPage, false)
                     }
                 }
             }
         })
 
-        mViewBinding.swipeRefresh.setOnRefreshListener {
+        mBinding.swipeRefresh.setOnRefreshListener {
             mIsLoading = true
-            mViewBinding.swipeRefresh.isRefreshing = true
+            mBinding.swipeRefresh.isRefreshing = true
             getComment(mStartPage, true)
         }
 
-        return mViewBinding.root
+        return mBinding.root
     }
 
     override fun onResume() {
@@ -104,7 +104,7 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _mViewBinding = null
+        _mBinding = null
     }
 
     override fun onCommentProfileClick(position: Int) {
@@ -130,10 +130,10 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            mComment = mViewBinding.inputComment.text.toString()
+            mComment = mBinding.inputComment.text.toString()
             when (mComment.isNotEmpty()) {
-                true -> mViewBinding.sendImage.visibility = View.VISIBLE
-                false -> mViewBinding.sendImage.visibility = View.INVISIBLE
+                true -> mBinding.sendImage.visibility = View.VISIBLE
+                false -> mBinding.sendImage.visibility = View.INVISIBLE
             }
         }
     }
@@ -157,12 +157,12 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
                         val insertIndex = mCommentList.size
                         mCommentList.addAll(insertIndex, commentList)
                         setAdapter()
-                        mViewBinding.progressBar.visibility = View.GONE
+                        mBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mViewBinding.errorMessage.visibility = View.GONE
+                mBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -173,19 +173,19 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
                         mCommentList.clear()
                         mCommentAdapter.notifyDataSetChanged()
                     }
-                    false -> mViewBinding.progressBar.visibility = View.GONE
+                    false -> mBinding.progressBar.visibility = View.GONE
                 }
-                mViewBinding.errorMessage.visibility = View.VISIBLE
-                mViewBinding.errorMessage.text = getString(R.string.empty_comment)
+                mBinding.errorMessage.visibility = View.VISIBLE
+                mBinding.errorMessage.text = getString(R.string.empty_comment)
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
                     false -> {
-                        mViewBinding.progressBar.visibility = View.GONE
-                        mViewBinding.errorMessage.visibility = View.VISIBLE
-                        mViewBinding.errorMessage.text = message
+                        mBinding.progressBar.visibility = View.GONE
+                        mBinding.errorMessage.visibility = View.VISIBLE
+                        mBinding.errorMessage.text = message
                     }
                 }
             }
@@ -193,14 +193,14 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
 
         // Memberhentikan loading
         mIsLoading = false
-        mViewBinding.swipeRefresh.isRefreshing = false
+        mBinding.swipeRefresh.isRefreshing = false
     }
 
     private fun setAdapter() {
         mCommentAdapter = CommentAdapter(mContext, mAuth.getAuthID(), mCommentList, this)
-        mViewBinding.recyclerView.adapter = mCommentAdapter
-        mViewBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
-        mViewBinding.recyclerView.visibility = View.VISIBLE
+        mBinding.recyclerView.adapter = mCommentAdapter
+        mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
+        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun addComment() {
@@ -214,9 +214,9 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
                     mIsLoadFirstTimeSuccess = true
                 }
                 mCommentAdapter.notifyItemInserted(insertIndex)
-                mViewBinding.recyclerView.scrollToPosition(insertIndex)
-                mViewBinding.errorMessage.visibility = View.GONE
-                mViewBinding.inputComment.text.clear()
+                mBinding.recyclerView.scrollToPosition(insertIndex)
+                mBinding.errorMessage.visibility = View.GONE
+                mBinding.inputComment.text.clear()
             }
 
             override fun onFailed(message: String) {
@@ -239,7 +239,7 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
                 mCommentList.removeAt(position)
                 mCommentAdapter.notifyItemRemoved(position)
                 if (mCommentList.isEmpty()) {
-                    mViewBinding.errorMessage.visibility = View.VISIBLE
+                    mBinding.errorMessage.visibility = View.VISIBLE
                 }
             }
 

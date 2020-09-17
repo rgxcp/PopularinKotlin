@@ -33,12 +33,12 @@ class FilmModal(
     // Member
     private lateinit var mFilmSelf: FilmSelf
 
-    // View binding
-    private var _mViewBinding: ModalFilmBinding? = null
-    private val mViewBinding get() = _mViewBinding!!
+    // Binding
+    private var _mBinding: ModalFilmBinding? = null
+    private val mBinding get() = _mBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _mViewBinding = ModalFilmBinding.inflate(inflater, container, false)
+        _mBinding = ModalFilmBinding.inflate(inflater, container, false)
 
         // Context
         val context = requireActivity()
@@ -47,8 +47,8 @@ class FilmModal(
         val isAuth = Auth(context).isAuth()
 
         // Isi
-        mViewBinding.title = filmTitle
-        mViewBinding.year = filmYear
+        mBinding.title = filmTitle
+        mBinding.year = filmYear
 
         // Mendapatkan status film
         if (isAuth) {
@@ -56,7 +56,7 @@ class FilmModal(
         }
 
         // Activity
-        mViewBinding.reviewImage.setOnClickListener {
+        mBinding.reviewImage.setOnClickListener {
             when (isAuth) {
                 true -> gotoAddReview(context)
                 false -> gotoEmptyAccount(context)
@@ -64,7 +64,7 @@ class FilmModal(
             dismiss()
         }
 
-        mViewBinding.favoriteImage.setOnClickListener {
+        mBinding.favoriteImage.setOnClickListener {
             when (isAuth) {
                 true -> {
                     when (mFilmSelf.inFavorite) {
@@ -77,7 +77,7 @@ class FilmModal(
             dismiss()
         }
 
-        mViewBinding.watchlistImage.setOnClickListener {
+        mBinding.watchlistImage.setOnClickListener {
             when (isAuth) {
                 true -> {
                     when (mFilmSelf.inWatchlist) {
@@ -90,7 +90,7 @@ class FilmModal(
             dismiss()
         }
 
-        mViewBinding.ratingBar.setOnRatingBarChangeListener { _, newRate, _ ->
+        mBinding.ratingBar.setOnRatingBarChangeListener { _, newRate, _ ->
             when (isAuth) {
                 true -> {
                     if (mLastRate != newRate) {
@@ -106,12 +106,12 @@ class FilmModal(
             }
         }
 
-        return mViewBinding.root
+        return mBinding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _mViewBinding = null
+        _mBinding = null
     }
 
     private fun getFilmSelf(context: Context) {
@@ -119,7 +119,7 @@ class FilmModal(
         filmSelfRequest.sendRequest(object : FilmSelfRequest.Callback {
             override fun onSuccess(filmSelf: FilmSelf) {
                 mFilmSelf = filmSelf
-                mViewBinding.filmSelf = mFilmSelf
+                mBinding.filmSelf = mFilmSelf
                 mLastRate = mFilmSelf.lastRate.toFloat()
             }
 

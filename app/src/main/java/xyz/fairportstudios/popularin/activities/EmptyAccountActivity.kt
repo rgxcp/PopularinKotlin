@@ -9,16 +9,16 @@ import xyz.fairportstudios.popularin.databinding.ReusableEmptyAccountBinding
 class EmptyAccountActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewBinding = ReusableEmptyAccountBinding.inflate(layoutInflater)
-        setContentView(viewBinding.root)
+        val binding = ReusableEmptyAccountBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Context
         val context = this
 
         // Activity
-        viewBinding.signInButton.setOnClickListener { gotoSignIn(context) }
+        binding.signInButton.setOnClickListener { gotoSignIn(context) }
 
-        viewBinding.signUpButton.setOnClickListener { gotoSignUp(context) }
+        binding.signUpButton.setOnClickListener { gotoSignUp(context) }
     }
 
     private fun gotoSignIn(context: Context) {
