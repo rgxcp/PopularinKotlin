@@ -14,6 +14,12 @@ import xyz.fairportstudios.popularin.apis.popularin.delete.UnfollowUserRequest
 import xyz.fairportstudios.popularin.apis.popularin.get.UserDetailRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.FollowUserRequest
 import xyz.fairportstudios.popularin.databinding.ActivityUserDetailBinding
+import xyz.fairportstudios.popularin.enums.FollowingState
+import xyz.fairportstudios.popularin.interfaces.FollowUserRequestCallback
+import xyz.fairportstudios.popularin.interfaces.RecentFavoriteAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.RecentReviewAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.UnfollowUserRequestCallback
+import xyz.fairportstudios.popularin.interfaces.UserDetailRequestCallback
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.RecentFavorite
 import xyz.fairportstudios.popularin.models.RecentReview
@@ -22,7 +28,7 @@ import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickListener, RecentReviewAdapter.OnClickListener {
+class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapterClickListener, RecentReviewAdapterClickListener {
     // Primitive
     private var mIsLoadFirstTimeSuccess = false
 
@@ -115,7 +121,7 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
 
     private fun getUserDetail(id: Int) {
         val userDetailRequest = UserDetailRequest(mContext, id)
-        userDetailRequest.sendRequest(object : UserDetailRequest.Callback {
+        userDetailRequest.sendRequest(object : UserDetailRequestCallback {
             override fun onSuccess(userDetail: UserDetail) {
                 mUserDetail = userDetail
                 mBinding.userDetail = mUserDetail
@@ -185,13 +191,9 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
         }
     }
 
-    private enum class FollowingState {
-        FOLLOWING, NOT_FOLLOWING, LOADING
-    }
-
     private fun followUser(id: Int) {
         val followUserRequest = FollowUserRequest(mContext, id)
-        followUserRequest.sendRequest(object : FollowUserRequest.Callback {
+        followUserRequest.sendRequest(object : FollowUserRequestCallback {
             override fun onSuccess() {
                 setFollowingState(true)
                 setFollowButtonState(true, FollowingState.FOLLOWING)
@@ -206,7 +208,7 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapter.OnClickLis
 
     private fun unfollowUser(id: Int) {
         val unfollowUserRequest = UnfollowUserRequest(mContext, id)
-        unfollowUserRequest.sendRequest(object : UnfollowUserRequest.Callback {
+        unfollowUserRequest.sendRequest(object : UnfollowUserRequestCallback {
             override fun onSuccess() {
                 setFollowingState(false)
                 setFollowButtonState(true, FollowingState.NOT_FOLLOWING)
