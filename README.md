@@ -3,6 +3,9 @@
 
 **ID**: Sosial media film Indonesia.
 
+## Status
+MAINTAINING
+
 ## Requirements
 1. Android Studio
 2. Android Emulator or Android Device
