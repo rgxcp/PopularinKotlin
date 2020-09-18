@@ -15,7 +15,6 @@ import xyz.fairportstudios.popularin.models.Comment
 
 class CommentAdapter(
     private val context: Context,
-    private val authID: Int,
     private val commentList: ArrayList<Comment>,
     private val clickListener: CommentAdapterClickListener
 ) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
@@ -28,7 +27,7 @@ class CommentAdapter(
         val currentItem = commentList[position]
 
         // Auth
-        holder.mImageDelete.visibility = when (currentItem.userID == authID) {
+        holder.mImageDelete.visibility = when (currentItem.isSelf) {
             true -> View.VISIBLE
             false -> View.GONE
         }

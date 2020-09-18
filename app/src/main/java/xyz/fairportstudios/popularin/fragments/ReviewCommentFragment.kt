@@ -39,7 +39,6 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
 
     // Member
     private lateinit var mCommentList: ArrayList<Comment>
-    private lateinit var mAuth: Auth
     private lateinit var mContext: Context
     private lateinit var mCommentAdapter: CommentAdapter
     private lateinit var mCommentRequest: CommentRequest
@@ -56,8 +55,7 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
         mContext = requireActivity()
 
         // Auth
-        mAuth = Auth(mContext)
-        val isAuth = mAuth.isAuth()
+        val isAuth = Auth(mContext).isAuth()
 
         // Text watcher
         mBinding.inputComment.addTextChangedListener(mCommentWatcher)
@@ -201,7 +199,7 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
     }
 
     private fun setAdapter() {
-        mCommentAdapter = CommentAdapter(mContext, mAuth.getAuthID(), mCommentList, this)
+        mCommentAdapter = CommentAdapter(mContext, mCommentList, this)
         mBinding.recyclerView.adapter = mCommentAdapter
         mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
         mBinding.recyclerView.visibility = View.VISIBLE
