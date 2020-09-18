@@ -8,6 +8,7 @@ import com.android.volley.TimeoutError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.AccountDetailRequestCallback
 import xyz.fairportstudios.popularin.models.AccountDetail
 import xyz.fairportstudios.popularin.models.RecentFavorite
 import xyz.fairportstudios.popularin.models.RecentReview
@@ -15,14 +16,7 @@ import xyz.fairportstudios.popularin.secrets.APIKey
 import xyz.fairportstudios.popularin.statics.PopularinAPI
 
 class AccountDetailRequest(private val context: Context, private val userID: Int) {
-    interface Callback {
-        fun onSuccess(accountDetail: AccountDetail)
-        fun onHasRecentFavorite(recentFavoriteList: ArrayList<RecentFavorite>)
-        fun onHasRecentReview(recentReviewList: ArrayList<RecentReview>)
-        fun onError(message: String)
-    }
-
-    fun sendRequest(callback: Callback) {
+    fun sendRequest(callback: AccountDetailRequestCallback) {
         val requestURL = "${PopularinAPI.USER}$userID"
 
         val accountDetail = object : JsonObjectRequest(Method.GET, requestURL, null, Response.Listener { response ->

@@ -14,12 +14,14 @@ import xyz.fairportstudios.popularin.activities.FilmDetailActivity
 import xyz.fairportstudios.popularin.adapters.FilmAdapter
 import xyz.fairportstudios.popularin.apis.tmdb.get.AiringFilmRequest
 import xyz.fairportstudios.popularin.databinding.ReusableRecyclerBinding
+import xyz.fairportstudios.popularin.interfaces.AiringFilmRequestCallback
+import xyz.fairportstudios.popularin.interfaces.FilmAdapterClickListener
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.Film
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class AiringFragment : Fragment(), FilmAdapter.OnClickListener {
+class AiringFragment : Fragment(), FilmAdapterClickListener {
     // Primitive
     private var mIsLoadFirstTimeSuccess = false
 
@@ -75,7 +77,7 @@ class AiringFragment : Fragment(), FilmAdapter.OnClickListener {
     }
 
     private fun getAiringFilm(refreshPage: Boolean) {
-        mAiringFilmRequest.sendRequest(object : AiringFilmRequest.Callback {
+        mAiringFilmRequest.sendRequest(object : AiringFilmRequestCallback {
             override fun onSuccess(filmList: ArrayList<Film>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {

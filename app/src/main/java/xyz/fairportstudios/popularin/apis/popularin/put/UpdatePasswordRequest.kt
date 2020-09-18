@@ -6,6 +6,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.UpdatePasswordRequestCallback
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.secrets.APIKey
 import xyz.fairportstudios.popularin.statics.PopularinAPI
@@ -16,14 +17,7 @@ class UpdatePasswordRequest(
     private val newPassword: String,
     private val confirmPassword: String
 ) {
-    interface Callback {
-        fun onSuccess()
-        fun onInvalidCurrentPassword()
-        fun onFailed(message: String)
-        fun onError(message: String)
-    }
-
-    fun sendRequest(callback: Callback) {
+    fun sendRequest(callback: UpdatePasswordRequestCallback) {
         val requestURL = PopularinAPI.UPDATE_PASSWORD
 
         val updatePassword = object : StringRequest(Method.PUT, requestURL, Response.Listener { response ->

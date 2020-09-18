@@ -11,11 +11,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import xyz.fairportstudios.popularin.activities.DiscoverFilmActivity
 import xyz.fairportstudios.popularin.adapters.GenreGridAdapter
 import xyz.fairportstudios.popularin.databinding.ReusableRecyclerBinding
+import xyz.fairportstudios.popularin.interfaces.GenreGridAdapterClickListener
 import xyz.fairportstudios.popularin.models.Genre
 import xyz.fairportstudios.popularin.services.LoadGenre
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class GenreFragment : Fragment(), GenreGridAdapter.OnClickListener {
+class GenreFragment : Fragment(), GenreGridAdapterClickListener {
     // Member
     private lateinit var mGenreList: ArrayList<Genre>
     private lateinit var mContext: Context

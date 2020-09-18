@@ -9,17 +9,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.recycler_genre_horizontal.view.*
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.GenreHorizontalAdapterClickListener
 import xyz.fairportstudios.popularin.models.Genre
 
 class GenreHorizontalAdapter(
     private val context: Context,
     private val genreList: ArrayList<Genre>,
-    private val onClickListener: OnClickListener
+    private val clickListener: GenreHorizontalAdapterClickListener
 ) : RecyclerView.Adapter<GenreHorizontalAdapter.GenreHorizontalViewHolder>() {
-    interface OnClickListener {
-        fun onGenreItemClick(position: Int)
-    }
-
     private fun getDensity(px: Int): Int {
         val dp = px * context.resources.displayMetrics.density
         return dp.toInt()
@@ -63,7 +60,7 @@ class GenreHorizontalAdapter(
         }
 
         override fun onClick(v: View?) {
-            if (v == itemView) onClickListener.onGenreItemClick(adapterPosition)
+            if (v == itemView) clickListener.onGenreItemClick(adapterPosition)
         }
     }
 }

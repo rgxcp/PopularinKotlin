@@ -15,13 +15,17 @@ import xyz.fairportstudios.popularin.apis.popularin.delete.UnlikeReviewRequest
 import xyz.fairportstudios.popularin.apis.popularin.get.UserReviewRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.LikeReviewRequest
 import xyz.fairportstudios.popularin.databinding.ReusableToolbarRecyclerBinding
+import xyz.fairportstudios.popularin.interfaces.LikeReviewRequestCallback
+import xyz.fairportstudios.popularin.interfaces.UnlikeReviewRequestCallback
+import xyz.fairportstudios.popularin.interfaces.UserReviewAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.UserReviewRequestCallback
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.UserReview
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class UserReviewActivity : AppCompatActivity(), UserReviewAdapter.OnClickListener {
+class UserReviewActivity : AppCompatActivity(), UserReviewAdapterClickListener {
     // Primitive
     private var mIsAuth = false
     private var mIsSelf = false
@@ -128,7 +132,7 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapter.OnClickListene
     }
 
     private fun getUserReview(page: Int, refreshPage: Boolean) {
-        mUserReviewRequest.sendRequest(page, object : UserReviewRequest.Callback {
+        mUserReviewRequest.sendRequest(page, object : UserReviewRequestCallback {
             override fun onSuccess(totalPage: Int, userReviewList: ArrayList<UserReview>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
@@ -206,7 +210,7 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapter.OnClickListene
 
     private fun likeReview(id: Int, position: Int) {
         val likeReviewRequest = LikeReviewRequest(mContext, id)
-        likeReviewRequest.sendRequest(object : LikeReviewRequest.Callback {
+        likeReviewRequest.sendRequest(object : LikeReviewRequestCallback {
             override fun onSuccess() {
                 mTotalLike++
                 val currentItem = mUserReviewList[position]
@@ -226,7 +230,7 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapter.OnClickListene
 
     private fun unlikeReview(id: Int, position: Int) {
         val unlikeReviewRequest = UnlikeReviewRequest(mContext, id)
-        unlikeReviewRequest.sendRequest(object : UnlikeReviewRequest.Callback {
+        unlikeReviewRequest.sendRequest(object : UnlikeReviewRequestCallback {
             override fun onSuccess() {
                 mTotalLike--
                 val currentItem = mUserReviewList[position]

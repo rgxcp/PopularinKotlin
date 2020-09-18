@@ -16,10 +16,12 @@ import xyz.fairportstudios.popularin.activities.UserDetailActivity
 import xyz.fairportstudios.popularin.adapters.UserAdapter
 import xyz.fairportstudios.popularin.apis.popularin.get.UserMutualRequest
 import xyz.fairportstudios.popularin.databinding.ReusableRecyclerBinding
+import xyz.fairportstudios.popularin.interfaces.UserAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.UserMutualRequestCallback
 import xyz.fairportstudios.popularin.models.User
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class MutualFragment(private val userID: Int) : Fragment(), UserAdapter.OnClickListener {
+class MutualFragment(private val userID: Int) : Fragment(), UserAdapterClickListener {
     // Primitive
     private var mIsResumeFirstTime = true
     private var mIsLoading = true
@@ -90,7 +92,7 @@ class MutualFragment(private val userID: Int) : Fragment(), UserAdapter.OnClickL
     }
 
     private fun getUserMutual(page: Int, refreshPage: Boolean) {
-        mUserMutualRequest.sendRequest(page, object : UserMutualRequest.Callback {
+        mUserMutualRequest.sendRequest(page, object : UserMutualRequestCallback {
             override fun onSuccess(totalPage: Int, userList: ArrayList<User>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {

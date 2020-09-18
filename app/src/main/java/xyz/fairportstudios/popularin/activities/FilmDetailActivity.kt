@@ -15,6 +15,10 @@ import xyz.fairportstudios.popularin.adapters.CrewAdapter
 import xyz.fairportstudios.popularin.apis.popularin.get.FilmMetadataRequest
 import xyz.fairportstudios.popularin.apis.tmdb.get.FilmDetailRequest
 import xyz.fairportstudios.popularin.databinding.ActivityFilmDetailBinding
+import xyz.fairportstudios.popularin.interfaces.CastAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.CrewAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.FilmDetailRequestCallback
+import xyz.fairportstudios.popularin.interfaces.FilmMetadataRequestCallback
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.Cast
 import xyz.fairportstudios.popularin.models.Crew
@@ -25,7 +29,7 @@ import xyz.fairportstudios.popularin.statics.Popularin
 import java.util.Locale
 import kotlin.collections.ArrayList
 
-class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, CrewAdapter.OnClickListener {
+class FilmDetailActivity : AppCompatActivity(), CastAdapterClickListener, CrewAdapterClickListener {
     // Member
     private lateinit var mCastList: ArrayList<Cast>
     private lateinit var mCrewList: ArrayList<Crew>
@@ -97,7 +101,7 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
 
     private fun getFilmDetail(id: Int) {
         val filmDetailRequest = FilmDetailRequest(mContext, id)
-        filmDetailRequest.sendRequest(object : FilmDetailRequest.Callback {
+        filmDetailRequest.sendRequest(object : FilmDetailRequestCallback {
             override fun onSuccess(filmDetail: FilmDetail, castList: ArrayList<Cast>, crewList: ArrayList<Crew>) {
                 // Detail
                 mFilmDetail = filmDetail
@@ -130,7 +134,7 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapter.OnClickListener, Cre
 
     private fun getFilmMetadata(id: Int) {
         val filmMetadataRequest = FilmMetadataRequest(mContext, id)
-        filmMetadataRequest.sendRequest(object : FilmMetadataRequest.Callback {
+        filmMetadataRequest.sendRequest(object : FilmMetadataRequestCallback {
             override fun onSuccess(filmMetadata: FilmMetadata) {
                 mBinding.filmMetadata = filmMetadata
             }

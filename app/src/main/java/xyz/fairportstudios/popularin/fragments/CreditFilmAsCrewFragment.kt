@@ -14,13 +14,15 @@ import xyz.fairportstudios.popularin.activities.FilmDetailActivity
 import xyz.fairportstudios.popularin.adapters.FilmGridAdapter
 import xyz.fairportstudios.popularin.apis.tmdb.get.CreditDetailRequest
 import xyz.fairportstudios.popularin.databinding.ReusableRecyclerBinding
+import xyz.fairportstudios.popularin.interfaces.CreditDetailRequestCallback
+import xyz.fairportstudios.popularin.interfaces.FilmGridAdapterClickListener
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.CreditDetail
 import xyz.fairportstudios.popularin.models.Film
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class CreditFilmAsCrewFragment(private val creditID: Int) : Fragment(), FilmGridAdapter.OnClickListener {
+class CreditFilmAsCrewFragment(private val creditID: Int) : Fragment(), FilmGridAdapterClickListener {
     // Primitive
     private var mIsResumeFirstTime = true
     private var mIsLoadFirstTimeSuccess = false
@@ -80,7 +82,7 @@ class CreditFilmAsCrewFragment(private val creditID: Int) : Fragment(), FilmGrid
 
     private fun getFilmAsCrew() {
         val creditDetailRequest = CreditDetailRequest(mContext, creditID)
-        creditDetailRequest.sendRequest(object : CreditDetailRequest.Callback {
+        creditDetailRequest.sendRequest(object : CreditDetailRequestCallback {
             override fun onSuccess(creditDetail: CreditDetail, filmAsCastList: ArrayList<Film>, filmAsCrewList: ArrayList<Film>) {
                 when (filmAsCrewList.isNotEmpty()) {
                     true -> {

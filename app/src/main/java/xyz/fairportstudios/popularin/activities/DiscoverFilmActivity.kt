@@ -12,12 +12,14 @@ import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.adapters.FilmGridAdapter
 import xyz.fairportstudios.popularin.apis.tmdb.get.DiscoverFilmRequest
 import xyz.fairportstudios.popularin.databinding.ReusableToolbarRecyclerBinding
+import xyz.fairportstudios.popularin.interfaces.DiscoverFilmRequestCallback
+import xyz.fairportstudios.popularin.interfaces.FilmGridAdapterClickListener
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.Film
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class DiscoverFilmActivity : AppCompatActivity(), FilmGridAdapter.OnClickListener {
+class DiscoverFilmActivity : AppCompatActivity(), FilmGridAdapterClickListener {
     // Primitive
     private var mIsLoading = true
     private var mIsLoadFirstTimeSuccess = false
@@ -90,7 +92,7 @@ class DiscoverFilmActivity : AppCompatActivity(), FilmGridAdapter.OnClickListene
     }
 
     private fun discoverFilm(page: Int, refreshPage: Boolean) {
-        mDiscoverFilmRequest.sendRequest(page, object : DiscoverFilmRequest.Callback {
+        mDiscoverFilmRequest.sendRequest(page, object : DiscoverFilmRequestCallback {
             override fun onSuccess(totalPage: Int, filmList: ArrayList<Film>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {

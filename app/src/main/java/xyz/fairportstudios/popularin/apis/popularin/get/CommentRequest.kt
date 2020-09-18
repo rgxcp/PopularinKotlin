@@ -8,18 +8,13 @@ import com.android.volley.TimeoutError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.CommentRequestCallback
 import xyz.fairportstudios.popularin.models.Comment
 import xyz.fairportstudios.popularin.secrets.APIKey
 import xyz.fairportstudios.popularin.statics.PopularinAPI
 
 class CommentRequest(private val context: Context, private val reviewID: Int) {
-    interface Callback {
-        fun onSuccess(totalPage: Int, commentList: ArrayList<Comment>)
-        fun onNotFound()
-        fun onError(message: String)
-    }
-
-    fun sendRequest(page: Int, callback: Callback) {
+    fun sendRequest(page: Int, callback: CommentRequestCallback) {
         val requestURL = "${PopularinAPI.REVIEW}$reviewID/comments?page=$page"
 
         val comment = object : JsonObjectRequest(Method.GET, requestURL, null, Response.Listener { response ->

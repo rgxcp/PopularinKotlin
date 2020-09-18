@@ -13,13 +13,15 @@ import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.adapters.FilmAdapter
 import xyz.fairportstudios.popularin.apis.popularin.get.UserWatchlistRequest
 import xyz.fairportstudios.popularin.databinding.ReusableToolbarRecyclerBinding
+import xyz.fairportstudios.popularin.interfaces.FilmAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.UserWatchlistRequestCallback
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.Film
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
+class UserWatchlistActivity : AppCompatActivity(), FilmAdapterClickListener {
     // Primitive
     private var mIsSelf = false
     private var mIsLoading = true
@@ -101,7 +103,7 @@ class UserWatchlistActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
     }
 
     private fun getUserWatchlist(page: Int, refreshPage: Boolean) {
-        mUserWatchlistRequest.sendRequest(page, object : UserWatchlistRequest.Callback {
+        mUserWatchlistRequest.sendRequest(page, object : UserWatchlistRequestCallback {
             override fun onSuccess(totalPage: Int, filmList: ArrayList<Film>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {

@@ -9,19 +9,14 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.AddCommentRequestCallback
 import xyz.fairportstudios.popularin.models.Comment
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.secrets.APIKey
 import xyz.fairportstudios.popularin.statics.PopularinAPI
 
 class AddCommentRequest(private val context: Context, private val reviewID: Int, private val commentDetail: String) {
-    interface Callback {
-        fun onSuccess(comment: Comment)
-        fun onFailed(message: String)
-        fun onError(message: String)
-    }
-
-    fun sendRequest(callback: Callback) {
+    fun sendRequest(callback: AddCommentRequestCallback) {
         val requestURL = PopularinAPI.ADD_COMMENT
 
         val addComment = object : StringRequest(Method.POST, requestURL, Response.Listener { response ->

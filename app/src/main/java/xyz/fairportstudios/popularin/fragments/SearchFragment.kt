@@ -17,13 +17,17 @@ import xyz.fairportstudios.popularin.adapters.UserAdapter
 import xyz.fairportstudios.popularin.apis.popularin.get.SearchUserRequest
 import xyz.fairportstudios.popularin.apis.tmdb.get.SearchFilmRequest
 import xyz.fairportstudios.popularin.databinding.FragmentSearchBinding
+import xyz.fairportstudios.popularin.interfaces.FilmAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.SearchFilmRequestCallback
+import xyz.fairportstudios.popularin.interfaces.SearchUserRequestCallback
+import xyz.fairportstudios.popularin.interfaces.UserAdapterClickListener
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.Film
 import xyz.fairportstudios.popularin.models.User
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnClickListener {
+class SearchFragment : Fragment(), FilmAdapterClickListener, UserAdapterClickListener {
     // Primitive
     private var mIsSearchFilmFirstTime = true
     private var mIsSearchUserFirstTime = true
@@ -125,7 +129,7 @@ class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnCl
     }
 
     private fun searchFilm() {
-        mSearchFilmRequest.sendRequest(mSearchQuery, object : SearchFilmRequest.Callback {
+        mSearchFilmRequest.sendRequest(mSearchQuery, object : SearchFilmRequestCallback {
             override fun onSuccess(filmList: ArrayList<Film>) {
                 when (mIsSearchFilmFirstTime || mIsLoadFilmFirstTimeSuccess) {
                     true -> {
@@ -166,7 +170,7 @@ class SearchFragment : Fragment(), FilmAdapter.OnClickListener, UserAdapter.OnCl
     }
 
     private fun searchUser() {
-        mSearchUserRequest.sendRequest(mSearchQuery, object : SearchUserRequest.Callback {
+        mSearchUserRequest.sendRequest(mSearchQuery, object : SearchUserRequestCallback {
             override fun onSuccess(userList: ArrayList<User>) {
                 when (mIsSearchUserFirstTime || mIsLoadUserFirstTimeSuccess) {
                     true -> {

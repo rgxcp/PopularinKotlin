@@ -16,10 +16,12 @@ import xyz.fairportstudios.popularin.activities.UserDetailActivity
 import xyz.fairportstudios.popularin.adapters.UserAdapter
 import xyz.fairportstudios.popularin.apis.popularin.get.LikeFromFollowingRequest
 import xyz.fairportstudios.popularin.databinding.ReusableRecyclerBinding
+import xyz.fairportstudios.popularin.interfaces.LikeFromFollowingRequestCallback
+import xyz.fairportstudios.popularin.interfaces.UserAdapterClickListener
 import xyz.fairportstudios.popularin.models.User
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class LikeFromFollowingFragment(private val reviewID: Int) : Fragment(), UserAdapter.OnClickListener {
+class LikeFromFollowingFragment(private val reviewID: Int) : Fragment(), UserAdapterClickListener {
     // Primitive
     private var mIsResumeFirstTime = true
     private var mIsLoading = true
@@ -90,7 +92,7 @@ class LikeFromFollowingFragment(private val reviewID: Int) : Fragment(), UserAda
     }
 
     private fun getLikeFromFollowing(page: Int, refreshPage: Boolean) {
-        mLikeFromFollowingRequest.sendRequest(page, object : LikeFromFollowingRequest.Callback {
+        mLikeFromFollowingRequest.sendRequest(page, object : LikeFromFollowingRequestCallback {
             override fun onSuccess(totalPage: Int, userList: ArrayList<User>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {

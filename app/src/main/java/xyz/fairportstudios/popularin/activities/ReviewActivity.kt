@@ -12,6 +12,7 @@ import xyz.fairportstudios.popularin.apis.popularin.delete.DeleteReviewRequest
 import xyz.fairportstudios.popularin.databinding.ReusableToolbarPagerBinding
 import xyz.fairportstudios.popularin.fragments.ReviewCommentFragment
 import xyz.fairportstudios.popularin.fragments.ReviewDetailFragment
+import xyz.fairportstudios.popularin.interfaces.DeleteReviewRequestCallback
 import xyz.fairportstudios.popularin.statics.Popularin
 
 class ReviewActivity : AppCompatActivity() {
@@ -78,7 +79,7 @@ class ReviewActivity : AppCompatActivity() {
 
     private fun deleteReview(context: Context, id: Int) {
         val deleteReviewRequest = DeleteReviewRequest(context, id)
-        deleteReviewRequest.sendRequest(object : DeleteReviewRequest.Callback {
+        deleteReviewRequest.sendRequest(object : DeleteReviewRequestCallback {
             override fun onSuccess() {
                 onBackPressed()
                 Toast.makeText(context, R.string.review_deleted, Toast.LENGTH_SHORT).show()

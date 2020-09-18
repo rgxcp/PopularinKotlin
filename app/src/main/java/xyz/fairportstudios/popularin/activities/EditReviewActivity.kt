@@ -12,6 +12,8 @@ import xyz.fairportstudios.popularin.apis.popularin.get.ReviewDetailRequest
 import xyz.fairportstudios.popularin.apis.popularin.put.UpdateReviewRequest
 import xyz.fairportstudios.popularin.databinding.ActivityEditReviewBinding
 import xyz.fairportstudios.popularin.dialogs.WatchDatePickerDialog
+import xyz.fairportstudios.popularin.interfaces.ReviewDetailRequestCallback
+import xyz.fairportstudios.popularin.interfaces.UpdateReviewRequestCallback
 import xyz.fairportstudios.popularin.models.ReviewDetail
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
@@ -77,7 +79,7 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
     private fun getCurrentReview(context: Context, id: Int) {
         val reviewDetailRequest = ReviewDetailRequest(context, id)
-        reviewDetailRequest.sendRequest(object : ReviewDetailRequest.Callback {
+        reviewDetailRequest.sendRequest(object : ReviewDetailRequestCallback {
             override fun onSuccess(reviewDetail: ReviewDetail) {
                 mReviewDetail = reviewDetail
                 mRating = mReviewDetail.rating.toFloat()
@@ -138,7 +140,7 @@ class EditReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
     private fun editReview(context: Context, id: Int) {
         val updateReviewRequest = UpdateReviewRequest(context, id, mRating, mReviewDetail.reviewDetail, mReviewDetail.watchDate)
-        updateReviewRequest.sendRequest(object : UpdateReviewRequest.Callback {
+        updateReviewRequest.sendRequest(object : UpdateReviewRequestCallback {
             override fun onSuccess() {
                 onBackPressed()
                 Toast.makeText(context, R.string.review_updated, Toast.LENGTH_SHORT).show()

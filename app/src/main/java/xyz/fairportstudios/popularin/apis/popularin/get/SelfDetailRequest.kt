@@ -8,18 +8,14 @@ import com.android.volley.TimeoutError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.SelfDetailRequestCallback
 import xyz.fairportstudios.popularin.models.SelfDetail
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.secrets.APIKey
 import xyz.fairportstudios.popularin.statics.PopularinAPI
 
 class SelfDetailRequest(private val context: Context) {
-    interface Callback {
-        fun onSuccess(selfDetail: SelfDetail)
-        fun onError(message: String)
-    }
-
-    fun sendRequest(callback: Callback) {
+    fun sendRequest(callback: SelfDetailRequestCallback) {
         val requestURL = PopularinAPI.SELF
 
         val selfDetail = object : JsonObjectRequest(Method.GET, requestURL, null, Response.Listener { response ->

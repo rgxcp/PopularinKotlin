@@ -6,6 +6,7 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.FilmDetailRequestCallback
 import xyz.fairportstudios.popularin.models.Cast
 import xyz.fairportstudios.popularin.models.Crew
 import xyz.fairportstudios.popularin.models.FilmDetail
@@ -13,12 +14,7 @@ import xyz.fairportstudios.popularin.secrets.APIKey
 import xyz.fairportstudios.popularin.statics.TMDbAPI
 
 class FilmDetailRequest(private val context: Context, private val filmID: Int) {
-    interface Callback {
-        fun onSuccess(filmDetail: FilmDetail, castList: ArrayList<Cast>, crewList: ArrayList<Crew>)
-        fun onError(message: String)
-    }
-
-    fun sendRequest(callback: Callback) {
+    fun sendRequest(callback: FilmDetailRequestCallback) {
         val requestURL = "${TMDbAPI.FILM}$filmID?api_key=${APIKey.TMDB_API_KEY}&language=id&append_to_response=credits%2Cvideos"
 
         val filmDetail = JsonObjectRequest(Request.Method.GET, requestURL, null, { response ->

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.recycler_film.view.*
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.FilmAdapterClickListener
 import xyz.fairportstudios.popularin.models.Film
 import xyz.fairportstudios.popularin.services.ConvertGenre
 import xyz.fairportstudios.popularin.services.ParseDate
@@ -18,14 +19,8 @@ import xyz.fairportstudios.popularin.statics.TMDbAPI
 class FilmAdapter(
     private val context: Context,
     private val filmList: ArrayList<Film>,
-    private val onClickListener: OnClickListener
+    private val clickListener: FilmAdapterClickListener
 ) : RecyclerView.Adapter<FilmAdapter.FilmViewHolder>() {
-    interface OnClickListener {
-        fun onFilmItemClick(position: Int)
-        fun onFilmPosterClick(position: Int)
-        fun onFilmPosterLongClick(position: Int)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmViewHolder {
         return FilmViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_film, parent, false))
     }
@@ -62,13 +57,13 @@ class FilmAdapter(
 
         override fun onClick(v: View?) {
             when (v) {
-                itemView -> onClickListener.onFilmItemClick(adapterPosition)
-                mImagePoster -> onClickListener.onFilmPosterClick(adapterPosition)
+                itemView -> clickListener.onFilmItemClick(adapterPosition)
+                mImagePoster -> clickListener.onFilmPosterClick(adapterPosition)
             }
         }
 
         override fun onLongClick(v: View?): Boolean {
-            if (v == mImagePoster) onClickListener.onFilmPosterLongClick(adapterPosition)
+            if (v == mImagePoster) clickListener.onFilmPosterLongClick(adapterPosition)
             return true
         }
     }

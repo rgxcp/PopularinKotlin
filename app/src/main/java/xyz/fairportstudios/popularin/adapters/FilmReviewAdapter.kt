@@ -10,21 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.recycler_film_review.view.*
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.FilmReviewAdapterClickListener
 import xyz.fairportstudios.popularin.models.FilmReview
 import xyz.fairportstudios.popularin.services.ConvertRating
 
 class FilmReviewAdapter(
     private val context: Context,
     private val filmReviewList: ArrayList<FilmReview>,
-    private val onClickListener: OnClickListener
+    private val clickListener: FilmReviewAdapterClickListener
 ) : RecyclerView.Adapter<FilmReviewAdapter.FilmReviewViewHolder>() {
-    interface OnClickListener {
-        fun onFilmReviewItemClick(position: Int)
-        fun onFilmReviewUserProfileClick(position: Int)
-        fun onFilmReviewLikeClick(position: Int)
-        fun onFilmReviewCommentClick(position: Int)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmReviewViewHolder {
         return FilmReviewViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_film_review, parent, false))
     }
@@ -81,10 +75,10 @@ class FilmReviewAdapter(
 
         override fun onClick(v: View?) {
             when (v) {
-                itemView -> onClickListener.onFilmReviewItemClick(adapterPosition)
-                mImageUserProfile -> onClickListener.onFilmReviewUserProfileClick(adapterPosition)
-                mImageLike -> onClickListener.onFilmReviewLikeClick(adapterPosition)
-                mImageComment -> onClickListener.onFilmReviewCommentClick(adapterPosition)
+                itemView -> clickListener.onFilmReviewItemClick(adapterPosition)
+                mImageUserProfile -> clickListener.onFilmReviewUserProfileClick(adapterPosition)
+                mImageLike -> clickListener.onFilmReviewLikeClick(adapterPosition)
+                mImageComment -> clickListener.onFilmReviewCommentClick(adapterPosition)
             }
         }
     }

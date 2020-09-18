@@ -18,11 +18,13 @@ import xyz.fairportstudios.popularin.databinding.ReusableToolbarPagerBinding
 import xyz.fairportstudios.popularin.databinding.ReusableToolbarRecyclerBinding
 import xyz.fairportstudios.popularin.fragments.WatchlistFromAllFragment
 import xyz.fairportstudios.popularin.fragments.WatchlistFromFollowingFragment
+import xyz.fairportstudios.popularin.interfaces.UserAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.WatchlistFromAllRequestCallback
 import xyz.fairportstudios.popularin.models.User
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class WatchlistedByActivity : AppCompatActivity(), UserAdapter.OnClickListener {
+class WatchlistedByActivity : AppCompatActivity(), UserAdapterClickListener {
     // Primitive
     private var mIsLoading = true
     private var mIsLoadFirstTimeSuccess = false
@@ -111,7 +113,7 @@ class WatchlistedByActivity : AppCompatActivity(), UserAdapter.OnClickListener {
     }
 
     private fun getWatchlistFromAll(page: Int, refreshPage: Boolean) {
-        mWatchlistFromAllRequest.sendRequest(page, object : WatchlistFromAllRequest.Callback {
+        mWatchlistFromAllRequest.sendRequest(page, object : WatchlistFromAllRequestCallback {
             override fun onSuccess(totalPage: Int, userList: ArrayList<User>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {

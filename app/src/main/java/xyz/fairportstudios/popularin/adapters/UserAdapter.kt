@@ -10,17 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.recycler_user.view.*
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.UserAdapterClickListener
 import xyz.fairportstudios.popularin.models.User
 
 class UserAdapter(
     private val context: Context,
     private val userList: ArrayList<User>,
-    private val onClickListener: OnClickListener
+    private val clickListener: UserAdapterClickListener
 ) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
-    interface OnClickListener {
-        fun onUserItemClick(position: Int)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         return UserViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_user, parent, false))
     }
@@ -50,7 +47,7 @@ class UserAdapter(
         }
 
         override fun onClick(v: View?) {
-            if (v == itemView) onClickListener.onUserItemClick(adapterPosition)
+            if (v == itemView) clickListener.onUserItemClick(adapterPosition)
         }
     }
 }

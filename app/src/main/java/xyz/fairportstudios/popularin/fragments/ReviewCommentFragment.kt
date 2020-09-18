@@ -20,11 +20,15 @@ import xyz.fairportstudios.popularin.apis.popularin.delete.DeleteCommentRequest
 import xyz.fairportstudios.popularin.apis.popularin.get.CommentRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.AddCommentRequest
 import xyz.fairportstudios.popularin.databinding.FragmentReviewCommentBinding
+import xyz.fairportstudios.popularin.interfaces.AddCommentRequestCallback
+import xyz.fairportstudios.popularin.interfaces.CommentAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.CommentRequestCallback
+import xyz.fairportstudios.popularin.interfaces.DeleteCommentRequestCallback
 import xyz.fairportstudios.popularin.models.Comment
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdapter.OnClickListener {
+class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdapterClickListener {
     // Primitive
     private var mIsResumeFirstTime = true
     private var mIsLoading = true
@@ -139,7 +143,7 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
     }
 
     private fun getComment(page: Int, refreshPage: Boolean) {
-        mCommentRequest.sendRequest(page, object : CommentRequest.Callback {
+        mCommentRequest.sendRequest(page, object : CommentRequestCallback {
             override fun onSuccess(totalPage: Int, commentList: ArrayList<Comment>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
@@ -205,7 +209,7 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
 
     private fun addComment() {
         val addCommentRequest = AddCommentRequest(mContext, reviewID, mComment)
-        addCommentRequest.sendRequest(object : AddCommentRequest.Callback {
+        addCommentRequest.sendRequest(object : AddCommentRequestCallback {
             override fun onSuccess(comment: Comment) {
                 val insertIndex = mCommentList.size
                 mCommentList.add(insertIndex, comment)
@@ -234,7 +238,7 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
 
     private fun deleteComment(id: Int, position: Int) {
         val deleteCommentRequest = DeleteCommentRequest(mContext, id)
-        deleteCommentRequest.sendRequest(object : DeleteCommentRequest.Callback {
+        deleteCommentRequest.sendRequest(object : DeleteCommentRequestCallback {
             override fun onSuccess() {
                 mCommentList.removeAt(position)
                 mCommentAdapter.notifyItemRemoved(position)

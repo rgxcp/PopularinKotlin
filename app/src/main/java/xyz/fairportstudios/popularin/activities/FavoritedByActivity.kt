@@ -18,11 +18,13 @@ import xyz.fairportstudios.popularin.databinding.ReusableToolbarPagerBinding
 import xyz.fairportstudios.popularin.databinding.ReusableToolbarRecyclerBinding
 import xyz.fairportstudios.popularin.fragments.FavoriteFromAllFragment
 import xyz.fairportstudios.popularin.fragments.FavoriteFromFollowingFragment
+import xyz.fairportstudios.popularin.interfaces.FavoriteFromAllRequestCallback
+import xyz.fairportstudios.popularin.interfaces.UserAdapterClickListener
 import xyz.fairportstudios.popularin.models.User
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class FavoritedByActivity : AppCompatActivity(), UserAdapter.OnClickListener {
+class FavoritedByActivity : AppCompatActivity(), UserAdapterClickListener {
     // Primitive
     private var mIsLoading = true
     private var mIsLoadFirstTimeSuccess = false
@@ -111,7 +113,7 @@ class FavoritedByActivity : AppCompatActivity(), UserAdapter.OnClickListener {
     }
 
     private fun getFavoriteFromAll(page: Int, refreshPage: Boolean) {
-        mFavoriteFromAllRequest.sendRequest(page, object : FavoriteFromAllRequest.Callback {
+        mFavoriteFromAllRequest.sendRequest(page, object : FavoriteFromAllRequestCallback {
             override fun onSuccess(totalPage: Int, userList: ArrayList<User>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {

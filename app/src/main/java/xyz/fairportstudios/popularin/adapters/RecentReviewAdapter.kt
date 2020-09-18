@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.recycler_recent_review.view.*
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.RecentReviewAdapterClickListener
 import xyz.fairportstudios.popularin.models.RecentReview
 import xyz.fairportstudios.popularin.services.ConvertRating
 import xyz.fairportstudios.popularin.statics.TMDbAPI
@@ -16,13 +17,8 @@ import xyz.fairportstudios.popularin.statics.TMDbAPI
 class RecentReviewAdapter(
     private val context: Context,
     private val recentReviewList: ArrayList<RecentReview>,
-    private val onClickListener: OnClickListener
+    private val clickListener: RecentReviewAdapterClickListener
 ) : RecyclerView.Adapter<RecentReviewAdapter.RecentReviewViewHolder>() {
-    interface OnClickListener {
-        fun onRecentReviewItemClick(position: Int)
-        fun onRecentReviewItemLongClick(position: Int)
-    }
-
     private fun getDensity(px: Int): Int {
         val dp = px * context.resources.displayMetrics.density
         return dp.toInt()
@@ -71,11 +67,11 @@ class RecentReviewAdapter(
         }
 
         override fun onClick(v: View?) {
-            if (v == itemView) onClickListener.onRecentReviewItemClick(adapterPosition)
+            if (v == itemView) clickListener.onRecentReviewItemClick(adapterPosition)
         }
 
         override fun onLongClick(v: View?): Boolean {
-            if (v == itemView) onClickListener.onRecentReviewItemLongClick(adapterPosition)
+            if (v == itemView) clickListener.onRecentReviewItemLongClick(adapterPosition)
             return true
         }
     }

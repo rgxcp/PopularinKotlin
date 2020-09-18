@@ -10,19 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.recycler_comment.view.*
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.CommentAdapterClickListener
 import xyz.fairportstudios.popularin.models.Comment
 
 class CommentAdapter(
     private val context: Context,
     private val authID: Int,
     private val commentList: ArrayList<Comment>,
-    private val onClickListener: OnClickListener
+    private val clickListener: CommentAdapterClickListener
 ) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
-    interface OnClickListener {
-        fun onCommentProfileClick(position: Int)
-        fun onCommentDeleteClick(position: Int)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
         return CommentViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_comment, parent, false))
     }
@@ -60,8 +56,8 @@ class CommentAdapter(
 
         override fun onClick(v: View?) {
             when (v) {
-                mImageProfile -> onClickListener.onCommentProfileClick(adapterPosition)
-                mImageDelete -> onClickListener.onCommentDeleteClick(adapterPosition)
+                mImageProfile -> clickListener.onCommentProfileClick(adapterPosition)
+                mImageDelete -> clickListener.onCommentDeleteClick(adapterPosition)
             }
         }
     }

@@ -16,6 +16,7 @@ import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.activities.MainActivity
 import xyz.fairportstudios.popularin.apis.popularin.put.UpdatePasswordRequest
 import xyz.fairportstudios.popularin.databinding.FragmentEditPasswordBinding
+import xyz.fairportstudios.popularin.interfaces.UpdatePasswordRequestCallback
 
 class EditPasswordFragment : Fragment() {
     // Member
@@ -110,7 +111,7 @@ class EditPasswordFragment : Fragment() {
         when (passwordValidated()) {
             true -> {
                 val updatePasswordRequest = UpdatePasswordRequest(context, mCurrentPassword, mNewPassword, mConfirmPassword)
-                updatePasswordRequest.sendRequest(object : UpdatePasswordRequest.Callback {
+                updatePasswordRequest.sendRequest(object : UpdatePasswordRequestCallback {
                     override fun onSuccess() {
                         val intent = Intent(context, MainActivity::class.java)
                         startActivity(intent)

@@ -19,11 +19,15 @@ import xyz.fairportstudios.popularin.apis.popularin.delete.UnlikeReviewRequest
 import xyz.fairportstudios.popularin.apis.popularin.get.LikedFilmReviewRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.LikeReviewRequest
 import xyz.fairportstudios.popularin.databinding.ReusableRecyclerBinding
+import xyz.fairportstudios.popularin.interfaces.FilmReviewAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.LikeReviewRequestCallback
+import xyz.fairportstudios.popularin.interfaces.LikedFilmReviewRequestCallback
+import xyz.fairportstudios.popularin.interfaces.UnlikeReviewRequestCallback
 import xyz.fairportstudios.popularin.models.FilmReview
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapter.OnClickListener {
+class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapterClickListener {
     // Primitive
     private var mIsResumeFirstTime = true
     private var mIsLoading = true
@@ -123,7 +127,7 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
     }
 
     private fun getLikedFilmReview(page: Int, refreshPage: Boolean) {
-        mLikedFilmReviewRequest.sendRequest(page, object : LikedFilmReviewRequest.Callback {
+        mLikedFilmReviewRequest.sendRequest(page, object : LikedFilmReviewRequestCallback {
             override fun onSuccess(totalPage: Int, filmReviewList: ArrayList<FilmReview>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
@@ -198,7 +202,7 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
 
     private fun likeReview(id: Int, position: Int) {
         val likeReviewRequest = LikeReviewRequest(mContext, id)
-        likeReviewRequest.sendRequest(object : LikeReviewRequest.Callback {
+        likeReviewRequest.sendRequest(object : LikeReviewRequestCallback {
             override fun onSuccess() {
                 mTotalLike++
                 val currentItem = mFilmReviewList[position]
@@ -218,7 +222,7 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
 
     private fun unlikeReview(id: Int, position: Int) {
         val unlikeReviewRequest = UnlikeReviewRequest(mContext, id)
-        unlikeReviewRequest.sendRequest(object : UnlikeReviewRequest.Callback {
+        unlikeReviewRequest.sendRequest(object : UnlikeReviewRequestCallback {
             override fun onSuccess() {
                 mTotalLike--
                 val currentItem = mFilmReviewList[position]

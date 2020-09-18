@@ -18,11 +18,13 @@ import xyz.fairportstudios.popularin.databinding.ReusableToolbarPagerBinding
 import xyz.fairportstudios.popularin.databinding.ReusableToolbarRecyclerBinding
 import xyz.fairportstudios.popularin.fragments.LikeFromAllFragment
 import xyz.fairportstudios.popularin.fragments.LikeFromFollowingFragment
+import xyz.fairportstudios.popularin.interfaces.LikeFromAllRequestCallback
+import xyz.fairportstudios.popularin.interfaces.UserAdapterClickListener
 import xyz.fairportstudios.popularin.models.User
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class LikedByActivity : AppCompatActivity(), UserAdapter.OnClickListener {
+class LikedByActivity : AppCompatActivity(), UserAdapterClickListener {
     // Primitive
     private var mIsLoading = true
     private var mIsLoadFirstTimeSuccess = false
@@ -111,7 +113,7 @@ class LikedByActivity : AppCompatActivity(), UserAdapter.OnClickListener {
     }
 
     private fun getLikeFromAll(page: Int, refreshPage: Boolean) {
-        mLikeFromAllRequest.sendRequest(page, object : LikeFromAllRequest.Callback {
+        mLikeFromAllRequest.sendRequest(page, object : LikeFromAllRequestCallback {
             override fun onSuccess(totalPage: Int, userList: ArrayList<User>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {

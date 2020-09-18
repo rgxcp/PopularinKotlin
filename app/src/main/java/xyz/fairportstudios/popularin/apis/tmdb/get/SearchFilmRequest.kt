@@ -5,18 +5,13 @@ import com.android.volley.*
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.SearchFilmRequestCallback
 import xyz.fairportstudios.popularin.models.Film
 import xyz.fairportstudios.popularin.secrets.APIKey
 import xyz.fairportstudios.popularin.statics.TMDbAPI
 
 class SearchFilmRequest(private val context: Context) {
-    interface Callback {
-        fun onSuccess(filmList: ArrayList<Film>)
-        fun onNotFound()
-        fun onError(message: String)
-    }
-
-    fun sendRequest(query: String, callback: Callback) {
+    fun sendRequest(query: String, callback: SearchFilmRequestCallback) {
         val requestURL = "${TMDbAPI.SEARCH_FILM}?api_key=${APIKey.TMDB_API_KEY}&language=id&query=$query&region=ID"
 
         val searchFilm = JsonObjectRequest(Request.Method.GET, requestURL, null, { response ->

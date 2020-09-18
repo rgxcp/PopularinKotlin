@@ -16,10 +16,12 @@ import xyz.fairportstudios.popularin.activities.UserDetailActivity
 import xyz.fairportstudios.popularin.adapters.UserAdapter
 import xyz.fairportstudios.popularin.apis.popularin.get.LikeFromAllRequest
 import xyz.fairportstudios.popularin.databinding.ReusableRecyclerBinding
+import xyz.fairportstudios.popularin.interfaces.LikeFromAllRequestCallback
+import xyz.fairportstudios.popularin.interfaces.UserAdapterClickListener
 import xyz.fairportstudios.popularin.models.User
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class LikeFromAllFragment(private val reviewID: Int) : Fragment(), UserAdapter.OnClickListener {
+class LikeFromAllFragment(private val reviewID: Int) : Fragment(), UserAdapterClickListener {
     // Primitive
     private var mIsLoading = true
     private var mIsLoadFirstTimeSuccess = false
@@ -83,7 +85,7 @@ class LikeFromAllFragment(private val reviewID: Int) : Fragment(), UserAdapter.O
     }
 
     private fun getLikeFromAll(page: Int, refreshPage: Boolean) {
-        mLikeFromAllRequest.sendRequest(page, object : LikeFromAllRequest.Callback {
+        mLikeFromAllRequest.sendRequest(page, object : LikeFromAllRequestCallback {
             override fun onSuccess(totalPage: Int, userList: ArrayList<User>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {

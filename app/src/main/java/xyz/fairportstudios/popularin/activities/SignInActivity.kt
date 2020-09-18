@@ -12,6 +12,7 @@ import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.apis.popularin.post.SignInRequest
 import xyz.fairportstudios.popularin.databinding.ActivitySignInBinding
+import xyz.fairportstudios.popularin.interfaces.SignInRequestCallback
 import xyz.fairportstudios.popularin.preferences.Auth
 
 class SignInActivity : AppCompatActivity() {
@@ -86,7 +87,7 @@ class SignInActivity : AppCompatActivity() {
 
     private fun signIn(context: Context) {
         val signInRequest = SignInRequest(context, mUsername, mPassword)
-        signInRequest.sendRequest(object : SignInRequest.Callback {
+        signInRequest.sendRequest(object : SignInRequestCallback {
             override fun onSuccess(authID: Int, authToken: String) {
                 val auth = Auth(context)
                 auth.setAuth(authID, authToken)

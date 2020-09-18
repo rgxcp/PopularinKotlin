@@ -10,18 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.recycler_credit.view.*
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.CastAdapterClickListener
 import xyz.fairportstudios.popularin.models.Cast
 import xyz.fairportstudios.popularin.statics.TMDbAPI
 
 class CastAdapter(
     private val context: Context,
     private val castList: ArrayList<Cast>,
-    private val onClickListener: OnClickListener
+    private val clickListener: CastAdapterClickListener
 ) : RecyclerView.Adapter<CastAdapter.CastViewHolder>() {
-    interface OnClickListener {
-        fun onCastItemClick(position: Int)
-    }
-
     private fun getDensity(px: Int): Int {
         val dp = px * context.resources.displayMetrics.density
         return dp.toInt()
@@ -70,7 +67,7 @@ class CastAdapter(
         }
 
         override fun onClick(v: View?) {
-            if (v == itemView) onClickListener.onCastItemClick(adapterPosition)
+            if (v == itemView) clickListener.onCastItemClick(adapterPosition)
         }
     }
 }

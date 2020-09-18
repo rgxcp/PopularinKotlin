@@ -13,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.apis.popularin.post.SignUpRequest
 import xyz.fairportstudios.popularin.databinding.ActivitySignUpBinding
+import xyz.fairportstudios.popularin.interfaces.SignUpRequestCallback
 import xyz.fairportstudios.popularin.preferences.Auth
 
 class SignUpActivity : AppCompatActivity() {
@@ -133,7 +134,7 @@ class SignUpActivity : AppCompatActivity() {
         when (usernameValidated() && emailValidated() && passwordValidated()) {
             true -> {
                 val signUpRequest = SignUpRequest(context, mFullName, mUsername, mEmail, mPassword)
-                signUpRequest.sendRequest(object : SignUpRequest.Callback {
+                signUpRequest.sendRequest(object : SignUpRequestCallback {
                     override fun onSuccess(authID: Int, authToken: String) {
                         val auth = Auth(context)
                         auth.setAuth(authID, authToken)

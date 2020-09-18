@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.recycler_review.view.*
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.ReviewAdapterClickListener
 import xyz.fairportstudios.popularin.models.Review
 import xyz.fairportstudios.popularin.services.ConvertRating
 import xyz.fairportstudios.popularin.services.ParseDate
@@ -18,17 +19,8 @@ import xyz.fairportstudios.popularin.statics.TMDbAPI
 class ReviewAdapter(
     private val context: Context,
     private val reviewList: ArrayList<Review>,
-    private val onClickListener: OnClickListener
+    private val clickListener: ReviewAdapterClickListener
 ) : RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder>() {
-    interface OnClickListener {
-        fun onReviewItemClick(position: Int)
-        fun onReviewUserProfileClick(position: Int)
-        fun onReviewFilmPosterClick(position: Int)
-        fun onReviewFilmPosterLongClick(position: Int)
-        fun onReviewLikeClick(position: Int)
-        fun onReviewCommentClick(position: Int)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
         return ReviewViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_review, parent, false))
     }
@@ -94,16 +86,16 @@ class ReviewAdapter(
 
         override fun onClick(v: View?) {
             when (v) {
-                itemView -> onClickListener.onReviewItemClick(adapterPosition)
-                mImageUserProfile -> onClickListener.onReviewUserProfileClick(adapterPosition)
-                mImageFilmPoster -> onClickListener.onReviewFilmPosterClick(adapterPosition)
-                mImageLike -> onClickListener.onReviewLikeClick(adapterPosition)
-                mImageComment -> onClickListener.onReviewCommentClick(adapterPosition)
+                itemView -> clickListener.onReviewItemClick(adapterPosition)
+                mImageUserProfile -> clickListener.onReviewUserProfileClick(adapterPosition)
+                mImageFilmPoster -> clickListener.onReviewFilmPosterClick(adapterPosition)
+                mImageLike -> clickListener.onReviewLikeClick(adapterPosition)
+                mImageComment -> clickListener.onReviewCommentClick(adapterPosition)
             }
         }
 
         override fun onLongClick(v: View?): Boolean {
-            if (v == mImageFilmPoster) onClickListener.onReviewFilmPosterLongClick(adapterPosition)
+            if (v == mImageFilmPoster) clickListener.onReviewFilmPosterLongClick(adapterPosition)
             return true
         }
     }

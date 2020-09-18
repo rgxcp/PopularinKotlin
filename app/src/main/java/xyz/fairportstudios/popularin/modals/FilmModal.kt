@@ -17,6 +17,11 @@ import xyz.fairportstudios.popularin.apis.popularin.get.FilmSelfRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.AddFavoriteRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.AddWatchlistRequest
 import xyz.fairportstudios.popularin.databinding.ModalFilmBinding
+import xyz.fairportstudios.popularin.interfaces.AddFavoriteRequestCallback
+import xyz.fairportstudios.popularin.interfaces.AddWatchlistRequestCallback
+import xyz.fairportstudios.popularin.interfaces.DeleteFavoriteRequestCallback
+import xyz.fairportstudios.popularin.interfaces.DeleteWatchlistRequestCallback
+import xyz.fairportstudios.popularin.interfaces.FilmSelfRequestCallback
 import xyz.fairportstudios.popularin.models.FilmSelf
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.statics.Popularin
@@ -116,7 +121,7 @@ class FilmModal(
 
     private fun getFilmSelf(context: Context) {
         val filmSelfRequest = FilmSelfRequest(context, filmID)
-        filmSelfRequest.sendRequest(object : FilmSelfRequest.Callback {
+        filmSelfRequest.sendRequest(object : FilmSelfRequestCallback {
             override fun onSuccess(filmSelf: FilmSelf) {
                 mFilmSelf = filmSelf
                 mBinding.filmSelf = mFilmSelf
@@ -131,7 +136,7 @@ class FilmModal(
 
     private fun addToFavorite(context: Context) {
         val addFavoriteRequest = AddFavoriteRequest(context, filmID)
-        addFavoriteRequest.sendRequest(object : AddFavoriteRequest.Callback {
+        addFavoriteRequest.sendRequest(object : AddFavoriteRequestCallback {
             override fun onSuccess() {
                 Toast.makeText(context, R.string.film_added_to_favorite, Toast.LENGTH_SHORT).show()
             }
@@ -144,7 +149,7 @@ class FilmModal(
 
     private fun removeFromFavorite(context: Context) {
         val deleteFavoriteRequest = DeleteFavoriteRequest(context, filmID)
-        deleteFavoriteRequest.sendRequest(object : DeleteFavoriteRequest.Callback {
+        deleteFavoriteRequest.sendRequest(object : DeleteFavoriteRequestCallback {
             override fun onSuccess() {
                 Toast.makeText(context, R.string.film_removed_from_favorite, Toast.LENGTH_SHORT).show()
             }
@@ -157,7 +162,7 @@ class FilmModal(
 
     private fun addToWatchlist(context: Context) {
         val addWatchlistRequest = AddWatchlistRequest(context, filmID)
-        addWatchlistRequest.sendRequest(object : AddWatchlistRequest.Callback {
+        addWatchlistRequest.sendRequest(object : AddWatchlistRequestCallback {
             override fun onSuccess() {
                 Toast.makeText(context, R.string.film_added_to_watchlist, Toast.LENGTH_SHORT).show()
             }
@@ -170,7 +175,7 @@ class FilmModal(
 
     private fun removeFromWatchlist(context: Context) {
         val deleteWatchlistRequest = DeleteWatchlistRequest(context, filmID)
-        deleteWatchlistRequest.sendRequest(object : DeleteWatchlistRequest.Callback {
+        deleteWatchlistRequest.sendRequest(object : DeleteWatchlistRequestCallback {
             override fun onSuccess() {
                 Toast.makeText(context, R.string.film_removed_from_watchlist, Toast.LENGTH_SHORT).show()
             }

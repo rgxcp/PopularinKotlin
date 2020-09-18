@@ -5,18 +5,14 @@ import com.android.volley.*
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.CreditDetailRequestCallback
 import xyz.fairportstudios.popularin.models.CreditDetail
 import xyz.fairportstudios.popularin.models.Film
 import xyz.fairportstudios.popularin.secrets.APIKey
 import xyz.fairportstudios.popularin.statics.TMDbAPI
 
 class CreditDetailRequest(private val context: Context, private val creditID: Int) {
-    interface Callback {
-        fun onSuccess(creditDetail: CreditDetail, filmAsCastList: ArrayList<Film>, filmAsCrewList: ArrayList<Film>)
-        fun onError(message: String)
-    }
-
-    fun sendRequest(callback: Callback) {
+    fun sendRequest(callback: CreditDetailRequestCallback) {
         val requestURL = "${TMDbAPI.CREDIT}$creditID?api_key=${APIKey.TMDB_API_KEY}&language=id&append_to_response=movie_credits"
 
         val creditDetail = JsonObjectRequest(Request.Method.GET, requestURL, null, { response ->

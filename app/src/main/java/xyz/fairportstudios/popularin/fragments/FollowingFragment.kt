@@ -16,10 +16,12 @@ import xyz.fairportstudios.popularin.activities.UserDetailActivity
 import xyz.fairportstudios.popularin.adapters.UserAdapter
 import xyz.fairportstudios.popularin.apis.popularin.get.UserFollowingRequest
 import xyz.fairportstudios.popularin.databinding.ReusableRecyclerBinding
+import xyz.fairportstudios.popularin.interfaces.UserAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.UserFollowingRequestCallback
 import xyz.fairportstudios.popularin.models.User
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class FollowingFragment(private val userID: Int, private val isSelf: Boolean) : Fragment(), UserAdapter.OnClickListener {
+class FollowingFragment(private val userID: Int, private val isSelf: Boolean) : Fragment(), UserAdapterClickListener {
     // Primitive
     private var mIsResumeFirstTime = true
     private var mIsLoading = true
@@ -90,7 +92,7 @@ class FollowingFragment(private val userID: Int, private val isSelf: Boolean) : 
     }
 
     private fun getUserFollowing(page: Int, refreshPage: Boolean) {
-        mUserFollowingRequest.sendRequest(page, object : UserFollowingRequest.Callback {
+        mUserFollowingRequest.sendRequest(page, object : UserFollowingRequestCallback {
             override fun onSuccess(totalPage: Int, userList: ArrayList<User>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {

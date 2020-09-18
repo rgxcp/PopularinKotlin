@@ -19,6 +19,8 @@ import xyz.fairportstudios.popularin.activities.MainActivity
 import xyz.fairportstudios.popularin.apis.popularin.get.SelfDetailRequest
 import xyz.fairportstudios.popularin.apis.popularin.put.UpdateProfileRequest
 import xyz.fairportstudios.popularin.databinding.FragmentEditProfileBinding
+import xyz.fairportstudios.popularin.interfaces.SelfDetailRequestCallback
+import xyz.fairportstudios.popularin.interfaces.UpdateProfileRequestCallback
 import xyz.fairportstudios.popularin.models.SelfDetail
 
 class EditProfileFragment : Fragment() {
@@ -91,7 +93,7 @@ class EditProfileFragment : Fragment() {
 
     private fun getSelfDetail(context: Context) {
         val selfDetailRequest = SelfDetailRequest(context)
-        selfDetailRequest.sendRequest(object : SelfDetailRequest.Callback {
+        selfDetailRequest.sendRequest(object : SelfDetailRequestCallback {
             override fun onSuccess(selfDetail: SelfDetail) {
                 mBinding.selfDetail = selfDetail
             }
@@ -138,7 +140,7 @@ class EditProfileFragment : Fragment() {
         when (usernameValidated() && emailValidated()) {
             true -> {
                 val updateProfileRequest = UpdateProfileRequest(context, mFullName, mUsername, mEmail)
-                updateProfileRequest.sendRequest(object : UpdateProfileRequest.Callback {
+                updateProfileRequest.sendRequest(object : UpdateProfileRequestCallback {
                     override fun onSuccess() {
                         val intent = Intent(context, MainActivity::class.java)
                         startActivity(intent)

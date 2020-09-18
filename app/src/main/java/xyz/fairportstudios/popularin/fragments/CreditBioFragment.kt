@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.apis.tmdb.get.CreditDetailRequest
 import xyz.fairportstudios.popularin.databinding.FragmentCreditBioBinding
+import xyz.fairportstudios.popularin.interfaces.CreditDetailRequestCallback
 import xyz.fairportstudios.popularin.models.CreditDetail
 import xyz.fairportstudios.popularin.models.Film
 import xyz.fairportstudios.popularin.services.ParseBio
@@ -62,7 +63,7 @@ class CreditBioFragment(private val creditID: Int) : Fragment() {
 
     private fun getCreditBio() {
         val creditDetailRequest = CreditDetailRequest(mContext, creditID)
-        creditDetailRequest.sendRequest(object : CreditDetailRequest.Callback {
+        creditDetailRequest.sendRequest(object : CreditDetailRequestCallback {
             override fun onSuccess(creditDetail: CreditDetail, filmAsCastList: ArrayList<Film>, filmAsCrewList: ArrayList<Film>) {
                 mBinding.profilePath = creditDetail.profilePath
                 mBinding.bioForHumans = ParseBio.getBioForHumans(creditDetail)

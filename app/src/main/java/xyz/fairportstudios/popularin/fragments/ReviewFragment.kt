@@ -21,13 +21,17 @@ import xyz.fairportstudios.popularin.apis.popularin.delete.UnlikeReviewRequest
 import xyz.fairportstudios.popularin.apis.popularin.get.ReviewRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.LikeReviewRequest
 import xyz.fairportstudios.popularin.databinding.ReusableRecyclerBinding
+import xyz.fairportstudios.popularin.interfaces.LikeReviewRequestCallback
+import xyz.fairportstudios.popularin.interfaces.ReviewAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.ReviewRequestCallback
+import xyz.fairportstudios.popularin.interfaces.UnlikeReviewRequestCallback
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.Review
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
+class ReviewFragment : Fragment(), ReviewAdapterClickListener {
     // Primitive
     private var mIsAuth = false
     private var mIsLoading = true
@@ -139,7 +143,7 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
     }
 
     private fun getReview(page: Int, refreshPage: Boolean) {
-        mReviewRequest.sendRequest(page, object : ReviewRequest.Callback {
+        mReviewRequest.sendRequest(page, object : ReviewRequestCallback {
             override fun onSuccess(totalPage: Int, reviewList: ArrayList<Review>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
@@ -216,7 +220,7 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
 
     private fun likeReview(id: Int, position: Int) {
         val likeReviewRequest = LikeReviewRequest(mContext, id)
-        likeReviewRequest.sendRequest(object : LikeReviewRequest.Callback {
+        likeReviewRequest.sendRequest(object : LikeReviewRequestCallback {
             override fun onSuccess() {
                 mTotalLike++
                 val currentItem = mReviewList[position]
@@ -236,7 +240,7 @@ class ReviewFragment : Fragment(), ReviewAdapter.OnClickListener {
 
     private fun unlikeReview(id: Int, position: Int) {
         val unlikeReviewRequest = UnlikeReviewRequest(mContext, id)
-        unlikeReviewRequest.sendRequest(object : UnlikeReviewRequest.Callback {
+        unlikeReviewRequest.sendRequest(object : UnlikeReviewRequestCallback {
             override fun onSuccess() {
                 mTotalLike--
                 val currentItem = mReviewList[position]

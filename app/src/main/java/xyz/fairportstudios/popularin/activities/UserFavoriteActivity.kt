@@ -13,13 +13,15 @@ import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.adapters.FilmAdapter
 import xyz.fairportstudios.popularin.apis.popularin.get.UserFavoriteRequest
 import xyz.fairportstudios.popularin.databinding.ReusableToolbarRecyclerBinding
+import xyz.fairportstudios.popularin.interfaces.FilmAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.UserFavoriteRequestCallback
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.Film
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class UserFavoriteActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
+class UserFavoriteActivity : AppCompatActivity(), FilmAdapterClickListener {
     // Primitive
     private var mIsSelf = false
     private var mIsLoading = true
@@ -101,7 +103,7 @@ class UserFavoriteActivity : AppCompatActivity(), FilmAdapter.OnClickListener {
     }
 
     private fun getUserFavorite(page: Int, refreshPage: Boolean) {
-        mUserFavoriteRequest.sendRequest(page, object : UserFavoriteRequest.Callback {
+        mUserFavoriteRequest.sendRequest(page, object : UserFavoriteRequestCallback {
             override fun onSuccess(totalPage: Int, filmList: ArrayList<Film>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {

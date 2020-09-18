@@ -9,19 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.recycler_recent_favorite.view.*
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.RecentFavoriteAdapterClickListener
 import xyz.fairportstudios.popularin.models.RecentFavorite
 import xyz.fairportstudios.popularin.statics.TMDbAPI
 
 class RecentFavoriteAdapter(
     private val context: Context,
     private val recentFavoriteList: ArrayList<RecentFavorite>,
-    private val onClickListener: OnClickListener
+    private val clickListener: RecentFavoriteAdapterClickListener
 ) : RecyclerView.Adapter<RecentFavoriteAdapter.RecentFavoriteViewHolder>() {
-    interface OnClickListener {
-        fun onRecentFavoriteItemClick(position: Int)
-        fun onRecentFavoriteItemLongClick(position: Int)
-    }
-
     private fun getDensity(px: Int): Int {
         val dp = px * context.resources.displayMetrics.density
         return dp.toInt()
@@ -67,11 +63,11 @@ class RecentFavoriteAdapter(
         }
 
         override fun onClick(v: View?) {
-            if (v == itemView) onClickListener.onRecentFavoriteItemClick(adapterPosition)
+            if (v == itemView) clickListener.onRecentFavoriteItemClick(adapterPosition)
         }
 
         override fun onLongClick(v: View?): Boolean {
-            if (v == itemView) onClickListener.onRecentFavoriteItemLongClick(adapterPosition)
+            if (v == itemView) clickListener.onRecentFavoriteItemLongClick(adapterPosition)
             return true
         }
     }

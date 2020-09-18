@@ -16,10 +16,12 @@ import xyz.fairportstudios.popularin.activities.UserDetailActivity
 import xyz.fairportstudios.popularin.adapters.UserAdapter
 import xyz.fairportstudios.popularin.apis.popularin.get.FavoriteFromAllRequest
 import xyz.fairportstudios.popularin.databinding.ReusableRecyclerBinding
+import xyz.fairportstudios.popularin.interfaces.FavoriteFromAllRequestCallback
+import xyz.fairportstudios.popularin.interfaces.UserAdapterClickListener
 import xyz.fairportstudios.popularin.models.User
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class FavoriteFromAllFragment(private val filmID: Int) : Fragment(), UserAdapter.OnClickListener {
+class FavoriteFromAllFragment(private val filmID: Int) : Fragment(), UserAdapterClickListener {
     // Primitive
     private var mIsLoading = true
     private var mIsLoadFirstTimeSuccess = false
@@ -83,7 +85,7 @@ class FavoriteFromAllFragment(private val filmID: Int) : Fragment(), UserAdapter
     }
 
     private fun getFavoriteFromAll(page: Int, refreshPage: Boolean) {
-        mFavoriteFromAllRequest.sendRequest(page, object : FavoriteFromAllRequest.Callback {
+        mFavoriteFromAllRequest.sendRequest(page, object : FavoriteFromAllRequestCallback {
             override fun onSuccess(totalPage: Int, userList: ArrayList<User>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {

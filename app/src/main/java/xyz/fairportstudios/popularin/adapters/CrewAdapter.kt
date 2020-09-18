@@ -10,18 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.recycler_credit.view.*
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.CrewAdapterClickListener
 import xyz.fairportstudios.popularin.models.Crew
 import xyz.fairportstudios.popularin.statics.TMDbAPI
 
 class CrewAdapter(
     private val context: Context,
     private val crewList: ArrayList<Crew>,
-    private val onClickListener: OnClickListener
+    private val clickListener: CrewAdapterClickListener
 ) : RecyclerView.Adapter<CrewAdapter.CrewViewHolder>() {
-    interface OnClickListener {
-        fun onCrewItemClick(position: Int)
-    }
-
     private fun getDensity(px: Int): Int {
         val dp = px * context.resources.displayMetrics.density
         return dp.toInt()
@@ -70,7 +67,7 @@ class CrewAdapter(
         }
 
         override fun onClick(v: View?) {
-            if (v == itemView) onClickListener.onCrewItemClick(adapterPosition)
+            if (v == itemView) clickListener.onCrewItemClick(adapterPosition)
         }
     }
 }

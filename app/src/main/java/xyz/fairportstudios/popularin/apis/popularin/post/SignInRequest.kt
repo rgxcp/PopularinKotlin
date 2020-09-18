@@ -9,19 +9,12 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.SignInRequestCallback
 import xyz.fairportstudios.popularin.secrets.APIKey
 import xyz.fairportstudios.popularin.statics.PopularinAPI
 
 class SignInRequest(private val context: Context, private val username: String, private val password: String) {
-    interface Callback {
-        fun onSuccess(authID: Int, authToken: String)
-        fun onInvalidUsername()
-        fun onInvalidPassword()
-        fun onFailed(message: String)
-        fun onError(message: String)
-    }
-
-    fun sendRequest(callback: Callback) {
+    fun sendRequest(callback: SignInRequestCallback) {
         val requestURL = PopularinAPI.SIGN_IN
 
         val signIn = object : StringRequest(Method.POST, requestURL, Response.Listener { response ->

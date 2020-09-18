@@ -12,6 +12,7 @@ import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.apis.popularin.post.AddReviewRequest
 import xyz.fairportstudios.popularin.databinding.ActivityAddReviewBinding
 import xyz.fairportstudios.popularin.dialogs.WatchDatePickerDialog
+import xyz.fairportstudios.popularin.interfaces.AddReviewRequestCallback
 import xyz.fairportstudios.popularin.statics.Popularin
 import xyz.fairportstudios.popularin.statics.TMDbAPI
 import java.text.DateFormat
@@ -123,7 +124,7 @@ class AddReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
 
     private fun addReview(context: Context, filmID: Int) {
         val addReviewRequest = AddReviewRequest(context, filmID, mRating, mReview, mWatchDate)
-        addReviewRequest.sendRequest(object : AddReviewRequest.Callback {
+        addReviewRequest.sendRequest(object : AddReviewRequestCallback {
             override fun onSuccess() {
                 onBackPressed()
                 Toast.makeText(context, R.string.review_added, Toast.LENGTH_SHORT).show()

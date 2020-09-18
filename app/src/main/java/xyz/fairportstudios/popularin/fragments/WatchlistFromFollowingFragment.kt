@@ -16,10 +16,12 @@ import xyz.fairportstudios.popularin.activities.UserDetailActivity
 import xyz.fairportstudios.popularin.adapters.UserAdapter
 import xyz.fairportstudios.popularin.apis.popularin.get.WatchlistFromFollowingRequest
 import xyz.fairportstudios.popularin.databinding.ReusableRecyclerBinding
+import xyz.fairportstudios.popularin.interfaces.UserAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.WatchlistFromFollowingRequestCallback
 import xyz.fairportstudios.popularin.models.User
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class WatchlistFromFollowingFragment(private val filmID: Int) : Fragment(), UserAdapter.OnClickListener {
+class WatchlistFromFollowingFragment(private val filmID: Int) : Fragment(), UserAdapterClickListener {
     // Primitive
     private var mIsResumeFirstTime = true
     private var mIsLoading = true
@@ -90,7 +92,7 @@ class WatchlistFromFollowingFragment(private val filmID: Int) : Fragment(), User
     }
 
     private fun getWatchlistFromFollowing(page: Int, refreshPage: Boolean) {
-        mWatchlistFromFollowingRequest.sendRequest(page, object : WatchlistFromFollowingRequest.Callback {
+        mWatchlistFromFollowingRequest.sendRequest(page, object : WatchlistFromFollowingRequestCallback {
             override fun onSuccess(totalPage: Int, userList: ArrayList<User>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {

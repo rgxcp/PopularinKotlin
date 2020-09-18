@@ -17,6 +17,9 @@ import xyz.fairportstudios.popularin.apis.popularin.delete.UnlikeReviewRequest
 import xyz.fairportstudios.popularin.apis.popularin.get.ReviewDetailRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.LikeReviewRequest
 import xyz.fairportstudios.popularin.databinding.FragmentReviewDetailBinding
+import xyz.fairportstudios.popularin.interfaces.LikeReviewRequestCallback
+import xyz.fairportstudios.popularin.interfaces.ReviewDetailRequestCallback
+import xyz.fairportstudios.popularin.interfaces.UnlikeReviewRequestCallback
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.ReviewDetail
 import xyz.fairportstudios.popularin.preferences.Auth
@@ -98,7 +101,7 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
 
     private fun getReviewDetail() {
         val reviewDetailRequest = ReviewDetailRequest(mContext, reviewID)
-        reviewDetailRequest.sendRequest(object : ReviewDetailRequest.Callback {
+        reviewDetailRequest.sendRequest(object : ReviewDetailRequestCallback {
             override fun onSuccess(reviewDetail: ReviewDetail) {
                 mReviewDetail = reviewDetail
                 mFilmYear = ParseDate.getYear(mReviewDetail.releaseDate)
@@ -145,7 +148,7 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
 
     private fun likeReview() {
         val likeReviewRequest = LikeReviewRequest(mContext, reviewID)
-        likeReviewRequest.sendRequest(object : LikeReviewRequest.Callback {
+        likeReviewRequest.sendRequest(object : LikeReviewRequestCallback {
             override fun onSuccess() {
                 setLikeState(true)
             }
@@ -161,7 +164,7 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
 
     private fun unlikeReview() {
         val unlikeReviewRequest = UnlikeReviewRequest(mContext, reviewID)
-        unlikeReviewRequest.sendRequest(object : UnlikeReviewRequest.Callback {
+        unlikeReviewRequest.sendRequest(object : UnlikeReviewRequestCallback {
             override fun onSuccess() {
                 setLikeState(false)
             }

@@ -8,18 +8,13 @@ import com.android.volley.TimeoutError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.FavoriteFromAllRequestCallback
 import xyz.fairportstudios.popularin.models.User
 import xyz.fairportstudios.popularin.secrets.APIKey
 import xyz.fairportstudios.popularin.statics.PopularinAPI
 
 class FavoriteFromAllRequest(private val context: Context, private val filmID: Int) {
-    interface Callback {
-        fun onSuccess(totalPage: Int, userList: ArrayList<User>)
-        fun onNotFound()
-        fun onError(message: String)
-    }
-
-    fun sendRequest(page: Int, callback: Callback) {
+    fun sendRequest(page: Int, callback: FavoriteFromAllRequestCallback) {
         val requestURL = "${PopularinAPI.FILM}$filmID/favorites/from/all?page=$page"
 
         val favoriteFromAll = object : JsonObjectRequest(Method.GET, requestURL, null, Response.Listener { response ->

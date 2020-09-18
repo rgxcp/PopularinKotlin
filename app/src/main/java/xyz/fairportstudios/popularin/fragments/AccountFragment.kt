@@ -22,6 +22,9 @@ import xyz.fairportstudios.popularin.adapters.RecentFavoriteAdapter
 import xyz.fairportstudios.popularin.adapters.RecentReviewAdapter
 import xyz.fairportstudios.popularin.apis.popularin.get.AccountDetailRequest
 import xyz.fairportstudios.popularin.databinding.FragmentAccountBinding
+import xyz.fairportstudios.popularin.interfaces.AccountDetailRequestCallback
+import xyz.fairportstudios.popularin.interfaces.RecentFavoriteAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.RecentReviewAdapterClickListener
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.AccountDetail
 import xyz.fairportstudios.popularin.models.RecentFavorite
@@ -30,7 +33,7 @@ import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, RecentReviewAdapter.OnClickListener {
+class AccountFragment : Fragment(), RecentFavoriteAdapterClickListener, RecentReviewAdapterClickListener {
     // Primitive
     private var mIsLoadFirstTimeSuccess = false
 
@@ -112,7 +115,7 @@ class AccountFragment : Fragment(), RecentFavoriteAdapter.OnClickListener, Recen
 
     private fun getAccountDetail(id: Int) {
         val accountDetailRequest = AccountDetailRequest(mContext, id)
-        accountDetailRequest.sendRequest(object : AccountDetailRequest.Callback {
+        accountDetailRequest.sendRequest(object : AccountDetailRequestCallback {
             override fun onSuccess(accountDetail: AccountDetail) {
                 mBinding.accountDetail = accountDetail
                 mBinding.isLoading = false

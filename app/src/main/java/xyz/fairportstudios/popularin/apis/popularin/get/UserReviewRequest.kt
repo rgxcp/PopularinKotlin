@@ -8,19 +8,14 @@ import com.android.volley.TimeoutError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.UserReviewRequestCallback
 import xyz.fairportstudios.popularin.models.UserReview
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.secrets.APIKey
 import xyz.fairportstudios.popularin.statics.PopularinAPI
 
 class UserReviewRequest(private val context: Context, private val userID: Int) {
-    interface Callback {
-        fun onSuccess(totalPage: Int, userReviewList: ArrayList<UserReview>)
-        fun onNotFound()
-        fun onError(message: String)
-    }
-
-    fun sendRequest(page: Int, callback: Callback) {
+    fun sendRequest(page: Int, callback: UserReviewRequestCallback) {
         val requestURL = "${PopularinAPI.USER}$userID/reviews?page=$page"
 
         val userReview = object : JsonObjectRequest(Method.GET, requestURL, null, Response.Listener { response ->

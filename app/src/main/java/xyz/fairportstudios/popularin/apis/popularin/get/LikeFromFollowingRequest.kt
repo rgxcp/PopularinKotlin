@@ -8,19 +8,14 @@ import com.android.volley.TimeoutError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.LikeFromFollowingRequestCallback
 import xyz.fairportstudios.popularin.models.User
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.secrets.APIKey
 import xyz.fairportstudios.popularin.statics.PopularinAPI
 
 class LikeFromFollowingRequest(private val context: Context, private val reviewID: Int) {
-    interface Callback {
-        fun onSuccess(totalPage: Int, userList: ArrayList<User>)
-        fun onNotFound()
-        fun onError(message: String)
-    }
-
-    fun sendRequest(page: Int, callback: Callback) {
+    fun sendRequest(page: Int, callback: LikeFromFollowingRequestCallback) {
         val requestURL = "${PopularinAPI.REVIEW}$reviewID/likes/from/following?page=$page"
 
         val likeFromFollowing = object : JsonObjectRequest(Method.GET, requestURL, null, Response.Listener { response ->

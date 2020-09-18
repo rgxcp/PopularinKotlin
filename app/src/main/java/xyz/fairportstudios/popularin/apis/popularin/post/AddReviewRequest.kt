@@ -9,6 +9,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.AddReviewRequestCallback
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.secrets.APIKey
 import xyz.fairportstudios.popularin.statics.PopularinAPI
@@ -20,13 +21,7 @@ class AddReviewRequest(
     private val reviewDetail: String,
     private val watchDate: String
 ) {
-    interface Callback {
-        fun onSuccess()
-        fun onFailed(message: String)
-        fun onError(message: String)
-    }
-
-    fun sendRequest(callback: Callback) {
+    fun sendRequest(callback: AddReviewRequestCallback) {
         val requestURL = PopularinAPI.ADD_REVIEW
 
         val addReview = object : StringRequest(Method.POST, requestURL, Response.Listener { response ->

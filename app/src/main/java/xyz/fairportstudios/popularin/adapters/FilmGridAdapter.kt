@@ -9,19 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.recycler_film_grid.view.*
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.interfaces.FilmGridAdapterClickListener
 import xyz.fairportstudios.popularin.models.Film
 import xyz.fairportstudios.popularin.statics.TMDbAPI
 
 class FilmGridAdapter(
     private val context: Context,
     private val filmList: ArrayList<Film>,
-    private val onClickListener: OnClickListener
+    private val clickListener: FilmGridAdapterClickListener
 ) : RecyclerView.Adapter<FilmGridAdapter.FilmGridViewHolder>() {
-    interface OnClickListener {
-        fun onFilmGridItemClick(position: Int)
-        fun onFilmGridItemLongClick(position: Int)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmGridViewHolder {
         return FilmGridViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_film_grid, parent, false))
     }
@@ -48,11 +44,11 @@ class FilmGridAdapter(
         }
 
         override fun onClick(v: View?) {
-            if (v == itemView) onClickListener.onFilmGridItemClick(adapterPosition)
+            if (v == itemView) clickListener.onFilmGridItemClick(adapterPosition)
         }
 
         override fun onLongClick(v: View?): Boolean {
-            if (v == itemView) onClickListener.onFilmGridItemLongClick(adapterPosition)
+            if (v == itemView) clickListener.onFilmGridItemLongClick(adapterPosition)
             return true
         }
     }

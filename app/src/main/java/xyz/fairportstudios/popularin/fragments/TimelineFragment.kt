@@ -23,6 +23,11 @@ import xyz.fairportstudios.popularin.apis.popularin.delete.UnlikeReviewRequest
 import xyz.fairportstudios.popularin.apis.popularin.get.TimelineRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.LikeReviewRequest
 import xyz.fairportstudios.popularin.databinding.FragmentTimelineBinding
+import xyz.fairportstudios.popularin.interfaces.GenreHorizontalAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.LikeReviewRequestCallback
+import xyz.fairportstudios.popularin.interfaces.ReviewAdapterClickListener
+import xyz.fairportstudios.popularin.interfaces.TimelineRequestCallback
+import xyz.fairportstudios.popularin.interfaces.UnlikeReviewRequestCallback
 import xyz.fairportstudios.popularin.modals.FilmModal
 import xyz.fairportstudios.popularin.models.Genre
 import xyz.fairportstudios.popularin.models.Review
@@ -30,7 +35,7 @@ import xyz.fairportstudios.popularin.services.LoadGenre
 import xyz.fairportstudios.popularin.services.ParseDate
 import xyz.fairportstudios.popularin.statics.Popularin
 
-class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, ReviewAdapter.OnClickListener {
+class TimelineFragment : Fragment(), GenreHorizontalAdapterClickListener, ReviewAdapterClickListener {
     // Primitive
     private var mIsLoading = true
     private var mIsLoadFirstTimeSuccess = false
@@ -143,7 +148,7 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
     }
 
     private fun getTimeline(page: Int, refreshPage: Boolean) {
-        mTimelineRequest.sendRequest(page, object : TimelineRequest.Callback {
+        mTimelineRequest.sendRequest(page, object : TimelineRequestCallback {
             override fun onSuccess(totalPage: Int, reviewList: ArrayList<Review>) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
@@ -233,7 +238,7 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
 
     private fun likeReview(id: Int, position: Int) {
         val likeReviewRequest = LikeReviewRequest(mContext, id)
-        likeReviewRequest.sendRequest(object : LikeReviewRequest.Callback {
+        likeReviewRequest.sendRequest(object : LikeReviewRequestCallback {
             override fun onSuccess() {
                 mTotalLike++
                 val currentItem = mReviewList[position]
@@ -253,7 +258,7 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapter.OnClickListener, Rev
 
     private fun unlikeReview(id: Int, position: Int) {
         val unlikeReviewRequest = UnlikeReviewRequest(mContext, id)
-        unlikeReviewRequest.sendRequest(object : UnlikeReviewRequest.Callback {
+        unlikeReviewRequest.sendRequest(object : UnlikeReviewRequestCallback {
             override fun onSuccess() {
                 mTotalLike--
                 val currentItem = mReviewList[position]
