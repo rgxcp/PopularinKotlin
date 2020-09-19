@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.recycler_user_review.view.*
+import kotlinx.android.synthetic.main.item_user_review.view.*
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.interfaces.UserReviewAdapterClickListener
 import xyz.fairportstudios.popularin.models.UserReview
@@ -22,7 +22,7 @@ class UserReviewAdapter(
     private val clickListener: UserReviewAdapterClickListener
 ) : RecyclerView.Adapter<UserReviewAdapter.UserReviewViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserReviewViewHolder {
-        return UserReviewViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_user_review, parent, false))
+        return UserReviewViewHolder(LayoutInflater.from(context).inflate(R.layout.item_user_review, parent, false))
     }
 
     override fun onBindViewHolder(holder: UserReviewViewHolder, position: Int) {

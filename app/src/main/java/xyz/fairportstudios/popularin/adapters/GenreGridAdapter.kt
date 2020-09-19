@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.recycler_genre_grid.view.*
+import kotlinx.android.synthetic.main.item_genre_grid.view.*
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.interfaces.GenreGridAdapterClickListener
 import xyz.fairportstudios.popularin.models.Genre
@@ -23,7 +23,7 @@ class GenreGridAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreGridViewHolder {
-        return GenreGridViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_genre_grid, parent, false))
+        return GenreGridViewHolder(LayoutInflater.from(context).inflate(R.layout.item_genre_grid, parent, false))
     }
 
     override fun onBindViewHolder(holder: GenreGridViewHolder, position: Int) {

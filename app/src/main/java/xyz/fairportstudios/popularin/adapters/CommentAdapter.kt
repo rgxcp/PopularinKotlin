@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.recycler_comment.view.*
+import kotlinx.android.synthetic.main.item_comment.view.*
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.interfaces.CommentAdapterClickListener
 import xyz.fairportstudios.popularin.models.Comment
@@ -19,7 +19,7 @@ class CommentAdapter(
     private val clickListener: CommentAdapterClickListener
 ) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
-        return CommentViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_comment, parent, false))
+        return CommentViewHolder(LayoutInflater.from(context).inflate(R.layout.item_comment, parent, false))
     }
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {

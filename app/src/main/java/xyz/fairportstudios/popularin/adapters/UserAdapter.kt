@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.recycler_user.view.*
+import kotlinx.android.synthetic.main.item_user.view.*
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.interfaces.UserAdapterClickListener
 import xyz.fairportstudios.popularin.models.User
@@ -19,7 +19,7 @@ class UserAdapter(
     private val clickListener: UserAdapterClickListener
 ) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-        return UserViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_user, parent, false))
+        return UserViewHolder(LayoutInflater.from(context).inflate(R.layout.item_user, parent, false))
     }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {

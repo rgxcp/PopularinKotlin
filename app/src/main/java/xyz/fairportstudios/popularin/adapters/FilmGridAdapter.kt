@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.recycler_film_grid.view.*
+import kotlinx.android.synthetic.main.item_film_grid.view.*
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.interfaces.FilmGridAdapterClickListener
 import xyz.fairportstudios.popularin.models.Film
@@ -19,7 +19,7 @@ class FilmGridAdapter(
     private val clickListener: FilmGridAdapterClickListener
 ) : RecyclerView.Adapter<FilmGridAdapter.FilmGridViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmGridViewHolder {
-        return FilmGridViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_film_grid, parent, false))
+        return FilmGridViewHolder(LayoutInflater.from(context).inflate(R.layout.item_film_grid, parent, false))
     }
 
     override fun onBindViewHolder(holder: FilmGridViewHolder, position: Int) {

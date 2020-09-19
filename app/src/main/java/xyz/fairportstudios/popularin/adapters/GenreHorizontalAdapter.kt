@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.recycler_genre_horizontal.view.*
+import kotlinx.android.synthetic.main.item_genre_horizontal.view.*
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.interfaces.GenreHorizontalAdapterClickListener
 import xyz.fairportstudios.popularin.models.Genre
@@ -23,7 +23,7 @@ class GenreHorizontalAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreHorizontalViewHolder {
-        return GenreHorizontalViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_genre_horizontal, parent, false))
+        return GenreHorizontalViewHolder(LayoutInflater.from(context).inflate(R.layout.item_genre_horizontal, parent, false))
     }
 
     override fun onBindViewHolder(holder: GenreHorizontalViewHolder, position: Int) {

@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.recycler_credit.view.*
+import kotlinx.android.synthetic.main.item_credit.view.*
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.interfaces.CastAdapterClickListener
 import xyz.fairportstudios.popularin.models.Cast
@@ -25,7 +25,7 @@ class CastAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CastViewHolder {
-        return CastViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_credit, parent, false))
+        return CastViewHolder(LayoutInflater.from(context).inflate(R.layout.item_credit, parent, false))
     }
 
     override fun onBindViewHolder(holder: CastViewHolder, position: Int) {

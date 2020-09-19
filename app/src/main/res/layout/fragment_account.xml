@@ -354,8 +354,7 @@
                             android:id="@+id/recycler_view_recent_review"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:visibility="@{accountDetail.hasRecentReview &amp;&amp; loadSuccess ? View.VISIBLE : View.GONE}"
-                            tools:listitem="@layout/recycler_recent_review" />
+                            android:visibility="@{accountDetail.hasRecentReview &amp;&amp; loadSuccess ? View.VISIBLE : View.GONE}" />
 
                         <ImageView
                             android:id="@+id/empty_recent_review_image"

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.recycler_recent_favorite.view.*
+import kotlinx.android.synthetic.main.item_recent_favorite.view.*
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.interfaces.RecentFavoriteAdapterClickListener
 import xyz.fairportstudios.popularin.models.RecentFavorite
@@ -24,7 +24,7 @@ class RecentFavoriteAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentFavoriteViewHolder {
-        return RecentFavoriteViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_recent_favorite, parent, false))
+        return RecentFavoriteViewHolder(LayoutInflater.from(context).inflate(R.layout.item_recent_favorite, parent, false))
     }
 
     override fun onBindViewHolder(holder: RecentFavoriteViewHolder, position: Int) {

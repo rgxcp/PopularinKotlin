@@ -8,55 +8,16 @@
     android:paddingHorizontal="16dp"
     android:paddingTop="16dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/text_rur_title_year"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="3">
-
-        <TextView
-            android:id="@+id/text_rr_title_year"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:fontFamily="@font/jost_medium"
-            android:textColor="@color/colorOnBackground"
-            android:textSize="17sp" />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_vertical|end"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/text_rr_username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:fontFamily="@font/jost_regular"
-                android:maxLength="10"
-                android:textColor="@color/colorOnSurface"
-                android:textSize="15sp" />
-
-            <com.github.florent37.shapeofview.shapes.CircleView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/image_rr_profile"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:background="@color/colorSurface"
-                    android:contentDescription="@null"
-                    android:scaleType="centerCrop" />
-            </com.github.florent37.shapeofview.shapes.CircleView>
-        </LinearLayout>
-    </LinearLayout>
+        android:fontFamily="@font/jost_medium"
+        android:textColor="@color/colorOnBackground"
+        android:textSize="17sp" />
 
     <ImageView
-        android:id="@+id/image_rr_star"
+        android:id="@+id/image_rur_star"
         android:layout_width="70dp"
         android:layout_height="20dp"
         android:contentDescription="@null"
@@ -79,7 +40,7 @@
             app:shape_roundRect_topRightRadius="2dp">
 
             <ImageView
-                android:id="@+id/image_rr_poster"
+                android:id="@+id/image_rur_poster"
                 android:layout_width="100dp"
                 android:layout_height="150dp"
                 android:background="@color/colorSurface"
@@ -88,7 +49,7 @@
         </com.github.florent37.shapeofview.shapes.RoundRectView>
 
         <TextView
-            android:id="@+id/text_rr_review"
+            android:id="@+id/text_rur_review"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -107,16 +68,16 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/image_rr_like"
+            android:id="@+id/image_rur_like"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@null"
             android:src="@drawable/ic_outline_heart"
-            android:tint="@color/redPrimary" />
+            app:tint="@color/redPrimary" />
 
         <TextView
-            android:id="@+id/text_rr_total_like"
+            android:id="@+id/text_rur_total_like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -125,7 +86,7 @@
             android:textSize="13sp" />
 
         <ImageView
-            android:id="@+id/image_rr_comment"
+            android:id="@+id/image_rur_comment"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginStart="8dp"
@@ -134,7 +95,7 @@
             android:src="@drawable/ic_outline_comment" />
 
         <TextView
-            android:id="@+id/text_rr_total_comment"
+            android:id="@+id/text_rur_total_comment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -150,7 +111,7 @@
             android:src="@drawable/ic_fill_lens" />
 
         <TextView
-            android:id="@+id/text_rr_timestamp"
+            android:id="@+id/text_rur_timestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -160,7 +121,7 @@
     </LinearLayout>
 
     <View
-        android:id="@+id/border_rr_layout"
+        android:id="@+id/border_rur_layout"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_marginTop="16dp"

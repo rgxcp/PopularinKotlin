@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.recycler_film_review.view.*
+import kotlinx.android.synthetic.main.item_film_review.view.*
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.interfaces.FilmReviewAdapterClickListener
 import xyz.fairportstudios.popularin.models.FilmReview
@@ -20,7 +20,7 @@ class FilmReviewAdapter(
     private val clickListener: FilmReviewAdapterClickListener
 ) : RecyclerView.Adapter<FilmReviewAdapter.FilmReviewViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmReviewViewHolder {
-        return FilmReviewViewHolder(LayoutInflater.from(context).inflate(R.layout.recycler_film_review, parent, false))
+        return FilmReviewViewHolder(LayoutInflater.from(context).inflate(R.layout.item_film_review, parent, false))
     }
 
     override fun onBindViewHolder(holder: FilmReviewViewHolder, position: Int) {
