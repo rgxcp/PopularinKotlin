@@ -29,6 +29,7 @@ class AddCommentRequest(private val context: Context, private val reviewID: Int,
                     val comment = Comment(
                         resultObject.getInt("id"),
                         userObject.getInt("id"),
+                        resultObject.getBoolean("is_self"),
                         resultObject.getString("comment_detail"),
                         resultObject.getString("timestamp"),
                         userObject.getString("username"),
