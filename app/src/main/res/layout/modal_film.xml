@@ -5,11 +5,11 @@
     <data>
 
         <variable
-            name="title"
+            name="filmTitle"
             type="String" />
 
         <variable
-            name="year"
+            name="filmYear"
             type="String" />
 
         <variable
@@ -25,25 +25,25 @@
         android:paddingVertical="8dp">
 
         <TextView
-            android:id="@+id/film_title"
+            android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:ellipsize="end"
             android:fontFamily="@font/jost_medium"
             android:maxLines="1"
-            android:text="@{title}"
+            android:text="@{filmTitle}"
             android:textColor="@color/colorOnBackground"
             android:textSize="17sp" />
 
         <TextView
-            android:id="@+id/film_year"
+            android:id="@+id/year"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
             android:fontFamily="@font/jost_regular"
-            android:text="@{year}"
+            android:text="@{filmYear}"
             android:textSize="15sp" />
 
         <View

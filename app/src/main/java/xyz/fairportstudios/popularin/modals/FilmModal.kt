@@ -52,8 +52,8 @@ class FilmModal(
         val isAuth = Auth(context).isAuth()
 
         // Isi
-        mBinding.title = filmTitle
-        mBinding.year = filmYear
+        mBinding.filmTitle = filmTitle
+        mBinding.filmYear = filmYear
 
         // Mendapatkan status film
         if (isAuth) {
