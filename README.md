@@ -16,7 +16,7 @@ MAINTAINING
 3. Do-what-you-want-with-it!
 
 ## How to Use (Play Store)
-1. Search `pub: Fairport Studios` (case sensitive) on Play Store and choose **Popoularin**, or;
+1. Search `pub: Fairport Studios` (case sensitive) on Play Store and choose **Popularin**, or;
 2. Search `"Popularin"` (with the double quote) specifically, or;
 3. Simply open this [link](https://bit.ly/Popularin "Popularin on Play Store").
 
