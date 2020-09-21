@@ -31,7 +31,7 @@ class SocialActivity : AppCompatActivity() {
         val isSelf = auth.isSelf(userID, auth.getAuthID())
 
         // Toolbar
-        binding.toolbar.title = getString(R.string.social)
+        binding.toolbarTitle = getString(R.string.social)
 
         // Limit page yang akan ditampilkan
         val screenPageLimit = when (isAuth && !isSelf) {

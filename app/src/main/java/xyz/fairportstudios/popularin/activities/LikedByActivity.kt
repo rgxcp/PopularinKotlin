@@ -56,7 +56,7 @@ class LikedByActivity : AppCompatActivity(), UserAdapterClickListener {
                 setContentView(viewBinding.root)
 
                 // Toolbar
-                viewBinding.toolbar.title = getString(R.string.liked_by)
+                viewBinding.toolbarTitle = getString(R.string.liked_by)
 
                 // Tab pager
                 val pagerAdapter = PagerAdapter(supportFragmentManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)

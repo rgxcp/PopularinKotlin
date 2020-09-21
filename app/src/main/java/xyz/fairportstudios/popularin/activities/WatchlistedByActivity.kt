@@ -56,7 +56,7 @@ class WatchlistedByActivity : AppCompatActivity(), UserAdapterClickListener {
                 setContentView(viewBinding.root)
 
                 // Toolbar
-                viewBinding.toolbar.title = getString(R.string.watchlisted_by)
+                viewBinding.toolbarTitle = getString(R.string.watchlisted_by)
 
                 // Tab pager
                 val pagerAdapter = PagerAdapter(supportFragmentManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)

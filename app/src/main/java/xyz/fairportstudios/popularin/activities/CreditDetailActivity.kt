@@ -22,7 +22,7 @@ class CreditDetailActivity : AppCompatActivity() {
         val viewPagerIndex = intent.getIntExtra(Popularin.VIEW_PAGER_INDEX, 0)
 
         // Toolbar
-        binding.toolbar.title = getString(R.string.credit)
+        binding.toolbarTitle = getString(R.string.credit)
 
         // Tab pager
         val pagerAdapter = PagerAdapter(supportFragmentManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)

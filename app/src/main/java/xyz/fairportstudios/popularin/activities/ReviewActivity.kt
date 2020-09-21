@@ -36,7 +36,7 @@ class ReviewActivity : AppCompatActivity() {
         val isSelf = intent.getBooleanExtra(Popularin.IS_SELF, false)
 
         // Toolbar
-        mBinding.toolbar.title = getString(R.string.review)
+        mBinding.toolbarTitle = getString(R.string.review)
         if (isSelf) addToolbarMenu(context, reviewID)
 
         // Tab pager

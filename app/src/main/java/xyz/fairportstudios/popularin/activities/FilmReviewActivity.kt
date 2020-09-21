@@ -70,7 +70,7 @@ class FilmReviewActivity : AppCompatActivity(), FilmReviewAdapterClickListener {
                 setContentView(viewBinding.root)
 
                 // Toolbar
-                viewBinding.toolbar.title = getString(R.string.review)
+                viewBinding.toolbarTitle = getString(R.string.review)
 
                 // Tab pager
                 val pagerAdapter = PagerAdapter(supportFragmentManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
