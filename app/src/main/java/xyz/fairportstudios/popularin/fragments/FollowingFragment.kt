@@ -54,7 +54,7 @@ class FollowingFragment(private val userID: Int, private val isSelf: Boolean) : 
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mBinding.loadMoreBar.visibility = View.VISIBLE
+                    mBinding.isLoadingMore = true
                     handler.postDelayed({
                         getUserFollowing(mCurrentPage, false)
                     }, 1000)
@@ -77,6 +77,7 @@ class FollowingFragment(private val userID: Int, private val isSelf: Boolean) : 
             // Mendapatkan data awal
             mIsResumeFirstTime = false
             mUserFollowingRequest = UserFollowingRequest(mContext, userID)
+            mBinding.isLoading = true
             getUserFollowing(mStartPage, false)
         }
     }
@@ -105,18 +106,19 @@ class FollowingFragment(private val userID: Int, private val isSelf: Boolean) : 
                         val insertIndex = mUserList.size
                         mUserList.addAll(insertIndex, userList)
                         mUserAdapter.notifyItemRangeInserted(insertIndex, userList.size)
+                        mBinding.isLoadingMore = false
                     }
                     false -> {
                         mUserList = ArrayList()
                         val insertIndex = mUserList.size
                         mUserList.addAll(insertIndex, userList)
                         setAdapter()
-                        mBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = true
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -127,10 +129,10 @@ class FollowingFragment(private val userID: Int, private val isSelf: Boolean) : 
                         mUserList.clear()
                         mUserAdapter.notifyDataSetChanged()
                     }
-                    false -> mBinding.progressBar.visibility = View.GONE
+                    false -> mBinding.isLoading = false
                 }
-                mBinding.errorMessage.visibility = View.VISIBLE
-                mBinding.errorMessage.text = when (isSelf) {
+                mBinding.loadSuccess = false
+                mBinding.message = when (isSelf) {
                     true -> getString(R.string.empty_self_following)
                     false -> getString(R.string.empty_user_following)
                 }
@@ -139,13 +141,13 @@ class FollowingFragment(private val userID: Int, private val isSelf: Boolean) : 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mBinding.loadMoreBar.visibility = View.GONE
+                        mBinding.isLoadingMore = false
                         Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mBinding.progressBar.visibility = View.GONE
-                        mBinding.errorMessage.visibility = View.VISIBLE
-                        mBinding.errorMessage.text = message
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = false
+                        mBinding.message = message
                     }
                 }
             }
@@ -154,17 +156,12 @@ class FollowingFragment(private val userID: Int, private val isSelf: Boolean) : 
         // Memberhentikan loading
         mIsLoading = false
         if (refreshPage) mBinding.swipeRefresh.isRefreshing = false
-        mBinding.loadMoreBar.visibility = when (page == mTotalPage) {
-            true -> View.GONE
-            false -> View.INVISIBLE
-        }
     }
 
     private fun setAdapter() {
-        mUserAdapter = UserAdapter(mContext, mUserList, this)
+        mUserAdapter = UserAdapter(mUserList, this)
         mBinding.recyclerView.adapter = mUserAdapter
         mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
-        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun gotoUserDetail(id: Int) {

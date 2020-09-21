@@ -65,7 +65,7 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mBinding.loadMoreBar.visibility = View.VISIBLE
+                    mBinding.isLoadingMore = true
                     handler.postDelayed({
                         getLikedFilmReview(mCurrentPage, false)
                     }, 1000)
@@ -88,6 +88,7 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
             // Mendapatkan data awal
             mIsResumeFirstTime = false
             mLikedFilmReviewRequest = LikedFilmReviewRequest(mContext, filmID)
+            mBinding.isLoading = true
             getLikedFilmReview(mStartPage, false)
         }
     }
@@ -141,18 +142,19 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
                         mFilmReviewList.addAll(insertIndex, filmReviewList)
                         mFilmReviewAdapter.notifyItemChanged(insertIndex - 1)
                         mFilmReviewAdapter.notifyItemRangeInserted(insertIndex, filmReviewList.size)
+                        mBinding.isLoadingMore = false
                     }
                     false -> {
                         mFilmReviewList = ArrayList()
                         val insertIndex = mFilmReviewList.size
                         mFilmReviewList.addAll(insertIndex, filmReviewList)
                         setAdapter()
-                        mBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = true
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -163,22 +165,22 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
                         mFilmReviewList.clear()
                         mFilmReviewAdapter.notifyDataSetChanged()
                     }
-                    false -> mBinding.progressBar.visibility = View.GONE
+                    false -> mBinding.isLoading = false
                 }
-                mBinding.errorMessage.visibility = View.VISIBLE
-                mBinding.errorMessage.text = getString(R.string.empty_liked_film_review)
+                mBinding.loadSuccess = false
+                mBinding.message = getString(R.string.empty_liked_film_review)
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mBinding.loadMoreBar.visibility = View.GONE
+                        mBinding.isLoadingMore = false
                         Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mBinding.progressBar.visibility = View.GONE
-                        mBinding.errorMessage.visibility = View.VISIBLE
-                        mBinding.errorMessage.text = message
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = false
+                        mBinding.message = message
                     }
                 }
             }
@@ -187,17 +189,12 @@ class LikedReviewFragment(private val filmID: Int) : Fragment(), FilmReviewAdapt
         // Memberhentikan loading
         mIsLoading = false
         if (refreshPage) mBinding.swipeRefresh.isRefreshing = false
-        mBinding.loadMoreBar.visibility = when (page == mTotalPage) {
-            true -> View.GONE
-            false -> View.INVISIBLE
-        }
     }
 
     private fun setAdapter() {
-        mFilmReviewAdapter = FilmReviewAdapter(mContext, mFilmReviewList, this)
+        mFilmReviewAdapter = FilmReviewAdapter(mFilmReviewList, this)
         mBinding.recyclerView.adapter = mFilmReviewAdapter
         mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
-        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun likeReview(id: Int, position: Int) {

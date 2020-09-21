@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -65,10 +64,11 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapterClickListener {
         val handler = Handler()
 
         // Toolbar
-        mBinding.toolbar.title = getString(R.string.review)
+        mBinding.toolbarTitle = getString(R.string.review)
 
         // Mendapatkan data awal
         mUserReviewRequest = UserReviewRequest(mContext, userID)
+        mBinding.isLoading = true
         getUserReview(mStartPage, false)
 
         // Activity
@@ -78,7 +78,7 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapterClickListener {
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mBinding.loadMoreBar.visibility = View.VISIBLE
+                    mBinding.isLoadingMore = true
                     handler.postDelayed({
                         getUserReview(mCurrentPage, false)
                     }, 1000)
@@ -146,18 +146,19 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapterClickListener {
                         mUserReviewList.addAll(insertIndex, userReviewList)
                         mUserReviewAdapter.notifyItemChanged(insertIndex - 1)
                         mUserReviewAdapter.notifyItemRangeInserted(insertIndex, userReviewList.size)
+                        mBinding.isLoadingMore = false
                     }
                     false -> {
                         mUserReviewList = ArrayList()
                         val insertIndex = mUserReviewList.size
                         mUserReviewList.addAll(insertIndex, userReviewList)
                         setAdapter()
-                        mBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = true
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -168,10 +169,10 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapterClickListener {
                         mUserReviewList.clear()
                         mUserReviewAdapter.notifyDataSetChanged()
                     }
-                    false -> mBinding.progressBar.visibility = View.GONE
+                    false -> mBinding.isLoading = false
                 }
-                mBinding.errorMessage.visibility = View.VISIBLE
-                mBinding.errorMessage.text = when (mIsSelf) {
+                mBinding.loadSuccess = false
+                mBinding.message = when (mIsSelf) {
                     true -> getString(R.string.empty_self_review)
                     false -> getString(R.string.empty_user_review)
                 }
@@ -180,13 +181,13 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapterClickListener {
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mBinding.loadMoreBar.visibility = View.GONE
+                        mBinding.isLoadingMore = false
                         Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mBinding.progressBar.visibility = View.GONE
-                        mBinding.errorMessage.visibility = View.VISIBLE
-                        mBinding.errorMessage.text = message
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = false
+                        mBinding.message = message
                     }
                 }
             }
@@ -195,17 +196,12 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapterClickListener {
         // Memberhentikan loading
         mIsLoading = false
         if (refreshPage) mBinding.swipeRefresh.isRefreshing = false
-        mBinding.loadMoreBar.visibility = when (page == mTotalPage) {
-            true -> View.GONE
-            false -> View.INVISIBLE
-        }
     }
 
     private fun setAdapter() {
-        mUserReviewAdapter = UserReviewAdapter(mContext, mUserReviewList, this)
+        mUserReviewAdapter = UserReviewAdapter(mUserReviewList, this)
         mBinding.recyclerView.adapter = mUserReviewAdapter
         mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
-        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun likeReview(id: Int, position: Int) {

@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.FragmentPagerAdapter
@@ -77,10 +76,11 @@ class FavoritedByActivity : AppCompatActivity(), UserAdapterClickListener {
                 val handler = Handler()
 
                 // Toolbar
-                mBinding.toolbar.title = getString(R.string.favorited_by)
+                mBinding.toolbarTitle = getString(R.string.favorited_by)
 
                 // Mendapatkan data awal
                 mFavoriteFromAllRequest = FavoriteFromAllRequest(mContext, filmID)
+                mBinding.isLoading = true
                 getFavoriteFromAll(mStartPage, false)
 
                 // Activity
@@ -90,7 +90,7 @@ class FavoritedByActivity : AppCompatActivity(), UserAdapterClickListener {
                     if (scrollY > oldScrollY) {
                         if (!mIsLoading && mCurrentPage <= mTotalPage) {
                             mIsLoading = true
-                            mBinding.loadMoreBar.visibility = View.VISIBLE
+                            mBinding.isLoadingMore = true
                             handler.postDelayed({
                                 getFavoriteFromAll(mCurrentPage, false)
                             }, 1000)
@@ -126,18 +126,19 @@ class FavoritedByActivity : AppCompatActivity(), UserAdapterClickListener {
                         val insertIndex = mUserList.size
                         mUserList.addAll(insertIndex, userList)
                         mUserAdapter.notifyItemRangeInserted(insertIndex, userList.size)
+                        mBinding.isLoadingMore = false
                     }
                     false -> {
                         mUserList = ArrayList()
                         val insertIndex = mUserList.size
                         mUserList.addAll(insertIndex, userList)
                         setAdapter()
-                        mBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = true
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -148,22 +149,22 @@ class FavoritedByActivity : AppCompatActivity(), UserAdapterClickListener {
                         mUserList.clear()
                         mUserAdapter.notifyDataSetChanged()
                     }
-                    false -> mBinding.progressBar.visibility = View.GONE
+                    false -> mBinding.isLoading = false
                 }
-                mBinding.errorMessage.visibility = View.VISIBLE
-                mBinding.errorMessage.text = getString(R.string.empty_film_favorite)
+                mBinding.loadSuccess = false
+                mBinding.message = getString(R.string.empty_film_favorite)
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mBinding.loadMoreBar.visibility = View.GONE
+                        mBinding.isLoadingMore = false
                         Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mBinding.progressBar.visibility = View.GONE
-                        mBinding.errorMessage.visibility = View.VISIBLE
-                        mBinding.errorMessage.text = message
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = false
+                        mBinding.message = message
                     }
                 }
             }
@@ -172,17 +173,12 @@ class FavoritedByActivity : AppCompatActivity(), UserAdapterClickListener {
         // Memberhentikan loading
         mIsLoading = false
         if (refreshPage) mBinding.swipeRefresh.isRefreshing = false
-        mBinding.loadMoreBar.visibility = when (page == mTotalPage) {
-            true -> View.GONE
-            false -> View.INVISIBLE
-        }
     }
 
     private fun setAdapter() {
-        mUserAdapter = UserAdapter(mContext, mUserList, this)
+        mUserAdapter = UserAdapter(mUserList, this)
         mBinding.recyclerView.adapter = mUserAdapter
         mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
-        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun gotoUserDetail(id: Int) {

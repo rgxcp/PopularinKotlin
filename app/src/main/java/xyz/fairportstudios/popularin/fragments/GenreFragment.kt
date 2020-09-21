@@ -32,10 +32,13 @@ class GenreFragment : Fragment(), GenreGridAdapterClickListener {
         mContext = requireActivity()
 
         // Menampilkan genre
+        mBinding.isLoading = true
         showGenre()
 
         // Activity
-        mBinding.swipeRefresh.setOnRefreshListener { mBinding.swipeRefresh.isRefreshing = false }
+        mBinding.swipeRefresh.setOnRefreshListener {
+            mBinding.swipeRefresh.isRefreshing = false
+        }
 
         return mBinding.root
     }
@@ -53,7 +56,7 @@ class GenreFragment : Fragment(), GenreGridAdapterClickListener {
     private fun showGenre() {
         loadGenre()
         setAdapter()
-        mBinding.progressBar.visibility = View.GONE
+        stopLoading()
     }
 
     private fun loadGenre() {
@@ -62,11 +65,15 @@ class GenreFragment : Fragment(), GenreGridAdapterClickListener {
     }
 
     private fun setAdapter() {
-        val genreGridAdapter = GenreGridAdapter(mContext, mGenreList, this)
+        val genreGridAdapter = GenreGridAdapter(mGenreList, this)
         mBinding.recyclerView.adapter = genreGridAdapter
         mBinding.recyclerView.layoutManager = GridLayoutManager(mContext, 2)
         mBinding.recyclerView.hasFixedSize()
-        mBinding.recyclerView.visibility = View.VISIBLE
+    }
+
+    private fun stopLoading() {
+        mBinding.isLoading = false
+        mBinding.loadSuccess = true
     }
 
     private fun gotoDiscoverFilm(id: Int, title: String) {

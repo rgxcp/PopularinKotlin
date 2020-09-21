@@ -153,14 +153,14 @@ class FilmDetailActivity : AppCompatActivity(), CastAdapterClickListener, CrewAd
     }
 
     private fun setCastAdapter() {
-        val castAdapter = CastAdapter(mContext, mCastList, this)
+        val castAdapter = CastAdapter(mCastList, this)
         mBinding.recyclerViewCast.adapter = castAdapter
         mBinding.recyclerViewCast.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
         mBinding.recyclerViewCast.hasFixedSize()
     }
 
     private fun setCrewAdapter() {
-        val crewAdapter = CrewAdapter(mContext, mCrewList, this)
+        val crewAdapter = CrewAdapter(mCrewList, this)
         mBinding.recyclerViewCrew.adapter = crewAdapter
         mBinding.recyclerViewCrew.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
         mBinding.recyclerViewCrew.hasFixedSize()

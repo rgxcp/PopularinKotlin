@@ -64,18 +64,17 @@ class SearchFragment : Fragment(), FilmAdapterClickListener, UserAdapterClickLis
             override fun onQueryTextChange(newText: String?): Boolean {
                 when (newText.isNullOrEmpty()) {
                     true -> {
-                        mBinding.searchInLayout.visibility = View.GONE
+                        mBinding.isTyping = false
                         mBinding.recyclerView.visibility = View.VISIBLE
                     }
                     false -> {
                         mSearchQuery = newText
-                        mBinding.searchInLayout.visibility = View.VISIBLE
+                        mBinding.isTyping = true
                         mBinding.recyclerView.visibility = View.GONE
                         mBinding.inFilmChip.text = String.format("Cari \"%s\" dalam film", mSearchQuery)
                         mBinding.inUserChip.text = String.format("Cari \"%s\" dalam pengguna", mSearchQuery)
                     }
                 }
-                mBinding.errorMessage.visibility = View.GONE
                 return true
             }
         })
@@ -84,8 +83,8 @@ class SearchFragment : Fragment(), FilmAdapterClickListener, UserAdapterClickLis
             if (mIsSearchFilmFirstTime) {
                 mSearchFilmRequest = SearchFilmRequest(mContext)
             }
-            mBinding.searchInLayout.visibility = View.GONE
-            mBinding.progressBar.visibility = View.VISIBLE
+            mBinding.isTyping = false
+            mBinding.isLoading = true
             searchFilm()
         }
 
@@ -93,8 +92,8 @@ class SearchFragment : Fragment(), FilmAdapterClickListener, UserAdapterClickLis
             if (mIsSearchUserFirstTime) {
                 mSearchUserRequest = SearchUserRequest(mContext)
             }
-            mBinding.searchInLayout.visibility = View.GONE
-            mBinding.progressBar.visibility = View.VISIBLE
+            mBinding.isTyping = false
+            mBinding.isLoading = true
             searchUser()
         }
 
@@ -143,26 +142,26 @@ class SearchFragment : Fragment(), FilmAdapterClickListener, UserAdapterClickLis
                         mFilmList = ArrayList()
                         val insertIndex = mFilmList.size
                         mFilmList.addAll(insertIndex, filmList)
-                        mFilmAdapter = FilmAdapter(mContext, mFilmList, this@SearchFragment)
+                        mFilmAdapter = FilmAdapter(mFilmList, this@SearchFragment)
                         mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
                         mIsLoadFilmFirstTimeSuccess = true
                     }
                 }
                 mBinding.recyclerView.adapter = mFilmAdapter
-                mBinding.recyclerView.visibility = View.VISIBLE
-                mBinding.progressBar.visibility = View.GONE
+                mBinding.isLoading = false
+                mBinding.loadSuccess = true
             }
 
             override fun onNotFound() {
-                mBinding.progressBar.visibility = View.GONE
-                mBinding.errorMessage.visibility = View.VISIBLE
-                mBinding.errorMessage.text = getString(R.string.empty_search_result)
+                mBinding.isLoading = false
+                mBinding.loadSuccess = false
+                mBinding.message = getString(R.string.empty_search_result)
             }
 
             override fun onError(message: String) {
-                mBinding.progressBar.visibility = View.GONE
-                mBinding.errorMessage.visibility = View.VISIBLE
-                mBinding.errorMessage.text = message
+                mBinding.isLoading = false
+                mBinding.loadSuccess = false
+                mBinding.message = message
             }
         })
 
@@ -184,26 +183,26 @@ class SearchFragment : Fragment(), FilmAdapterClickListener, UserAdapterClickLis
                         mUserList = ArrayList()
                         val insertIndex = mUserList.size
                         mUserList.addAll(insertIndex, userList)
-                        mUserAdapter = UserAdapter(mContext, mUserList, this@SearchFragment)
+                        mUserAdapter = UserAdapter(mUserList, this@SearchFragment)
                         mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
                         mIsLoadUserFirstTimeSuccess = true
                     }
                 }
                 mBinding.recyclerView.adapter = mUserAdapter
-                mBinding.recyclerView.visibility = View.VISIBLE
-                mBinding.progressBar.visibility = View.GONE
+                mBinding.isLoading = false
+                mBinding.loadSuccess = true
             }
 
             override fun onNotFound() {
-                mBinding.progressBar.visibility = View.GONE
-                mBinding.errorMessage.visibility = View.VISIBLE
-                mBinding.errorMessage.text = getString(R.string.empty_search_result)
+                mBinding.isLoading = false
+                mBinding.loadSuccess = false
+                mBinding.message = getString(R.string.empty_search_result)
             }
 
             override fun onError(message: String) {
-                mBinding.progressBar.visibility = View.GONE
-                mBinding.errorMessage.visibility = View.VISIBLE
-                mBinding.errorMessage.text = message
+                mBinding.isLoading = false
+                mBinding.loadSuccess = false
+                mBinding.message = message
             }
         })
 

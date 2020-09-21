@@ -1,70 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activities.MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/search_view"
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="isLoading"
+            type="Boolean" />
+
+        <variable
+            name="isTyping"
+            type="Boolean" />
+
+        <variable
+            name="loadSuccess"
+            type="Boolean" />
+
+        <variable
+            name="message"
+            type="String" />
+    </data>
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/bg_circle_gray"
-        app:queryBackground="@android:color/transparent"
-        app:queryHint="@string/search_hint" />
+        android:layout_height="match_parent"
+        tools:context=".activities.MainActivity">
 
-    <LinearLayout
-        android:id="@+id/search_in_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/search_view"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
-        android:visibility="gone">
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_circle_gray"
+            app:queryBackground="@android:color/transparent"
+            app:queryHint="@string/search_hint" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/in_film_chip"
+        <LinearLayout
+            android:id="@+id/search_in_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorOnBackground"
-            android:textSize="15sp" />
+            android:layout_below="@+id/search_view"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            android:visibility="@{isTyping ? View.VISIBLE : View.GONE}">
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/in_user_chip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorOnBackground"
-            android:textSize="15sp" />
-    </LinearLayout>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/in_film_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorOnBackground"
+                android:textSize="15sp" />
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/search_view"
-        android:layout_marginTop="8dp"
-        android:padding="170dp"
-        android:visibility="gone" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/in_user_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorOnBackground"
+                android:textSize="15sp" />
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/error_message"
-        style="@style/TextMessagePrimary"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/search_view"
-        android:layout_marginTop="8dp"
-        android:visibility="gone" />
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/search_view"
+            android:layout_marginTop="8dp"
+            android:padding="170dp"
+            android:visibility="@{isLoading ? View.VISIBLE : View.GONE}" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/search_view"
-        android:layout_marginTop="8dp"
-        android:visibility="gone" />
+        <TextView
+            android:id="@+id/error_message"
+            style="@style/TextMessagePrimary"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/search_view"
+            android:layout_marginTop="8dp"
+            android:text="@{message}"
+            android:visibility="@{loadSuccess ? View.GONE : View.VISIBLE}" />
 
-</RelativeLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/search_view"
+            android:layout_marginTop="8dp"
+            android:visibility="@{loadSuccess ? View.VISIBLE : View.GONE}" />
+
+    </RelativeLayout>
+</layout>

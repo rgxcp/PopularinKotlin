@@ -60,6 +60,7 @@ class CreditFilmAsCrewFragment(private val creditID: Int) : Fragment(), FilmGrid
         if (mIsResumeFirstTime) {
             // Mendapatkan data
             mIsResumeFirstTime = false
+            mBinding.isLoading = true
             getFilmAsCrew()
         }
     }
@@ -89,14 +90,14 @@ class CreditFilmAsCrewFragment(private val creditID: Int) : Fragment(), FilmGrid
                         mFilmAsCrewList = ArrayList()
                         mFilmAsCrewList.addAll(filmAsCrewList)
                         setAdapter()
-                        mBinding.errorMessage.visibility = View.GONE
+                        mBinding.loadSuccess = true
                     }
                     false -> {
-                        mBinding.errorMessage.visibility = View.VISIBLE
-                        mBinding.errorMessage.text = getString(R.string.empty_credit_film_as_crew)
+                        mBinding.loadSuccess = false
+                        mBinding.message = getString(R.string.empty_credit_film_as_crew)
                     }
                 }
-                mBinding.progressBar.visibility = View.GONE
+                mBinding.isLoading = false
                 mIsLoadFirstTimeSuccess = true
             }
 
@@ -104,9 +105,9 @@ class CreditFilmAsCrewFragment(private val creditID: Int) : Fragment(), FilmGrid
                 when (mIsLoadFirstTimeSuccess) {
                     true -> Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     false -> {
-                        mBinding.progressBar.visibility = View.GONE
-                        mBinding.errorMessage.visibility = View.VISIBLE
-                        mBinding.errorMessage.text = message
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = false
+                        mBinding.message = message
                     }
                 }
             }
@@ -117,11 +118,10 @@ class CreditFilmAsCrewFragment(private val creditID: Int) : Fragment(), FilmGrid
     }
 
     private fun setAdapter() {
-        val filmGridAdapter = FilmGridAdapter(mContext, mFilmAsCrewList, this)
+        val filmGridAdapter = FilmGridAdapter(mFilmAsCrewList, this)
         mBinding.recyclerView.adapter = filmGridAdapter
         mBinding.recyclerView.layoutManager = GridLayoutManager(mContext, 4)
         mBinding.recyclerView.hasFixedSize()
-        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun showFilmModal(id: Int, title: String, year: String, poster: String) {

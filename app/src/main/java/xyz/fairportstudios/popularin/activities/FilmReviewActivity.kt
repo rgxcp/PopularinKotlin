@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.FragmentPagerAdapter
@@ -95,10 +94,11 @@ class FilmReviewActivity : AppCompatActivity(), FilmReviewAdapterClickListener {
                 val handler = Handler()
 
                 // Toolbar
-                mBinding.toolbar.title = getString(R.string.review)
+                mBinding.toolbarTitle = getString(R.string.review)
 
                 // Mendapatkan data awal
                 mFilmReviewFromAllRequest = FilmReviewFromAllRequest(mContext, filmID)
+                mBinding.isLoading = true
                 getFilmReviewFromAll(mStartPage, false)
 
                 // Activity
@@ -108,7 +108,7 @@ class FilmReviewActivity : AppCompatActivity(), FilmReviewAdapterClickListener {
                     if (scrollY > oldScrollY) {
                         if (!mIsLoading && mCurrentPage <= mTotalPage) {
                             mIsLoading = true
-                            mBinding.loadMoreBar.visibility = View.VISIBLE
+                            mBinding.isLoadingMore = true
                             handler.postDelayed({
                                 getFilmReviewFromAll(mCurrentPage, false)
                             }, 1000)
@@ -174,18 +174,19 @@ class FilmReviewActivity : AppCompatActivity(), FilmReviewAdapterClickListener {
                         mFilmReviewList.addAll(insertIndex, filmReviewList)
                         mFilmReviewAdapter.notifyItemChanged(insertIndex - 1)
                         mFilmReviewAdapter.notifyItemRangeInserted(insertIndex, filmReviewList.size)
+                        mBinding.isLoadingMore = false
                     }
                     false -> {
                         mFilmReviewList = ArrayList()
                         val insertIndex = mFilmReviewList.size
                         mFilmReviewList.addAll(insertIndex, filmReviewList)
                         setAdapter()
-                        mBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = true
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -196,22 +197,22 @@ class FilmReviewActivity : AppCompatActivity(), FilmReviewAdapterClickListener {
                         mFilmReviewList.clear()
                         mFilmReviewAdapter.notifyDataSetChanged()
                     }
-                    false -> mBinding.progressBar.visibility = View.GONE
+                    false -> mBinding.isLoading = false
                 }
-                mBinding.errorMessage.visibility = View.VISIBLE
-                mBinding.errorMessage.text = getString(R.string.empty_film_review)
+                mBinding.loadSuccess = false
+                mBinding.message = getString(R.string.empty_film_review)
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mBinding.loadMoreBar.visibility = View.GONE
+                        mBinding.isLoadingMore = false
                         Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mBinding.progressBar.visibility = View.GONE
-                        mBinding.errorMessage.visibility = View.VISIBLE
-                        mBinding.errorMessage.text = message
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = false
+                        mBinding.message = message
                     }
                 }
             }
@@ -220,17 +221,12 @@ class FilmReviewActivity : AppCompatActivity(), FilmReviewAdapterClickListener {
         // Memberhentikan loading
         mIsLoading = false
         if (refreshPage) mBinding.swipeRefresh.isRefreshing = false
-        mBinding.loadMoreBar.visibility = when (page == mTotalPage) {
-            true -> View.GONE
-            false -> View.INVISIBLE
-        }
     }
 
     private fun setAdapter() {
-        mFilmReviewAdapter = FilmReviewAdapter(mContext, mFilmReviewList, this)
+        mFilmReviewAdapter = FilmReviewAdapter(mFilmReviewList, this)
         mBinding.recyclerView.adapter = mFilmReviewAdapter
         mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
-        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun likeReview(id: Int, position: Int) {

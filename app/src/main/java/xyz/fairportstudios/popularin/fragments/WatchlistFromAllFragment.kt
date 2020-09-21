@@ -50,6 +50,7 @@ class WatchlistFromAllFragment(private val filmID: Int) : Fragment(), UserAdapte
 
         // Mendapatkan data awal
         mWatchlistFromAllRequest = WatchlistFromAllRequest(mContext, filmID)
+        mBinding.isLoading = true
         getWatchlistFromAll(mStartPage, false)
 
         // Activity
@@ -57,7 +58,7 @@ class WatchlistFromAllFragment(private val filmID: Int) : Fragment(), UserAdapte
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mBinding.loadMoreBar.visibility = View.VISIBLE
+                    mBinding.isLoadingMore = true
                     handler.postDelayed({
                         getWatchlistFromAll(mCurrentPage, false)
                     }, 1000)
@@ -98,18 +99,19 @@ class WatchlistFromAllFragment(private val filmID: Int) : Fragment(), UserAdapte
                         val insertIndex = mUserList.size
                         mUserList.addAll(insertIndex, userList)
                         mUserAdapter.notifyItemRangeInserted(insertIndex, userList.size)
+                        mBinding.isLoadingMore = false
                     }
                     false -> {
                         mUserList = ArrayList()
                         val insertIndex = mUserList.size
                         mUserList.addAll(insertIndex, userList)
                         setAdapter()
-                        mBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = true
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -120,22 +122,22 @@ class WatchlistFromAllFragment(private val filmID: Int) : Fragment(), UserAdapte
                         mUserList.clear()
                         mUserAdapter.notifyDataSetChanged()
                     }
-                    false -> mBinding.progressBar.visibility = View.GONE
+                    false -> mBinding.isLoading = false
                 }
-                mBinding.errorMessage.visibility = View.VISIBLE
-                mBinding.errorMessage.text = getString(R.string.empty_film_watchlist)
+                mBinding.loadSuccess = false
+                mBinding.message = getString(R.string.empty_film_watchlist)
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mBinding.loadMoreBar.visibility = View.GONE
+                        mBinding.isLoadingMore = false
                         Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mBinding.progressBar.visibility = View.GONE
-                        mBinding.errorMessage.visibility = View.VISIBLE
-                        mBinding.errorMessage.text = message
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = false
+                        mBinding.message = message
                     }
                 }
             }
@@ -144,17 +146,12 @@ class WatchlistFromAllFragment(private val filmID: Int) : Fragment(), UserAdapte
         // Memberhentikan loading
         mIsLoading = false
         if (refreshPage) mBinding.swipeRefresh.isRefreshing = false
-        mBinding.loadMoreBar.visibility = when (page == mTotalPage) {
-            true -> View.GONE
-            false -> View.INVISIBLE
-        }
     }
 
     private fun setAdapter() {
-        mUserAdapter = UserAdapter(mContext, mUserList, this)
+        mUserAdapter = UserAdapter(mUserList, this)
         mBinding.recyclerView.adapter = mUserAdapter
         mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
-        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun gotoUserDetail(id: Int) {

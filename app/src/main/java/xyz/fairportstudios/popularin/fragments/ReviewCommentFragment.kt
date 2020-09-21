@@ -100,6 +100,7 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
             mIsResumeFirstTime = false
             mCommentList = ArrayList()
             mCommentRequest = CommentRequest(mContext, reviewID)
+            mBinding.isLoading = true
             getComment(mStartPage, false)
         }
     }
@@ -159,12 +160,12 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
                         val insertIndex = mCommentList.size
                         mCommentList.addAll(insertIndex, commentList)
                         setAdapter()
-                        mBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = true
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -175,19 +176,19 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
                         mCommentList.clear()
                         mCommentAdapter.notifyDataSetChanged()
                     }
-                    false -> mBinding.progressBar.visibility = View.GONE
+                    false -> mBinding.isLoading = false
                 }
-                mBinding.errorMessage.visibility = View.VISIBLE
-                mBinding.errorMessage.text = getString(R.string.empty_comment)
+                mBinding.loadSuccess = false
+                mBinding.message = getString(R.string.empty_comment)
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
                     false -> {
-                        mBinding.progressBar.visibility = View.GONE
-                        mBinding.errorMessage.visibility = View.VISIBLE
-                        mBinding.errorMessage.text = message
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = false
+                        mBinding.message = message
                     }
                 }
             }
@@ -195,14 +196,13 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
 
         // Memberhentikan loading
         mIsLoading = false
-        mBinding.swipeRefresh.isRefreshing = false
+        if (refreshPage) mBinding.swipeRefresh.isRefreshing = false
     }
 
     private fun setAdapter() {
-        mCommentAdapter = CommentAdapter(mContext, mCommentList, this)
+        mCommentAdapter = CommentAdapter(mCommentList, this)
         mBinding.recyclerView.adapter = mCommentAdapter
         mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
-        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun addComment() {
@@ -217,7 +217,7 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
                 }
                 mCommentAdapter.notifyItemInserted(insertIndex)
                 mBinding.recyclerView.scrollToPosition(insertIndex)
-                mBinding.errorMessage.visibility = View.GONE
+                mBinding.loadSuccess = true
                 mBinding.inputComment.text.clear()
             }
 
@@ -241,7 +241,7 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
                 mCommentList.removeAt(position)
                 mCommentAdapter.notifyItemRemoved(position)
                 if (mCommentList.isEmpty()) {
-                    mBinding.errorMessage.visibility = View.VISIBLE
+                    mBinding.loadSuccess = false
                 }
             }
 

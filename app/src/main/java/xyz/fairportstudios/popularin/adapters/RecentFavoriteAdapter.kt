@@ -1,74 +1,57 @@
 package xyz.fairportstudios.popularin.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.item_recent_favorite.view.*
-import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.databinding.ItemRecentFavoriteBinding
 import xyz.fairportstudios.popularin.interfaces.RecentFavoriteAdapterClickListener
 import xyz.fairportstudios.popularin.models.RecentFavorite
-import xyz.fairportstudios.popularin.statics.TMDbAPI
+import xyz.fairportstudios.popularin.services.ConvertPixel
 
 class RecentFavoriteAdapter(
-    private val context: Context,
     private val recentFavoriteList: ArrayList<RecentFavorite>,
     private val clickListener: RecentFavoriteAdapterClickListener
 ) : RecyclerView.Adapter<RecentFavoriteAdapter.RecentFavoriteViewHolder>() {
-    private fun getDensity(px: Int): Int {
-        val dp = px * context.resources.displayMetrics.density
-        return dp.toInt()
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentFavoriteViewHolder {
-        return RecentFavoriteViewHolder(LayoutInflater.from(context).inflate(R.layout.item_recent_favorite, parent, false))
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = ItemRecentFavoriteBinding.inflate(layoutInflater, parent, false)
+        return RecentFavoriteViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RecentFavoriteViewHolder, position: Int) {
         // Posisi
         val currentItem = recentFavoriteList[position]
 
-        // Parsing
-        val poster = "${TMDbAPI.BASE_SMALL_IMAGE_URL}${currentItem.poster}"
-
-        // Isi
-        Glide.with(context).load(poster).into(holder.mImagePoster)
+        // Binding
+        holder.binding.recentFavorite = currentItem
 
         // Margin
+        val context = holder.binding.root.context
         val left = when (position == 0) {
-            true -> getDensity(16)
-            false -> getDensity(4)
+            true -> ConvertPixel.getDensity(context, 16)
+            false -> ConvertPixel.getDensity(context, 4)
         }
         val right = when (position == itemCount - 1) {
-            true -> getDensity(16)
-            false -> getDensity(4)
+            true -> ConvertPixel.getDensity(context, 16)
+            false -> ConvertPixel.getDensity(context, 4)
         }
-        val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+        val layoutParams = holder.binding.root.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.marginStart = left
         layoutParams.marginEnd = right
-        holder.itemView.layoutParams = layoutParams
+        holder.binding.root.layoutParams = layoutParams
     }
 
     override fun getItemCount() = recentFavoriteList.size
 
-    inner class RecentFavoriteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
-        val mImagePoster: ImageView = itemView.image_rrf_poster
-
+    inner class RecentFavoriteViewHolder(val binding: ItemRecentFavoriteBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            itemView.setOnClickListener(this)
-            itemView.setOnLongClickListener(this)
-        }
-
-        override fun onClick(v: View?) {
-            if (v == itemView) clickListener.onRecentFavoriteItemClick(adapterPosition)
-        }
-
-        override fun onLongClick(v: View?): Boolean {
-            if (v == itemView) clickListener.onRecentFavoriteItemLongClick(adapterPosition)
-            return true
+            binding.root.setOnClickListener {
+                clickListener.onRecentFavoriteItemClick(adapterPosition)
+            }
+            binding.root.setOnLongClickListener {
+                clickListener.onRecentFavoriteItemLongClick(adapterPosition)
+                return@setOnLongClickListener true
+            }
         }
     }
 }

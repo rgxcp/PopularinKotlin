@@ -43,6 +43,7 @@ class AiringFragment : Fragment(), FilmAdapterClickListener {
 
         // Mendapatkan data
         mAiringFilmRequest = AiringFilmRequest(mContext)
+        mBinding.isLoading = true
         getAiringFilm(false)
 
         // Activity
@@ -94,24 +95,24 @@ class AiringFragment : Fragment(), FilmAdapterClickListener {
                         val insertIndex = mFilmList.size
                         mFilmList.addAll(insertIndex, filmList)
                         setAdapter()
-                        mBinding.progressBar.visibility = View.GONE
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = true
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mBinding.errorMessage.visibility = View.GONE
             }
 
             override fun onNotFound() {
-                mBinding.progressBar.visibility = View.GONE
-                mBinding.errorMessage.visibility = View.VISIBLE
-                mBinding.errorMessage.text = getString(R.string.empty_airing_film)
+                mBinding.isLoading = false
+                mBinding.loadSuccess = false
+                mBinding.message = getString(R.string.empty_airing_film)
             }
 
             override fun onError(message: String) {
                 if (!mIsLoadFirstTimeSuccess) {
-                    mBinding.progressBar.visibility = View.GONE
-                    mBinding.errorMessage.visibility = View.VISIBLE
-                    mBinding.errorMessage.text = getString(R.string.empty_airing_film)
+                    mBinding.isLoading = false
+                    mBinding.loadSuccess = false
+                    mBinding.message = getString(R.string.empty_airing_film)
                 }
                 Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
@@ -122,11 +123,10 @@ class AiringFragment : Fragment(), FilmAdapterClickListener {
     }
 
     private fun setAdapter() {
-        mFilmAdapter = FilmAdapter(mContext, mFilmList, this)
+        mFilmAdapter = FilmAdapter(mFilmList, this)
         mBinding.recyclerView.adapter = mFilmAdapter
         mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
         mBinding.recyclerView.hasFixedSize()
-        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun resetState() {

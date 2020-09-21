@@ -1,70 +1,44 @@
 package xyz.fairportstudios.popularin.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.item_film.view.*
-import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.databinding.ItemFilmBinding
 import xyz.fairportstudios.popularin.interfaces.FilmAdapterClickListener
 import xyz.fairportstudios.popularin.models.Film
-import xyz.fairportstudios.popularin.services.ConvertGenre
-import xyz.fairportstudios.popularin.services.ParseDate
-import xyz.fairportstudios.popularin.statics.TMDbAPI
 
 class FilmAdapter(
-    private val context: Context,
     private val filmList: ArrayList<Film>,
     private val clickListener: FilmAdapterClickListener
 ) : RecyclerView.Adapter<FilmAdapter.FilmViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmViewHolder {
-        return FilmViewHolder(LayoutInflater.from(context).inflate(R.layout.item_film, parent, false))
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = ItemFilmBinding.inflate(layoutInflater, parent, false)
+        return FilmViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: FilmViewHolder, position: Int) {
         // Posisi
         val currentItem = filmList[position]
 
-        // Parsing
-        val genre = ConvertGenre.getGenreForHumans(currentItem.genreID)
-        val releaseDate = ParseDate.getDateForHumans(currentItem.releaseDate)
-        val poster = "${TMDbAPI.BASE_SMALL_IMAGE_URL}${currentItem.posterPath}"
-
-        // Isi
-        holder.mTextTitle.text = currentItem.originalTitle
-        holder.mTextGenre.text = genre
-        holder.mTextReleaseDate.text = releaseDate
-        Glide.with(context).load(poster).into(holder.mImagePoster)
+        // Binding
+        holder.binding.film = currentItem
     }
 
     override fun getItemCount() = filmList.size
 
-    inner class FilmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
-        val mImagePoster: ImageView = itemView.image_rf_poster
-        val mTextTitle: TextView = itemView.text_rf_title
-        val mTextGenre: TextView = itemView.text_rf_genre
-        val mTextReleaseDate: TextView = itemView.text_rf_release_date
-
+    inner class FilmViewHolder(val binding: ItemFilmBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            itemView.setOnClickListener(this)
-            mImagePoster.setOnClickListener(this)
-            mImagePoster.setOnLongClickListener(this)
-        }
-
-        override fun onClick(v: View?) {
-            when (v) {
-                itemView -> clickListener.onFilmItemClick(adapterPosition)
-                mImagePoster -> clickListener.onFilmPosterClick(adapterPosition)
+            binding.root.setOnClickListener {
+                clickListener.onFilmItemClick(adapterPosition)
             }
-        }
-
-        override fun onLongClick(v: View?): Boolean {
-            if (v == mImagePoster) clickListener.onFilmPosterLongClick(adapterPosition)
-            return true
+            binding.poster.setOnClickListener {
+                clickListener.onFilmPosterClick(adapterPosition)
+            }
+            binding.poster.setOnLongClickListener {
+                clickListener.onFilmPosterLongClick(adapterPosition)
+                return@setOnLongClickListener true
+            }
         }
     }
 }

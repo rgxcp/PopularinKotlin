@@ -160,14 +160,14 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapterClickListen
     }
 
     private fun setRecentFavoriteAdapter() {
-        val recentFavoriteAdapter = RecentFavoriteAdapter(mContext, mRecentFavoriteList, this)
+        val recentFavoriteAdapter = RecentFavoriteAdapter(mRecentFavoriteList, this)
         mBinding.recyclerViewRecentFavorite.adapter = recentFavoriteAdapter
         mBinding.recyclerViewRecentFavorite.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
         mBinding.recyclerViewRecentFavorite.hasFixedSize()
     }
 
     private fun setRecentReviewAdapter() {
-        val recentReviewAdapter = RecentReviewAdapter(mContext, mRecentReviewList, this)
+        val recentReviewAdapter = RecentReviewAdapter(mRecentReviewList, this)
         mBinding.recyclerViewRecentReview.adapter = recentReviewAdapter
         mBinding.recyclerViewRecentReview.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
         mBinding.recyclerViewRecentReview.hasFixedSize()

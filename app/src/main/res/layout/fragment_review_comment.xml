@@ -1,68 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activities.ReviewActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/comment_layout"
-        android:padding="170dp" />
+    <data>
 
-    <TextView
-        android:id="@+id/error_message"
-        style="@style/TextMessagePrimary"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/comment_layout"
-        android:visibility="gone" />
+        <import type="android.view.View" />
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/comment_layout">
+        <variable
+            name="isLoading"
+            type="Boolean" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <variable
+            name="loadSuccess"
+            type="Boolean" />
+
+        <variable
+            name="message"
+            type="String" />
+    </data>
 
     <RelativeLayout
-        android:id="@+id/comment_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        tools:context=".activities.ReviewActivity">
 
-        <EditText
-            android:id="@+id/input_comment"
+        <ProgressBar
+            android:id="@+id/progress_bar"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:autofillHints="@null"
-            android:background="@drawable/bg_circle_gray"
-            android:fontFamily="@font/jost_regular"
-            android:hint="@string/input_comment_hint"
-            android:inputType="textShortMessage"
-            android:paddingStart="16dp"
-            android:paddingEnd="48dp"
-            android:textSize="15sp" />
+            android:layout_height="match_parent"
+            android:layout_above="@id/comment_layout"
+            android:padding="170dp"
+            android:visibility="@{isLoading ? View.VISIBLE : View.GONE}" />
 
-        <ImageView
-            android:id="@+id/send_image"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_outline_send"
-            android:visibility="invisible" />
+        <TextView
+            android:id="@+id/error_message"
+            style="@style/TextMessagePrimary"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/comment_layout"
+            android:text="@{message}"
+            android:visibility="@{loadSuccess ? View.GONE : View.VISIBLE}" />
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/comment_layout">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="@{loadSuccess ? View.VISIBLE : View.GONE}" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <RelativeLayout
+            android:id="@+id/comment_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:padding="16dp">
+
+            <EditText
+                android:id="@+id/input_comment"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:autofillHints="@null"
+                android:background="@drawable/bg_circle_gray"
+                android:fontFamily="@font/jost_regular"
+                android:hint="@string/input_comment_hint"
+                android:inputType="textShortMessage"
+                android:paddingStart="16dp"
+                android:paddingEnd="48dp"
+                android:textSize="15sp" />
+
+            <ImageView
+                android:id="@+id/send_image"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_outline_send"
+                android:visibility="invisible" />
+        </RelativeLayout>
+
     </RelativeLayout>
-
-</RelativeLayout>
+</layout>

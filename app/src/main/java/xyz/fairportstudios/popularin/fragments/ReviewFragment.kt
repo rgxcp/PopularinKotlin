@@ -67,6 +67,7 @@ class ReviewFragment : Fragment(), ReviewAdapterClickListener {
 
         // Mendapatkan data awal
         mReviewRequest = ReviewRequest(mContext)
+        mBinding.isLoading = true
         getReview(mStartPage, false)
 
         // Activity
@@ -74,7 +75,7 @@ class ReviewFragment : Fragment(), ReviewAdapterClickListener {
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mBinding.loadMoreBar.visibility = View.VISIBLE
+                    mBinding.isLoadingMore = true
                     handler.postDelayed({
                         getReview(mCurrentPage, false)
                     }, 1000)
@@ -157,18 +158,19 @@ class ReviewFragment : Fragment(), ReviewAdapterClickListener {
                         mReviewList.addAll(insertIndex, reviewList)
                         mReviewAdapter.notifyItemChanged(insertIndex - 1)
                         mReviewAdapter.notifyItemRangeInserted(insertIndex, reviewList.size)
+                        mBinding.isLoadingMore = false
                     }
                     false -> {
                         mReviewList = ArrayList()
                         val insertIndex = mReviewList.size
                         mReviewList.addAll(insertIndex, reviewList)
                         setAdapter()
-                        mBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = true
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -179,19 +181,19 @@ class ReviewFragment : Fragment(), ReviewAdapterClickListener {
                         mReviewList.clear()
                         mReviewAdapter.notifyDataSetChanged()
                     }
-                    false -> mBinding.progressBar.visibility = View.GONE
+                    false -> mBinding.isLoading = false
                 }
-                mBinding.errorMessage.visibility = View.VISIBLE
-                mBinding.errorMessage.text = getString(R.string.empty_review)
+                mBinding.loadSuccess = false
+                mBinding.message = getString(R.string.empty_review)
             }
 
             override fun onError(message: String) {
                 if (!mIsLoadFirstTimeSuccess) {
-                    mBinding.progressBar.visibility = View.GONE
-                    mBinding.errorMessage.visibility = View.VISIBLE
-                    mBinding.errorMessage.text = getString(R.string.empty_review)
+                    mBinding.isLoading = false
+                    mBinding.loadSuccess = false
+                    mBinding.message = getString(R.string.empty_review)
                 }
-                mBinding.loadMoreBar.visibility = View.GONE
+                mBinding.isLoadingMore = false
                 Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
@@ -199,17 +201,12 @@ class ReviewFragment : Fragment(), ReviewAdapterClickListener {
         // Memberhentikan loading
         mIsLoading = false
         if (refreshPage) mBinding.swipeRefresh.isRefreshing = false
-        mBinding.loadMoreBar.visibility = when (page == mTotalPage) {
-            true -> View.GONE
-            false -> View.INVISIBLE
-        }
     }
 
     private fun setAdapter() {
-        mReviewAdapter = ReviewAdapter(mContext, mReviewList, this)
+        mReviewAdapter = ReviewAdapter(mReviewList, this)
         mBinding.recyclerView.adapter = mReviewAdapter
         mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
-        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun resetState() {

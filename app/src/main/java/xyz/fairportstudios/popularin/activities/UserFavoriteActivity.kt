@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -58,10 +57,11 @@ class UserFavoriteActivity : AppCompatActivity(), FilmAdapterClickListener {
         val handler = Handler()
 
         // Toolbar
-        mBinding.toolbar.title = getString(R.string.favorite)
+        mBinding.toolbarTitle = getString(R.string.favorite)
 
         // Mendapatkan data awal
         mUserFavoriteRequest = UserFavoriteRequest(mContext, userID)
+        mBinding.isLoading = true
         getUserFavorite(mStartPage, false)
 
         // Activity
@@ -71,7 +71,7 @@ class UserFavoriteActivity : AppCompatActivity(), FilmAdapterClickListener {
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mBinding.loadMoreBar.visibility = View.VISIBLE
+                    mBinding.isLoadingMore = true
                     handler.postDelayed({
                         getUserFavorite(mCurrentPage, false)
                     }, 1000)
@@ -116,18 +116,19 @@ class UserFavoriteActivity : AppCompatActivity(), FilmAdapterClickListener {
                         val insertIndex = mFilmList.size
                         mFilmList.addAll(insertIndex, filmList)
                         mFilmAdapter.notifyItemRangeInserted(insertIndex, filmList.size)
+                        mBinding.isLoadingMore = false
                     }
                     false -> {
                         mFilmList = ArrayList()
                         val insertIndex = mFilmList.size
                         mFilmList.addAll(insertIndex, filmList)
                         setAdapter()
-                        mBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = true
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -138,10 +139,10 @@ class UserFavoriteActivity : AppCompatActivity(), FilmAdapterClickListener {
                         mFilmList.clear()
                         mFilmAdapter.notifyDataSetChanged()
                     }
-                    false -> mBinding.progressBar.visibility = View.GONE
+                    false -> mBinding.isLoading = false
                 }
-                mBinding.errorMessage.visibility = View.VISIBLE
-                mBinding.errorMessage.text = when (mIsSelf) {
+                mBinding.loadSuccess = false
+                mBinding.message = when (mIsSelf) {
                     true -> getString(R.string.empty_self_favorite_film)
                     false -> getString(R.string.empty_user_favorite_film)
                 }
@@ -150,13 +151,13 @@ class UserFavoriteActivity : AppCompatActivity(), FilmAdapterClickListener {
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mBinding.loadMoreBar.visibility = View.GONE
+                        mBinding.isLoadingMore = false
                         Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mBinding.progressBar.visibility = View.GONE
-                        mBinding.errorMessage.visibility = View.VISIBLE
-                        mBinding.errorMessage.text = message
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = false
+                        mBinding.message = message
                     }
                 }
             }
@@ -165,17 +166,12 @@ class UserFavoriteActivity : AppCompatActivity(), FilmAdapterClickListener {
         // Memberhentikan loading
         mIsLoading = false
         if (refreshPage) mBinding.swipeRefresh.isRefreshing = false
-        mBinding.loadMoreBar.visibility = when (page == mTotalPage) {
-            true -> View.GONE
-            false -> View.INVISIBLE
-        }
     }
 
     private fun setAdapter() {
-        mFilmAdapter = FilmAdapter(mContext, mFilmList, this)
+        mFilmAdapter = FilmAdapter(mFilmList, this)
         mBinding.recyclerView.adapter = mFilmAdapter
         mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
-        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun showFilmModal(id: Int, title: String, year: String, poster: String) {

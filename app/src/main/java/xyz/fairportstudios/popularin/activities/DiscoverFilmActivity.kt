@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.GridLayoutManager
@@ -52,10 +51,11 @@ class DiscoverFilmActivity : AppCompatActivity(), FilmGridAdapterClickListener {
         val handler = Handler()
 
         // Toolbar
-        mBinding.toolbar.title = genreTitle
+        mBinding.toolbarTitle = genreTitle
 
         // Mendapatkan data awal
         mDiscoverFilmRequest = DiscoverFilmRequest(mContext, genreID)
+        mBinding.isLoading = true
         discoverFilm(mStartPage, false)
 
         // Activity
@@ -65,7 +65,7 @@ class DiscoverFilmActivity : AppCompatActivity(), FilmGridAdapterClickListener {
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mBinding.loadMoreBar.visibility = View.VISIBLE
+                    mBinding.isLoadingMore = true
                     handler.postDelayed({
                         discoverFilm(mCurrentPage, false)
                     }, 1000)
@@ -105,15 +105,16 @@ class DiscoverFilmActivity : AppCompatActivity(), FilmGridAdapterClickListener {
                         val insertIndex = mFilmList.size
                         mFilmList.addAll(insertIndex, filmList)
                         mFilmGridAdapter.notifyItemRangeInserted(insertIndex, filmList.size)
+                        mBinding.isLoadingMore = false
                     }
                     false -> {
                         mFilmList = ArrayList()
                         val insertIndex = mFilmList.size
                         mFilmList.addAll(insertIndex, filmList)
                         setAdapter()
-                        mBinding.progressBar.visibility = View.GONE
-                        mBinding.errorMessage.visibility = View.GONE
                         mTotalPage = totalPage
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = true
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
@@ -123,13 +124,13 @@ class DiscoverFilmActivity : AppCompatActivity(), FilmGridAdapterClickListener {
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mBinding.loadMoreBar.visibility = View.GONE
+                        mBinding.isLoadingMore = false
                         Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mBinding.progressBar.visibility = View.GONE
-                        mBinding.errorMessage.visibility = View.VISIBLE
-                        mBinding.errorMessage.text = message
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = false
+                        mBinding.message = message
                     }
                 }
             }
@@ -138,17 +139,12 @@ class DiscoverFilmActivity : AppCompatActivity(), FilmGridAdapterClickListener {
         // Memberhentikan loading
         mIsLoading = false
         if (refreshPage) mBinding.swipeRefresh.isRefreshing = false
-        mBinding.loadMoreBar.visibility = when (page == mTotalPage) {
-            true -> View.GONE
-            false -> View.INVISIBLE
-        }
     }
 
     private fun setAdapter() {
-        mFilmGridAdapter = FilmGridAdapter(mContext, mFilmList, this)
+        mFilmGridAdapter = FilmGridAdapter(mFilmList, this)
         mBinding.recyclerView.adapter = mFilmGridAdapter
         mBinding.recyclerView.layoutManager = GridLayoutManager(mContext, 4)
-        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun showFilmModal(id: Int, title: String, year: String, poster: String) {

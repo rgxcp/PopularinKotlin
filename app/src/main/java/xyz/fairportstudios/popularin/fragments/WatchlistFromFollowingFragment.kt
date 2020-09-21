@@ -54,7 +54,7 @@ class WatchlistFromFollowingFragment(private val filmID: Int) : Fragment(), User
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mBinding.loadMoreBar.visibility = View.VISIBLE
+                    mBinding.isLoadingMore = true
                     handler.postDelayed({
                         getWatchlistFromFollowing(mCurrentPage, false)
                     }, 1000)
@@ -77,6 +77,7 @@ class WatchlistFromFollowingFragment(private val filmID: Int) : Fragment(), User
             // Mendapatkan data awal
             mIsResumeFirstTime = false
             mWatchlistFromFollowingRequest = WatchlistFromFollowingRequest(mContext, filmID)
+            mBinding.isLoading = true
             getWatchlistFromFollowing(mStartPage, false)
         }
     }
@@ -105,18 +106,19 @@ class WatchlistFromFollowingFragment(private val filmID: Int) : Fragment(), User
                         val insertIndex = mUserList.size
                         mUserList.addAll(insertIndex, userList)
                         mUserAdapter.notifyItemRangeInserted(insertIndex, userList.size)
+                        mBinding.isLoadingMore = false
                     }
                     false -> {
                         mUserList = ArrayList()
                         val insertIndex = mUserList.size
                         mUserList.addAll(insertIndex, userList)
                         setAdapter()
-                        mBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = true
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -127,22 +129,22 @@ class WatchlistFromFollowingFragment(private val filmID: Int) : Fragment(), User
                         mUserList.clear()
                         mUserAdapter.notifyDataSetChanged()
                     }
-                    false -> mBinding.progressBar.visibility = View.GONE
+                    false -> mBinding.isLoading = false
                 }
-                mBinding.errorMessage.visibility = View.VISIBLE
-                mBinding.errorMessage.text = getString(R.string.empty_film_watchlist_from_following)
+                mBinding.loadSuccess = false
+                mBinding.message = getString(R.string.empty_film_watchlist_from_following)
             }
 
             override fun onError(message: String) {
                 when (mIsLoadFirstTimeSuccess) {
                     true -> {
-                        mBinding.loadMoreBar.visibility = View.GONE
+                        mBinding.isLoadingMore = false
                         Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
                     }
                     false -> {
-                        mBinding.progressBar.visibility = View.GONE
-                        mBinding.errorMessage.visibility = View.VISIBLE
-                        mBinding.errorMessage.text = message
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = false
+                        mBinding.message = message
                     }
                 }
             }
@@ -151,17 +153,12 @@ class WatchlistFromFollowingFragment(private val filmID: Int) : Fragment(), User
         // Memberhentikan loading
         mIsLoading = false
         if (refreshPage) mBinding.swipeRefresh.isRefreshing = false
-        mBinding.loadMoreBar.visibility = when (page == mTotalPage) {
-            true -> View.GONE
-            false -> View.INVISIBLE
-        }
     }
 
     private fun setAdapter() {
-        mUserAdapter = UserAdapter(mContext, mUserList, this)
+        mUserAdapter = UserAdapter(mUserList, this)
         mBinding.recyclerView.adapter = mUserAdapter
         mBinding.recyclerView.layoutManager = LinearLayoutManager(mContext)
-        mBinding.recyclerView.visibility = View.VISIBLE
     }
 
     private fun gotoUserDetail(id: Int) {

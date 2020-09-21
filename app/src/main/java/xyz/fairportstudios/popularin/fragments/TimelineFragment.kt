@@ -69,6 +69,7 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapterClickListener, Review
 
         // Mendapatkan data awal timeline
         mTimelineRequest = TimelineRequest(mContext)
+        mBinding.isLoading = true
         getTimeline(mStartPage, false)
 
         // Activity
@@ -76,7 +77,7 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapterClickListener, Review
             if (scrollY > oldScrollY) {
                 if (!mIsLoading && mCurrentPage <= mTotalPage) {
                     mIsLoading = true
-                    mBinding.loadMoreBar.visibility = View.VISIBLE
+                    mBinding.isLoadingMore = true
                     handler.postDelayed({
                         getTimeline(mCurrentPage, false)
                     }, 1000)
@@ -162,18 +163,19 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapterClickListener, Review
                         mReviewList.addAll(insertIndex, reviewList)
                         mReviewAdapter.notifyItemChanged(insertIndex - 1)
                         mReviewAdapter.notifyItemRangeInserted(insertIndex, reviewList.size)
+                        mBinding.isLoadingMore = false
                     }
                     false -> {
                         mReviewList = ArrayList()
                         val insertIndex = mReviewList.size
                         mReviewList.addAll(insertIndex, reviewList)
                         setTimelineAdapter()
-                        mBinding.progressBar.visibility = View.GONE
                         mTotalPage = totalPage
+                        mBinding.isLoading = false
+                        mBinding.loadSuccess = true
                         mIsLoadFirstTimeSuccess = true
                     }
                 }
-                mBinding.errorMessage.visibility = View.GONE
                 mCurrentPage++
             }
 
@@ -184,19 +186,19 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapterClickListener, Review
                         mReviewList.clear()
                         mReviewAdapter.notifyDataSetChanged()
                     }
-                    false -> mBinding.progressBar.visibility = View.GONE
+                    false -> mBinding.isLoading = false
                 }
-                mBinding.errorMessage.visibility = View.VISIBLE
-                mBinding.errorMessage.text = getString(R.string.empty_timeline)
+                mBinding.loadSuccess = false
+                mBinding.message = getString(R.string.empty_timeline)
             }
 
             override fun onError(message: String) {
                 if (!mIsLoadFirstTimeSuccess) {
-                    mBinding.progressBar.visibility = View.GONE
-                    mBinding.errorMessage.visibility = View.VISIBLE
-                    mBinding.errorMessage.text = getString(R.string.empty_timeline)
+                    mBinding.isLoading = false
+                    mBinding.loadSuccess = false
+                    mBinding.message = getString(R.string.empty_timeline)
                 }
-                mBinding.loadMoreBar.visibility = View.GONE
+                mBinding.isLoadingMore = false
                 Snackbar.make(mBinding.anchorLayout, message, Snackbar.LENGTH_LONG).show()
             }
         })
@@ -204,10 +206,6 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapterClickListener, Review
         // Memberhentikan loading
         mIsLoading = false
         if (refreshPage) mBinding.swipeRefresh.isRefreshing = false
-        mBinding.loadMoreBar.visibility = when (page == mTotalPage) {
-            true -> View.GONE
-            false -> View.INVISIBLE
-        }
     }
 
     private fun loadGenre() {
@@ -216,7 +214,7 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapterClickListener, Review
     }
 
     private fun setGenreAdapter() {
-        val genreHorizontalAdapter = GenreHorizontalAdapter(mContext, mGenreList, this)
+        val genreHorizontalAdapter = GenreHorizontalAdapter(mGenreList, this)
         mBinding.recyclerViewGenre.adapter = genreHorizontalAdapter
         mBinding.recyclerViewGenre.layoutManager = LinearLayoutManager(mContext, RecyclerView.HORIZONTAL, false)
         mBinding.recyclerViewGenre.hasFixedSize()
@@ -224,10 +222,9 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapterClickListener, Review
     }
 
     private fun setTimelineAdapter() {
-        mReviewAdapter = ReviewAdapter(mContext, mReviewList, this)
+        mReviewAdapter = ReviewAdapter(mReviewList, this)
         mBinding.recyclerViewTimeline.adapter = mReviewAdapter
         mBinding.recyclerViewTimeline.layoutManager = LinearLayoutManager(mContext)
-        mBinding.recyclerViewTimeline.visibility = View.VISIBLE
     }
 
     private fun resetState() {

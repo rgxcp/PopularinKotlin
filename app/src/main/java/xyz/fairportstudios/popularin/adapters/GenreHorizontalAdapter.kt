@@ -1,66 +1,53 @@
 package xyz.fairportstudios.popularin.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.item_genre_horizontal.view.*
-import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.databinding.ItemGenreHorizontalBinding
 import xyz.fairportstudios.popularin.interfaces.GenreHorizontalAdapterClickListener
 import xyz.fairportstudios.popularin.models.Genre
+import xyz.fairportstudios.popularin.services.ConvertPixel
 
 class GenreHorizontalAdapter(
-    private val context: Context,
     private val genreList: ArrayList<Genre>,
     private val clickListener: GenreHorizontalAdapterClickListener
 ) : RecyclerView.Adapter<GenreHorizontalAdapter.GenreHorizontalViewHolder>() {
-    private fun getDensity(px: Int): Int {
-        val dp = px * context.resources.displayMetrics.density
-        return dp.toInt()
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreHorizontalViewHolder {
-        return GenreHorizontalViewHolder(LayoutInflater.from(context).inflate(R.layout.item_genre_horizontal, parent, false))
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = ItemGenreHorizontalBinding.inflate(layoutInflater, parent, false)
+        return GenreHorizontalViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: GenreHorizontalViewHolder, position: Int) {
         // Posisi
         val currentItem = genreList[position]
 
-        // Isi
-        holder.mTextTitle.text = currentItem.title
-        holder.mImageBackground.setImageResource(currentItem.background)
+        // Binding
+        holder.binding.genre = currentItem
 
         // Margin
+        val context = holder.binding.root.context
         val left = when (position == 0) {
-            true -> getDensity(16)
-            false -> getDensity(6)
+            true -> ConvertPixel.getDensity(context, 16)
+            false -> ConvertPixel.getDensity(context, 6)
         }
         val right = when (position == itemCount - 1) {
-            true -> getDensity(16)
-            false -> getDensity(6)
+            true -> ConvertPixel.getDensity(context, 16)
+            false -> ConvertPixel.getDensity(context, 6)
         }
-        val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+        val layoutParams = holder.binding.root.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.marginStart = left
         layoutParams.marginEnd = right
-        holder.itemView.layoutParams = layoutParams
+        holder.binding.root.layoutParams = layoutParams
     }
 
     override fun getItemCount() = genreList.size
 
-    inner class GenreHorizontalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        val mImageBackground: ImageView = itemView.image_rgh_background
-        val mTextTitle: TextView = itemView.text_rgh_title
-
+    inner class GenreHorizontalViewHolder(val binding: ItemGenreHorizontalBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            itemView.setOnClickListener(this)
-        }
-
-        override fun onClick(v: View?) {
-            if (v == itemView) clickListener.onGenreItemClick(adapterPosition)
+            binding.root.setOnClickListener {
+                clickListener.onGenreItemClick(adapterPosition)
+            }
         }
     }
 }

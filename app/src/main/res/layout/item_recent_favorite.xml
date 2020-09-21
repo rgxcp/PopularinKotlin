@@ -1,21 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.github.florent37.shapeofview.shapes.RoundRectView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    app:shape_roundRect_borderColor="@color/colorPrimary"
-    app:shape_roundRect_borderWidth="0.5dp"
-    app:shape_roundRect_bottomLeftRadius="2dp"
-    app:shape_roundRect_bottomRightRadius="2dp"
-    app:shape_roundRect_topLeftRadius="2dp"
-    app:shape_roundRect_topRightRadius="2dp">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
-        android:id="@+id/image_rrf_poster"
-        android:layout_width="100dp"
-        android:layout_height="150dp"
-        android:background="@color/colorSurface"
-        android:contentDescription="@null"
-        android:scaleType="centerCrop" />
+    <data>
 
-</com.github.florent37.shapeofview.shapes.RoundRectView>
+        <variable
+            name="recentFavorite"
+            type="xyz.fairportstudios.popularin.models.RecentFavorite" />
+    </data>
+
+    <com.github.florent37.shapeofview.shapes.RoundRectView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:shape_roundRect_borderColor="@color/colorPrimary"
+        app:shape_roundRect_borderWidth="0.5dp"
+        app:shape_roundRect_bottomLeftRadius="2dp"
+        app:shape_roundRect_bottomRightRadius="2dp"
+        app:shape_roundRect_topLeftRadius="2dp"
+        app:shape_roundRect_topRightRadius="2dp">
+
+        <ImageView
+            android:id="@+id/film_poster"
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:background="@color/colorSurface"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            app:smallTMDbPictureURL="@{recentFavorite.poster}" />
+
+    </com.github.florent37.shapeofview.shapes.RoundRectView>
+</layout>

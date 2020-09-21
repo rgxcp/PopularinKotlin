@@ -1,73 +1,53 @@
 package xyz.fairportstudios.popularin.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.item_credit.view.*
-import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.databinding.ItemCastBinding
 import xyz.fairportstudios.popularin.interfaces.CastAdapterClickListener
 import xyz.fairportstudios.popularin.models.Cast
-import xyz.fairportstudios.popularin.statics.TMDbAPI
+import xyz.fairportstudios.popularin.services.ConvertPixel
 
 class CastAdapter(
-    private val context: Context,
     private val castList: ArrayList<Cast>,
     private val clickListener: CastAdapterClickListener
 ) : RecyclerView.Adapter<CastAdapter.CastViewHolder>() {
-    private fun getDensity(px: Int): Int {
-        val dp = px * context.resources.displayMetrics.density
-        return dp.toInt()
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CastViewHolder {
-        return CastViewHolder(LayoutInflater.from(context).inflate(R.layout.item_credit, parent, false))
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = ItemCastBinding.inflate(layoutInflater, parent, false)
+        return CastViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: CastViewHolder, position: Int) {
         // Posisi
         val currentItem = castList[position]
 
-        // Parsing
-        val profile = "${TMDbAPI.BASE_SMALL_IMAGE_URL}${currentItem.profilePath}"
-
-        // Isi
-        holder.mTextName.text = currentItem.name
-        holder.mTextAs.text = currentItem.character
-        Glide.with(context).load(profile).into(holder.mImageProfile)
+        // Binding
+        holder.binding.cast = currentItem
 
         // Margin
+        val context = holder.binding.root.context
         val left = when (position == 0) {
-            true -> getDensity(16)
-            false -> getDensity(6)
+            true -> ConvertPixel.getDensity(context, 16)
+            false -> ConvertPixel.getDensity(context, 6)
         }
         val right = when (position == itemCount - 1) {
-            true -> getDensity(16)
-            false -> getDensity(6)
+            true -> ConvertPixel.getDensity(context, 16)
+            false -> ConvertPixel.getDensity(context, 6)
         }
-        val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+        val layoutParams = holder.binding.root.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.marginStart = left
         layoutParams.marginEnd = right
-        holder.itemView.layoutParams = layoutParams
+        holder.binding.root.layoutParams = layoutParams
     }
 
     override fun getItemCount() = castList.size
 
-    inner class CastViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        val mImageProfile: ImageView = itemView.image_rcr_profile
-        val mTextName: TextView = itemView.text_rcr_name
-        val mTextAs: TextView = itemView.text_rcr_as
-
+    inner class CastViewHolder(val binding: ItemCastBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            itemView.setOnClickListener(this)
-        }
-
-        override fun onClick(v: View?) {
-            if (v == itemView) clickListener.onCastItemClick(adapterPosition)
+            binding.root.setOnClickListener {
+                clickListener.onCastItemClick(adapterPosition)
+            }
         }
     }
 }
