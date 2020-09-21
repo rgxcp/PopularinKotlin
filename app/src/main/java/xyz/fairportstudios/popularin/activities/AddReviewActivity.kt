@@ -14,7 +14,7 @@ import xyz.fairportstudios.popularin.dialogs.WatchDatePickerDialog
 import xyz.fairportstudios.popularin.interfaces.AddReviewRequestCallback
 import xyz.fairportstudios.popularin.statics.Popularin
 import java.text.DateFormat
-import java.util.*
+import java.util.Calendar
 
 class AddReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
     // Primitive
