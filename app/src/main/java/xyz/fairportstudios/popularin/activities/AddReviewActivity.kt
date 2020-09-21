@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.apis.popularin.post.AddReviewRequest
@@ -14,9 +13,8 @@ import xyz.fairportstudios.popularin.databinding.ActivityAddReviewBinding
 import xyz.fairportstudios.popularin.dialogs.WatchDatePickerDialog
 import xyz.fairportstudios.popularin.interfaces.AddReviewRequestCallback
 import xyz.fairportstudios.popularin.statics.Popularin
-import xyz.fairportstudios.popularin.statics.TMDbAPI
 import java.text.DateFormat
-import java.util.Calendar
+import java.util.*
 
 class AddReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
     // Primitive
@@ -44,7 +42,7 @@ class AddReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
         val filmID = intent.getIntExtra(Popularin.FILM_ID, 0)
         val filmTitle = intent.getStringExtra(Popularin.FILM_TITLE)
         val filmYear = intent.getStringExtra(Popularin.FILM_YEAR)
-        val filmPoster = "${TMDbAPI.BASE_SMALL_IMAGE_URL}${intent.getStringExtra(Popularin.FILM_POSTER)}"
+        val filmPoster = intent.getStringExtra(Popularin.FILM_POSTER)
 
         // Calendar
         mCalendar = Calendar.getInstance()
@@ -53,10 +51,10 @@ class AddReviewActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListene
         getCurrentDate()
 
         // Menampilkan info film dan rating
-        mBinding.filmTitle.text = filmTitle
-        mBinding.filmYear.text = filmYear
-        mBinding.ratingBar.rating = mRating
-        Glide.with(context).load(filmPoster).into(mBinding.filmPoster)
+        mBinding.title = filmTitle
+        mBinding.year = filmYear
+        mBinding.poster = filmPoster
+        mBinding.rating = mRating
 
         // Activity
         mBinding.toolbar.setNavigationOnClickListener { onBackPressed() }

@@ -1,157 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/anchor_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".activities.AddReviewActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <data>
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorBackground"
-            app:menu="@menu/add_review"
-            app:navigationIcon="@drawable/ic_fill_close"
-            app:title="@string/add_review" />
-    </com.google.android.material.appbar.AppBarLayout>
+        <variable
+            name="rating"
+            type="Float" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:paddingHorizontal="16dp">
+        <variable
+            name="title"
+            type="String" />
 
-        <TextView
-            android:id="@+id/film_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_marginEnd="16dp"
-            android:layout_toStartOf="@+id/sov_film_poster"
-            android:fontFamily="@font/jost_medium"
-            android:textColor="@color/colorOnBackground"
-            android:textSize="17sp" />
+        <variable
+            name="year"
+            type="String" />
 
-        <TextView
-            android:id="@+id/film_year"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/film_title"
-            android:layout_marginTop="4dp"
-            android:fontFamily="@font/jost_regular"
-            android:textSize="15sp" />
+        <variable
+            name="poster"
+            type="String" />
+    </data>
 
-        <com.github.florent37.shapeofview.shapes.RoundRectView
-            android:id="@+id/sov_film_poster"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            app:shape_roundRect_borderColor="@color/colorPrimary"
-            app:shape_roundRect_borderWidth="0.5dp"
-            app:shape_roundRect_bottomLeftRadius="2dp"
-            app:shape_roundRect_bottomRightRadius="2dp"
-            app:shape_roundRect_topLeftRadius="2dp"
-            app:shape_roundRect_topRightRadius="2dp">
-
-            <ImageView
-                android:id="@+id/film_poster"
-                android:layout_width="40dp"
-                android:layout_height="60dp"
-                android:background="@color/colorSurface"
-                android:contentDescription="@null" />
-        </com.github.florent37.shapeofview.shapes.RoundRectView>
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/colorSurface" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:paddingHorizontal="16dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_toStartOf="@id/watch_date"
-            android:fontFamily="@font/jost_regular"
-            android:text="@string/watch_date"
-            android:textColor="@color/colorOnBackground"
-            android:textSize="15sp" />
-
-        <TextView
-            android:id="@+id/watch_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:fontFamily="@font/jost_regular"
-            android:textColor="@color/colorOnBackground"
-            android:textSize="15sp" />
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/colorSurface" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:paddingHorizontal="16dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_toStartOf="@id/rating_bar"
-            android:fontFamily="@font/jost_regular"
-            android:text="@string/rating"
-            android:textColor="@color/colorOnBackground"
-            android:textSize="15sp" />
-
-        <RatingBar
-            android:id="@+id/rating_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="45dp"
-            android:layout_alignParentEnd="true"
-            android:numStars="5"
-            android:stepSize="0.5" />
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/colorSurface" />
-
-    <EditText
-        android:id="@+id/input_review"
+    <LinearLayout
+        android:id="@+id/anchor_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:autofillHints="@null"
-        android:background="@color/colorBackground"
-        android:fontFamily="@font/jost_regular"
-        android:gravity="top"
-        android:hint="@string/input_review_hint"
-        android:inputType="textMultiLine"
-        android:isScrollContainer="true"
-        android:padding="16dp"
-        android:textColor="@color/colorOnBackground"
-        android:textSize="15sp" />
+        android:orientation="vertical"
+        tools:context=".activities.AddReviewActivity">
 
-</LinearLayout>
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorBackground"
+                app:menu="@menu/add_review"
+                app:navigationIcon="@drawable/ic_fill_close"
+                app:title="@string/add_review" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:paddingHorizontal="16dp">
+
+            <TextView
+                android:id="@+id/film_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginEnd="16dp"
+                android:layout_toStartOf="@+id/sov_film_poster"
+                android:fontFamily="@font/jost_medium"
+                android:text="@{title}"
+                android:textColor="@color/colorOnBackground"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/film_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/film_title"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/jost_regular"
+                android:text="@{year}"
+                android:textSize="15sp" />
+
+            <com.github.florent37.shapeofview.shapes.RoundRectView
+                android:id="@+id/sov_film_poster"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                app:shape_roundRect_borderColor="@color/colorPrimary"
+                app:shape_roundRect_borderWidth="0.5dp"
+                app:shape_roundRect_bottomLeftRadius="2dp"
+                app:shape_roundRect_bottomRightRadius="2dp"
+                app:shape_roundRect_topLeftRadius="2dp"
+                app:shape_roundRect_topRightRadius="2dp">
+
+                <ImageView
+                    android:id="@+id/film_poster"
+                    android:layout_width="40dp"
+                    android:layout_height="60dp"
+                    android:background="@color/colorSurface"
+                    android:contentDescription="@null"
+                    app:smallTMDbPictureURL="@{poster}" />
+            </com.github.florent37.shapeofview.shapes.RoundRectView>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorSurface" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@id/watch_date"
+                android:fontFamily="@font/jost_regular"
+                android:text="@string/watch_date"
+                android:textColor="@color/colorOnBackground"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/watch_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:fontFamily="@font/jost_regular"
+                android:textColor="@color/colorOnBackground"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/colorSurface" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:paddingHorizontal="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/rating_bar"
+                android:fontFamily="@font/jost_regular"
+                android:text="@string/rating"
+                android:textColor="@color/colorOnBackground"
+                android:textSize="15sp" />
+
+            <RatingBar
+                android:id="@+id/rating_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_alignParentEnd="true"
+                android:numStars="5"
+                android:rating="@{rating}"
+                android:stepSize="0.5" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/colorSurface" />
+
+        <EditText
+            android:id="@+id/input_review"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:autofillHints="@null"
+            android:background="@color/colorBackground"
+            android:fontFamily="@font/jost_regular"
+            android:gravity="top"
+            android:hint="@string/input_review_hint"
+            android:inputType="textMultiLine"
+            android:isScrollContainer="true"
+            android:padding="16dp"
+            android:textColor="@color/colorOnBackground"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+</layout>
