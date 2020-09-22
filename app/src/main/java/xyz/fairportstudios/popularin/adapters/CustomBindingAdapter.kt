@@ -1,5 +1,6 @@
 package xyz.fairportstudios.popularin.adapters
 
+import android.view.View
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
@@ -29,6 +30,11 @@ fun loadLargeTMDbPicture(imageView: ImageView, imageURL: String?) {
     Glide.with(imageView.context).load(parsedURL).into(imageView)
 }
 
+@BindingAdapter("app:genreBackground")
+fun loadGenreBackground(imageView: ImageView, background: Int) {
+    imageView.setImageResource(background)
+}
+
 @BindingAdapter("app:star")
 fun loadStarImage(imageView: ImageView, rating: Double) {
     ConvertRating.getStar(rating)?.let { imageView.setImageResource(it) }
@@ -40,8 +46,11 @@ fun loadDate(textView: TextView, date: String?) {
 }
 
 @BindingAdapter("app:genreForHumans")
-fun loadGenre(chip: Chip, id: Int) {
-    chip.text = ConvertGenre.getGenreForHumans(id)
+fun loadGenre(view: View, id: Int) {
+    when (view) {
+        is Chip -> view.text = ConvertGenre.getGenreForHumans(id)
+        is TextView -> view.text = ConvertGenre.getGenreForHumans(id)
+    }
 }
 
 @BindingAdapter("app:runtimeForHumans")

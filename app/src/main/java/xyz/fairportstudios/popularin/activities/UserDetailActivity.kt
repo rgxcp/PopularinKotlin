@@ -128,7 +128,14 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapterClickListen
                 mBinding.isLoading = false
                 mBinding.loadSuccess = true
                 mIsLoadFirstTimeSuccess = true
-                if (mUserDetail.isSelf) mBinding.followButton.text = getString(R.string.edit_profile)
+
+                // TODO : Refactor this logic
+                mBinding.followButton.text = when {
+                    mUserDetail.isSelf -> getString(R.string.edit_profile)
+                    mUserDetail.isFollowing -> getString(R.string.following)
+                    else -> getString(R.string.follow)
+
+                }
             }
 
             override fun onHasRecentFavorite(recentFavoriteList: ArrayList<RecentFavorite>) {
