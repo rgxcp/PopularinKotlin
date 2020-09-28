@@ -21,6 +21,9 @@ MAINTAINING
 3. Simply open this [link](https://bit.ly/Popularin "Popularin on Play Store").
 
 ## Changelog
+### 2.2.0
+- Fixing only load film poster when the poster is not null
+- Showing film title when the poster is null
 ### 2.1.0
 - Implementing view binding
 - Implementing data binding
