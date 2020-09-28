@@ -20,14 +20,18 @@ fun loadUserProfile(imageView: ImageView, imageURL: String?) {
 
 @BindingAdapter("app:smallTMDbPictureURL")
 fun loadSmallTMDbPicture(imageView: ImageView, imageURL: String?) {
-    val parsedURL = "${TMDbAPI.BASE_SMALL_IMAGE_URL}${imageURL}"
-    Glide.with(imageView.context).load(parsedURL).into(imageView)
+    if (imageURL?.length != 4) {
+        val parsedURL = "${TMDbAPI.BASE_SMALL_IMAGE_URL}${imageURL}"
+        Glide.with(imageView.context).load(parsedURL).into(imageView)
+    }
 }
 
 @BindingAdapter("app:largeTMDbPictureURL")
 fun loadLargeTMDbPicture(imageView: ImageView, imageURL: String?) {
-    val parsedURL = "${TMDbAPI.BASE_LARGE_IMAGE_URL}${imageURL}"
-    Glide.with(imageView.context).load(parsedURL).into(imageView)
+    if (imageURL?.length != 4) {
+        val parsedURL = "${TMDbAPI.BASE_LARGE_IMAGE_URL}${imageURL}"
+        Glide.with(imageView.context).load(parsedURL).into(imageView)
+    }
 }
 
 @BindingAdapter("app:genreBackground")
