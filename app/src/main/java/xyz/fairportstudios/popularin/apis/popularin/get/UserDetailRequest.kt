@@ -37,6 +37,7 @@ class UserDetailRequest(private val context: Context, private val userID: Int) {
                         metadataObject.getBoolean("is_self"),
                         metadataObject.getBoolean("is_follower"),
                         metadataObject.getBoolean("is_following"),
+                        metadataObject.getBoolean("is_point_positive"),
                         hasRecentFavorite,
                         hasRecentReview,
                         totalReview,
@@ -44,6 +45,7 @@ class UserDetailRequest(private val context: Context, private val userID: Int) {
                         metadataObject.getInt("total_watchlist"),
                         metadataObject.getInt("total_follower"),
                         metadataObject.getInt("total_following"),
+                        metadataObject.getString("total_point"),
                         userObject.getString("full_name"),
                         userObject.getString("username"),
                         userObject.getString("profile_picture")

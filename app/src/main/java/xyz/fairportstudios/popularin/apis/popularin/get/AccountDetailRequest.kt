@@ -38,8 +38,10 @@ class AccountDetailRequest(private val context: Context, private val userID: Int
                         metadataObject.getInt("total_watchlist"),
                         metadataObject.getInt("total_follower"),
                         metadataObject.getInt("total_following"),
+                        metadataObject.getBoolean("is_point_positive"),
                         hasRecentFavorite,
                         hasRecentReview,
+                        metadataObject.getString("total_point"),
                         userObject.getString("full_name"),
                         userObject.getString("username"),
                         userObject.getString("profile_picture")

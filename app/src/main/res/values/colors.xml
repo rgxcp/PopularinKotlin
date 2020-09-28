@@ -11,5 +11,6 @@
     <color name="colorOnBackground">#FFFFFF</color>
     <color name="colorOnSurface">#FAFAFA</color>
     <color name="grayPrimary">#4D4E51</color>
+    <color name="greenPrimary">#69F0AE</color>
     <color name="redPrimary">#FF5252</color>
 </resources>

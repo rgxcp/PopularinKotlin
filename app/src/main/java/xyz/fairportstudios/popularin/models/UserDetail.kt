@@ -4,6 +4,7 @@ data class UserDetail(
     val isSelf: Boolean,
     val isFollower: Boolean,
     var isFollowing: Boolean,
+    val isPointPositive: Boolean,
     val hasRecentFavorite: Boolean,
     val hasRecentReview: Boolean,
     val totalReview: Int,
@@ -11,6 +12,7 @@ data class UserDetail(
     val totalWatchlist: Int,
     var totalFollower: Int,
     val totalFollowing: Int,
+    val totalPoint: String,
     val fullName: String,
     val username: String,
     val profilePicture: String
