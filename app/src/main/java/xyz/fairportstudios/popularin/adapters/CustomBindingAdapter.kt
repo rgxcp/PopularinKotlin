@@ -66,3 +66,11 @@ fun loadRuntime(textView: TextView, runtime: Int) {
 fun loadRating(ratingBar: RatingBar, rating: Double) {
     ratingBar.rating = rating.toFloat()
 }
+
+@BindingAdapter("app:filmTitleVisibility")
+fun setFilmTitleVisibility(filmTitle: TextView, imageURL: String) {
+    when (imageURL.length == 4) {
+        true -> filmTitle.visibility = View.VISIBLE
+        false -> filmTitle.visibility = View.GONE
+    }
+}

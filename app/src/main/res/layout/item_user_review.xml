@@ -43,25 +43,43 @@
             android:layout_marginTop="8dp"
             android:orientation="horizontal">
 
-            <com.github.florent37.shapeofview.shapes.RoundRectView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:shape_roundRect_borderColor="@color/colorPrimary"
-                app:shape_roundRect_borderWidth="0.5dp"
-                app:shape_roundRect_bottomLeftRadius="2dp"
-                app:shape_roundRect_bottomRightRadius="2dp"
-                app:shape_roundRect_topLeftRadius="2dp"
-                app:shape_roundRect_topRightRadius="2dp">
+            <RelativeLayout
+                android:layout_width="100dp"
+                android:layout_height="150dp">
 
-                <ImageView
-                    android:id="@+id/film_poster"
-                    android:layout_width="100dp"
-                    android:layout_height="150dp"
-                    android:background="@color/colorSurface"
-                    android:contentDescription="@null"
-                    android:scaleType="centerCrop"
-                    app:smallTMDbPictureURL="@{userReview.poster}" />
-            </com.github.florent37.shapeofview.shapes.RoundRectView>
+                <com.github.florent37.shapeofview.shapes.RoundRectView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:shape_roundRect_borderColor="@color/colorPrimary"
+                    app:shape_roundRect_borderWidth="0.5dp"
+                    app:shape_roundRect_bottomLeftRadius="2dp"
+                    app:shape_roundRect_bottomRightRadius="2dp"
+                    app:shape_roundRect_topLeftRadius="2dp"
+                    app:shape_roundRect_topRightRadius="2dp">
+
+                    <ImageView
+                        android:id="@+id/film_poster"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorSurface"
+                        android:contentDescription="@null"
+                        android:scaleType="centerCrop"
+                        app:smallTMDbPictureURL="@{userReview.poster}" />
+                </com.github.florent37.shapeofview.shapes.RoundRectView>
+
+                <TextView
+                    android:id="@+id/film_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/jost_light"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:text="@{userReview.title}"
+                    android:textColor="@color/colorOnSurface"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    app:filmTitleVisibility="@{userReview.poster}" />
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/detail"
