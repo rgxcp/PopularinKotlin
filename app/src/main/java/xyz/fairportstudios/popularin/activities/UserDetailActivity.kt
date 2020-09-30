@@ -62,6 +62,8 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapterClickListen
         // Activity
         mBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
+        mBinding.totalPoint.setOnClickListener { gotoUserPoint(userID) }
+
         mBinding.totalReviewLayout.setOnClickListener { gotoUserReview(userID) }
 
         mBinding.totalFavoriteLayout.setOnClickListener { gotoUserFavorite(userID) }
@@ -243,6 +245,12 @@ class UserDetailActivity : AppCompatActivity(), RecentFavoriteAdapterClickListen
         val intent = Intent(mContext, ReviewActivity::class.java)
         intent.putExtra(Popularin.REVIEW_ID, id)
         intent.putExtra(Popularin.IS_SELF, mUserDetail.isSelf)
+        startActivity(intent)
+    }
+
+    private fun gotoUserPoint(id: Int) {
+        val intent = Intent(mContext, PointActivity::class.java)
+        intent.putExtra(Popularin.USER_ID, id)
         startActivity(intent)
     }
 

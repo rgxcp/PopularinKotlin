@@ -13,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import xyz.fairportstudios.popularin.activities.EditProfileActivity
 import xyz.fairportstudios.popularin.activities.FilmDetailActivity
 import xyz.fairportstudios.popularin.activities.MainActivity
+import xyz.fairportstudios.popularin.activities.PointActivity
 import xyz.fairportstudios.popularin.activities.ReviewActivity
 import xyz.fairportstudios.popularin.activities.SocialActivity
 import xyz.fairportstudios.popularin.activities.UserFavoriteActivity
@@ -61,6 +62,8 @@ class AccountFragment : Fragment(), RecentFavoriteAdapterClickListener, RecentRe
         getAccountDetail(authID)
 
         // Activity
+        mBinding.totalPoint.setOnClickListener { gotoAccountPoint(authID) }
+
         mBinding.totalReviewLayout.setOnClickListener { gotoAccountReview(authID) }
 
         mBinding.totalFavoriteLayout.setOnClickListener { gotoAccountFavorite(authID) }
@@ -180,6 +183,12 @@ class AccountFragment : Fragment(), RecentFavoriteAdapterClickListener, RecentRe
         val intent = Intent(mContext, ReviewActivity::class.java)
         intent.putExtra(Popularin.REVIEW_ID, id)
         intent.putExtra(Popularin.IS_SELF, true)
+        startActivity(intent)
+    }
+
+    private fun gotoAccountPoint(id: Int) {
+        val intent = Intent(mContext, PointActivity::class.java)
+        intent.putExtra(Popularin.USER_ID, id)
         startActivity(intent)
     }
 
