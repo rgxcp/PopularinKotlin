@@ -26,6 +26,7 @@ MAINTAINING
 - Showing film title when the poster is null
 - Adding total point on account & user detail layout
 - Adding point activity
+- Fixing app crashes when opening review detail activity
 ### 2.1.0
 - Implementing view binding
 - Implementing data binding
