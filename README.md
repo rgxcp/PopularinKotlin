@@ -25,6 +25,7 @@ MAINTAINING
 - Fixing only load film poster when the poster is not null
 - Showing film title when the poster is null
 - Adding total point on account & user detail layout
+- Adding point activity
 ### 2.1.0
 - Implementing view binding
 - Implementing data binding
