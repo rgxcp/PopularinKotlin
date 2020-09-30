@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="point"
+            type="xyz.fairportstudios.popularin.models.Point" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp">
+
+        <RelativeLayout
+            android:layout_width="50dp"
+            android:layout_height="50dp">
+
+            <com.github.florent37.shapeofview.shapes.CircleView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/background"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorSurface"
+                    android:contentDescription="@null"
+                    android:src="@{point.positive ? @color/greenPrimary : @color/redPrimary}" />
+            </com.github.florent37.shapeofview.shapes.CircleView>
+
+            <TextView
+                android:id="@+id/total"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/jost_medium"
+                android:gravity="center"
+                android:text="@{point.total}"
+                android:textColor="@{point.positive ? @color/colorBackgroundDark : @color/colorOnBackground}"
+                android:textSize="17sp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/jost_medium"
+                android:text="@{point.description}"
+                android:textColor="@color/colorOnBackground"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/timestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:fontFamily="@font/jost_regular"
+                android:maxLines="1"
+                android:text="@{point.timestamp}"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>
