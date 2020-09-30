@@ -42,12 +42,14 @@
     <string name="empty_self_film_review">Belum ada ulasan dari kamu untuk film ini.</string>
     <string name="empty_self_follower">Kamu belum mempunyai pengikut.</string>
     <string name="empty_self_following">Kamu belum mengikuti siapapun.</string>
+    <string name="empty_self_point">Kamu belum mempunyai point.</string>
     <string name="empty_self_review">Kamu belum mempunyai ulasan.</string>
     <string name="empty_self_watchlist_film">Kamu belum mempunyai daftar film\nyang ingin ditonton.</string>
     <string name="empty_timeline">Ulasan dari pengguna yang kamu ikuti\nakan tampil di sini.</string>
     <string name="empty_user_favorite_film">Pengguna belum mempunyai film favorit.</string>
     <string name="empty_user_follower">Pengguna belum mempunyai pengikut.</string>
     <string name="empty_user_following">Pengguna belum mengikuti siapapun.</string>
+    <string name="empty_user_point">Pengguna belum mempunyai point.</string>
     <string name="empty_user_review">Pengguna belum mempunyai ulasan.</string>
     <string name="empty_user_watchlist">Pengguna belum mempunyai daftar film\nyang ingin ditonton.</string>
     <string name="failed_retrieve_metadata">Gagal mendapatkan metadata film</string>
@@ -96,6 +98,7 @@
     <string name="new_password">Kata Sandi Baru</string>
     <string name="overview">Sinopsis</string>
     <string name="password">Kata Sandi</string>
+    <string name="point">Point</string>
     <string name="press_once_more_to_exit">Klik sekali lagi untuk keluar</string>
     <string name="profile">Profil</string>
     <string name="rating">Rating</string>
