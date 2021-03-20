@@ -49,6 +49,9 @@
             android:name=".activities.PointActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".activities.ReportedByActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activities.ReviewActivity"
             android:screenOrientation="portrait" />
         <activity
