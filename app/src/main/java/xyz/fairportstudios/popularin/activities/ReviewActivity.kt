@@ -63,7 +63,7 @@ class ReviewActivity : AppCompatActivity() {
     }
 
     private fun addAuthToolbarMenu(context: Context, id: Int) {
-        mBinding.toolbar.inflateMenu(R.menu.review_detail)
+        mBinding.toolbar.inflateMenu(R.menu.review_auth)
         mBinding.toolbar.setOnMenuItemClickListener { item ->
             return@setOnMenuItemClickListener when (item.itemId) {
                 R.id.menu_rd_edit -> {
