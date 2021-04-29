@@ -69,8 +69,8 @@ fun loadRating(ratingBar: RatingBar, rating: Double) {
 
 @BindingAdapter("app:filmTitleVisibility")
 fun setFilmTitleVisibility(filmTitle: TextView, imageURL: String?) {
-    when (imageURL?.length == 4) {
-        true -> filmTitle.visibility = View.VISIBLE
-        false -> filmTitle.visibility = View.GONE
+    filmTitle.visibility = when (imageURL?.length == 4) {
+        true -> View.VISIBLE
+        false -> View.GONE
     }
 }
