@@ -39,7 +39,7 @@ class LikeFromAllFragment(private val reviewID: Int) : Fragment(), UserAdapterCl
     private var _mBinding: ReusableRecyclerBinding? = null
     private val mBinding get() = _mBinding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _mBinding = ReusableRecyclerBinding.inflate(inflater, container, false)
 
         // Context

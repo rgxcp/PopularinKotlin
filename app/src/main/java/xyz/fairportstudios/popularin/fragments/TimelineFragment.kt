@@ -56,7 +56,7 @@ class TimelineFragment : Fragment(), GenreHorizontalAdapterClickListener, Review
     private var _mBinding: FragmentTimelineBinding? = null
     private val mBinding get() = _mBinding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _mBinding = FragmentTimelineBinding.inflate(inflater, container, false)
 
         // Context

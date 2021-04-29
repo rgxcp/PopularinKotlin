@@ -40,7 +40,7 @@ class WatchlistFromFollowingFragment(private val filmID: Int) : Fragment(), User
     private var _mBinding: ReusableRecyclerBinding? = null
     private val mBinding get() = _mBinding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _mBinding = ReusableRecyclerBinding.inflate(inflater, container, false)
 
         // Context

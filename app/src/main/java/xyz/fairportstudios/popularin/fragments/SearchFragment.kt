@@ -48,7 +48,7 @@ class SearchFragment : Fragment(), FilmAdapterClickListener, UserAdapterClickLis
     private var _mBinding: FragmentSearchBinding? = null
     private val mBinding get() = _mBinding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _mBinding = FragmentSearchBinding.inflate(inflater, container, false)
 
         // Context

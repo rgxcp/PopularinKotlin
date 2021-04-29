@@ -28,7 +28,7 @@ class EditPasswordFragment : Fragment() {
     private var _mBinding: FragmentEditPasswordBinding? = null
     private val mBinding get() = _mBinding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _mBinding = FragmentEditPasswordBinding.inflate(inflater, container, false)
 
         // Context

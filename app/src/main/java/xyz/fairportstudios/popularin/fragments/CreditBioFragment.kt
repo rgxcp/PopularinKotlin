@@ -26,7 +26,7 @@ class CreditBioFragment(private val creditID: Int) : Fragment() {
     private var _mBinding: FragmentCreditBioBinding? = null
     private val mBinding get() = _mBinding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _mBinding = FragmentCreditBioBinding.inflate(inflater, container, false)
 
         // Context

@@ -56,7 +56,7 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
     private var _mBinding: FragmentReviewCommentBinding? = null
     private val mBinding get() = _mBinding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _mBinding = FragmentReviewCommentBinding.inflate(inflater, container, false)
 
         // Context

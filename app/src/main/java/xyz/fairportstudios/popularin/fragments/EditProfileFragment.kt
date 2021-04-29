@@ -33,7 +33,7 @@ class EditProfileFragment : Fragment() {
     private var _mBinding: FragmentEditProfileBinding? = null
     private val mBinding get() = _mBinding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _mBinding = FragmentEditProfileBinding.inflate(inflater, container, false)
 
         // Context

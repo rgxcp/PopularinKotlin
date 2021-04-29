@@ -16,7 +16,7 @@ class EmptyAccountFragment : Fragment() {
     private var _mBinding: ReusableEmptyAccountBinding? = null
     private val mBinding get() = _mBinding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _mBinding = ReusableEmptyAccountBinding.inflate(inflater, container, false)
 
         // Context
