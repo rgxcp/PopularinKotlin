@@ -16,6 +16,9 @@
             android:name=".activities.AddReviewActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".activities.CommentReportedByActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activities.CreditDetailActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -50,6 +53,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.ReviewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.ReviewReportedByActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.SignInActivity"

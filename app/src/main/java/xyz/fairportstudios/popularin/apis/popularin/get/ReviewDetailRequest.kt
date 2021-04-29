@@ -28,6 +28,7 @@ class ReviewDetailRequest(private val context: Context, private val reviewID: In
                         filmObject.getInt("tmdb_id"),
                         userObject.getInt("id"),
                         resultObject.getInt("total_like"),
+                        resultObject.getInt("total_report"),
                         resultObject.getBoolean("is_liked"),
                         resultObject.getDouble("rating"),
                         resultObject.getString("review_detail"),

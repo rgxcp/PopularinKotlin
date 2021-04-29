@@ -9,37 +9,24 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 import xyz.fairportstudios.popularin.R
-import xyz.fairportstudios.popularin.interfaces.AddCommentRequestCallback
-import xyz.fairportstudios.popularin.models.Comment
+import xyz.fairportstudios.popularin.interfaces.ReportReviewRequestCallback
 import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.secrets.APIKey
 import xyz.fairportstudios.popularin.statics.PopularinAPI
 
-class AddCommentRequest(private val context: Context, private val reviewID: Int, private val commentDetail: String) {
-    fun sendRequest(callback: AddCommentRequestCallback) {
-        val requestURL = PopularinAPI.ADD_COMMENT
+class ReportReviewRequest(
+    private val context: Context,
+    private val reviewId: Int,
+    private val reportCategoryId: Int
+) {
+    fun sendRequest(callback: ReportReviewRequestCallback) {
+        val requestURL = "${PopularinAPI.REVIEW}$reviewId/reports"
 
-        val addComment = object : StringRequest(Method.POST, requestURL, Response.Listener { response ->
+        val reportReview = object : StringRequest(Method.POST, requestURL, Response.Listener { response ->
             val responseObject = JSONObject(response)
 
             when (responseObject.getInt("status")) {
-                202 -> {
-                    val resultObject = responseObject.getJSONObject("result")
-                    val userObject = resultObject.getJSONObject("user")
-                    val comment = Comment(
-                        resultObject.getInt("id"),
-                        userObject.getInt("id"),
-                        resultObject.getInt("total_report"),
-                        resultObject.getBoolean("is_self"),
-                        resultObject.getBoolean("is_nsfw"),
-                        resultObject.getString("comment_detail"),
-                        resultObject.getString("timestamp"),
-                        userObject.getString("username"),
-                        userObject.getString("profile_picture")
-                    )
-                    callback.onSuccess(comment)
-                }
-                626 -> callback.onFailed(responseObject.getJSONArray("result").getString(0))
+                202 -> callback.onSuccess()
                 else -> callback.onError(context.getString(R.string.general_error))
             }
         }, Response.ErrorListener { error ->
@@ -52,8 +39,7 @@ class AddCommentRequest(private val context: Context, private val reviewID: Int,
         }) {
             override fun getParams(): MutableMap<String, String> {
                 val params = HashMap<String, String>()
-                params["review_id"] = reviewID.toString()
-                params["comment_detail"] = commentDetail
+                params["report_category_id"] = reportCategoryId.toString()
                 return params
             }
 
@@ -66,6 +52,6 @@ class AddCommentRequest(private val context: Context, private val reviewID: Int,
             }
         }
 
-        Volley.newRequestQueue(context).add(addComment)
+        Volley.newRequestQueue(context).add(reportReview)
     }
 }

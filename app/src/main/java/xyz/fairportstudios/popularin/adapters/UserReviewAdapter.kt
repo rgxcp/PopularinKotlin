@@ -28,6 +28,18 @@ class UserReviewAdapter(
         holder.binding.userReview = currentItem
         holder.binding.filmYear = ParseDate.getYear(currentItem.releaseDate)
 
+        // NSFW status
+        when (currentItem.isNSFW) {
+            true -> {
+                holder.binding.nsfwBanner.visibility = View.VISIBLE
+                holder.binding.detail.visibility = View.GONE
+            }
+            false -> {
+                holder.binding.nsfwBanner.visibility = View.GONE
+                holder.binding.detail.visibility = View.VISIBLE
+            }
+        }
+
         // Like status
         holder.binding.likeImage.setImageResource(
             when (currentItem.isLiked) {
@@ -57,11 +69,17 @@ class UserReviewAdapter(
                 clickListener.onUserReviewFilmPosterLongClick(adapterPosition)
                 return@setOnLongClickListener true
             }
+            binding.nsfwBanner.setOnClickListener {
+                clickListener.onUserReviewNSFWBannerClick(adapterPosition)
+            }
             binding.likeImage.setOnClickListener {
                 clickListener.onUserReviewLikeClick(adapterPosition)
             }
             binding.commentImage.setOnClickListener {
                 clickListener.onUserReviewCommentClick(adapterPosition)
+            }
+            binding.reportImage.setOnClickListener {
+                clickListener.onUserReviewReportClick(adapterPosition)
             }
         }
     }

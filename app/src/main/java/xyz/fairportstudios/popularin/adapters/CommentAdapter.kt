@@ -25,10 +25,28 @@ class CommentAdapter(
         // Binding
         holder.binding.comment = currentItem
 
+        // NSFW status
+        when (currentItem.isNSFW) {
+            true -> {
+                holder.binding.nsfwBanner.visibility = View.VISIBLE
+                holder.binding.detail.visibility = View.GONE
+            }
+            false -> {
+                holder.binding.nsfwBanner.visibility = View.GONE
+                holder.binding.detail.visibility = View.VISIBLE
+            }
+        }
+
         // Auth
-        holder.binding.deleteImage.visibility = when (currentItem.isSelf) {
-            true -> View.VISIBLE
-            false -> View.GONE
+        when (currentItem.isSelf) {
+            true -> {
+                holder.binding.deleteImage.visibility = View.VISIBLE
+                holder.binding.moreImage.visibility = View.GONE
+            }
+            false -> {
+                holder.binding.deleteImage.visibility = View.GONE
+                holder.binding.moreImage.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -38,6 +56,15 @@ class CommentAdapter(
         init {
             binding.userProfilePicture.setOnClickListener {
                 clickListener.onCommentProfileClick(adapterPosition)
+            }
+            binding.nsfwBanner.setOnClickListener {
+                clickListener.onCommentNSFWBannerClick(adapterPosition)
+            }
+            binding.reportImage.setOnClickListener {
+                clickListener.onCommentReportClick(adapterPosition)
+            }
+            binding.moreImage.setOnClickListener {
+                clickListener.onCommentMoreClick(adapterPosition, binding.moreImage)
             }
             binding.deleteImage.setOnClickListener {
                 clickListener.onCommentDeleteClick(adapterPosition)

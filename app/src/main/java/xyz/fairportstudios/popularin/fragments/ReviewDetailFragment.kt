@@ -12,6 +12,7 @@ import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.activities.EmptyAccountActivity
 import xyz.fairportstudios.popularin.activities.FilmDetailActivity
 import xyz.fairportstudios.popularin.activities.LikedByActivity
+import xyz.fairportstudios.popularin.activities.ReviewReportedByActivity
 import xyz.fairportstudios.popularin.activities.UserDetailActivity
 import xyz.fairportstudios.popularin.apis.popularin.delete.UnlikeReviewRequest
 import xyz.fairportstudios.popularin.apis.popularin.get.ReviewDetailRequest
@@ -58,6 +59,10 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
         mBinding.filmPoster.setOnLongClickListener {
             showFilmModal()
             return@setOnLongClickListener true
+        }
+
+        mBinding.reportImage.setOnClickListener {
+            gotoReviewReportedBy()
         }
 
         mBinding.likeImage.setOnClickListener {
@@ -181,6 +186,12 @@ class ReviewDetailFragment(private val reviewID: Int) : Fragment() {
     private fun showFilmModal() {
         val filmModal = FilmModal(mReviewDetail.tmdbID, mReviewDetail.title, mFilmYear, mReviewDetail.poster)
         filmModal.show(requireFragmentManager(), Popularin.FILM_MODAL)
+    }
+
+    private fun gotoReviewReportedBy() {
+        val intent = Intent(mContext, ReviewReportedByActivity::class.java)
+        intent.putExtra(Popularin.REVIEW_ID, reviewID)
+        startActivity(intent)
     }
 
     private fun gotoUserDetail() {

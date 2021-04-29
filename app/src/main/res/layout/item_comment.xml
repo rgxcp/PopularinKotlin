@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -64,26 +65,79 @@
                     android:textSize="13sp" />
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/detail"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:fontFamily="@font/jost_regular"
-                android:text="@{comment.commentDetail}"
-                android:textSize="15sp" />
+                android:layout_marginTop="6dp">
 
-            <ImageView
-                android:id="@+id/delete_image"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="end"
-                android:layout_marginTop="2dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_outline_delete"
-                android:visibility="gone"
-                app:tint="@color/redPrimary" />
+                <TextView
+                    android:id="@+id/nsfw_banner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorSurface"
+                    android:fontFamily="@font/jost_light"
+                    android:padding="6dp"
+                    android:text="@string/nsfw_comment"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorOnBackground"
+                    android:textSize="15sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/jost_regular"
+                    android:text="@{comment.commentDetail}"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+
+                <ImageView
+                    android:id="@+id/report_image"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_outline_report" />
+
+                <TextView
+                    android:id="@+id/total_report"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="4dp"
+                    android:layout_toEndOf="@id/report_image"
+                    android:fontFamily="@font/jost_extra_light"
+                    android:text="@{String.valueOf(comment.totalReport)}"
+                    android:textColor="@color/colorOnBackground"
+                    android:textSize="13sp"
+                    tools:ignore="RelativeOverlap" />
+
+                <ImageView
+                    android:id="@+id/more_image"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_fill_more" />
+
+                <ImageView
+                    android:id="@+id/delete_image"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_outline_delete"
+                    android:visibility="gone"
+                    app:tint="@color/redPrimary" />
+            </RelativeLayout>
         </LinearLayout>
 
     </LinearLayout>

@@ -26,6 +26,18 @@ class FilmReviewAdapter(
         // Binding
         holder.binding.filmReview = currentItem
 
+        // NSFW status
+        when (currentItem.isNSFW) {
+            true -> {
+                holder.binding.nsfwBanner.visibility = View.VISIBLE
+                holder.binding.detail.visibility = View.GONE
+            }
+            false -> {
+                holder.binding.nsfwBanner.visibility = View.GONE
+                holder.binding.detail.visibility = View.VISIBLE
+            }
+        }
+
         // Like status
         holder.binding.likeImage.setImageResource(
             when (currentItem.isLiked) {
@@ -51,11 +63,17 @@ class FilmReviewAdapter(
             binding.userProfilePicture.setOnClickListener {
                 clickListener.onFilmReviewUserProfileClick(adapterPosition)
             }
+            binding.nsfwBanner.setOnClickListener {
+                clickListener.onFilmReviewNSFWBannerClick(adapterPosition)
+            }
             binding.likeImage.setOnClickListener {
                 clickListener.onFilmReviewLikeClick(adapterPosition)
             }
             binding.commentImage.setOnClickListener {
                 clickListener.onFilmReviewCommentClick(adapterPosition)
+            }
+            binding.reportImage.setOnClickListener {
+                clickListener.onFilmReviewReportClick(adapterPosition)
             }
         }
     }

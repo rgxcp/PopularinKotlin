@@ -6,13 +6,18 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentPagerAdapter
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.adapters.PagerAdapter
 import xyz.fairportstudios.popularin.apis.popularin.delete.DeleteReviewRequest
+import xyz.fairportstudios.popularin.apis.popularin.post.ReportReviewRequest
 import xyz.fairportstudios.popularin.databinding.ReusableToolbarPagerBinding
 import xyz.fairportstudios.popularin.fragments.ReviewCommentFragment
 import xyz.fairportstudios.popularin.fragments.ReviewDetailFragment
 import xyz.fairportstudios.popularin.interfaces.DeleteReviewRequestCallback
+import xyz.fairportstudios.popularin.interfaces.ReportReviewRequestCallback
+import xyz.fairportstudios.popularin.preferences.Auth
+import xyz.fairportstudios.popularin.services.LoadReportCategory.getAllReportCategory
 import xyz.fairportstudios.popularin.statics.Popularin
 
 class ReviewActivity : AppCompatActivity() {
@@ -35,9 +40,15 @@ class ReviewActivity : AppCompatActivity() {
         val viewPagerIndex = intent.getIntExtra(Popularin.VIEW_PAGER_INDEX, 0)
         val isSelf = intent.getBooleanExtra(Popularin.IS_SELF, false)
 
+        // Auth
+        val isAuth = Auth(context).isAuth()
+
         // Toolbar
         mBinding.toolbarTitle = getString(R.string.review)
-        if (isSelf) addToolbarMenu(context, reviewID)
+        when (isSelf) {
+            true -> addAuthToolbarMenu(context, reviewID)
+            false -> addGuestToolbarMenu(context, isAuth, reviewID)
+        }
 
         // Tab pager
         val pagerAdapter = PagerAdapter(supportFragmentManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
@@ -51,7 +62,7 @@ class ReviewActivity : AppCompatActivity() {
         mBinding.toolbar.setNavigationOnClickListener { onBackPressed() }
     }
 
-    private fun addToolbarMenu(context: Context, id: Int) {
+    private fun addAuthToolbarMenu(context: Context, id: Int) {
         mBinding.toolbar.inflateMenu(R.menu.review_detail)
         mBinding.toolbar.setOnMenuItemClickListener { item ->
             return@setOnMenuItemClickListener when (item.itemId) {
@@ -63,6 +74,22 @@ class ReviewActivity : AppCompatActivity() {
                     if (!mIsLoading) {
                         mIsLoading = true
                         deleteReview(context, id)
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun addGuestToolbarMenu(context: Context, isAuth: Boolean, reviewId: Int) {
+        mBinding.toolbar.inflateMenu(R.menu.review_guest)
+        mBinding.toolbar.setOnMenuItemClickListener { item ->
+            return@setOnMenuItemClickListener when (item.itemId) {
+                R.id.menu_rg_report -> {
+                    when (isAuth) {
+                        true -> showPickReportCategoryDialog(context, reviewId)
+                        false -> gotoEmptyAccount(context)
                     }
                     true
                 }
@@ -92,5 +119,40 @@ class ReviewActivity : AppCompatActivity() {
 
         // Memberhentikan loading
         mIsLoading = false
+    }
+
+    private fun showPickReportCategoryDialog(context: Context, reviewId: Int) {
+        val reportCategories = getAllReportCategory(context)
+        var pickedReportCategory = 0
+
+        MaterialAlertDialogBuilder(context)
+            .setTitle(getString(R.string.pick_report_category_dialog_title))
+            .setNeutralButton(getString(R.string.cancel)) { _, _ ->
+            }
+            .setPositiveButton(getString(R.string.pick)) { _, _ ->
+                reportReview(context, reviewId, pickedReportCategory + 1)
+            }
+            .setSingleChoiceItems(reportCategories, pickedReportCategory) { _, which ->
+                pickedReportCategory = which
+            }
+            .show()
+    }
+
+    private fun reportReview(context: Context, reviewId: Int, reportCategoryId: Int) {
+        val reportReviewRequest = ReportReviewRequest(context, reviewId, reportCategoryId)
+        reportReviewRequest.sendRequest(object : ReportReviewRequestCallback {
+            override fun onSuccess() {
+                Toast.makeText(context, getString(R.string.review_reported), Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onError(message: String) {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun gotoEmptyAccount(context: Context) {
+        val intent = Intent(context, EmptyAccountActivity::class.java)
+        startActivity(intent)
     }
 }

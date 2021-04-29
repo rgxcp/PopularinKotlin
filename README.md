@@ -21,6 +21,8 @@ MAINTAINING
 3. Simply open this [link](https://bit.ly/Popularin "Popularin on Play Store").
 
 ## Changelog
+### 2.3.0
+- Adding comment & review report feature
 ### 2.2.0
 - Fixing only load film poster when the poster is not null
 - Showing film title when the poster is null

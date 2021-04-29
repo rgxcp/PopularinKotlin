@@ -8,28 +8,36 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import xyz.fairportstudios.popularin.R
+import xyz.fairportstudios.popularin.activities.CommentReportedByActivity
 import xyz.fairportstudios.popularin.activities.EmptyAccountActivity
 import xyz.fairportstudios.popularin.activities.UserDetailActivity
 import xyz.fairportstudios.popularin.adapters.CommentAdapter
 import xyz.fairportstudios.popularin.apis.popularin.delete.DeleteCommentRequest
 import xyz.fairportstudios.popularin.apis.popularin.get.CommentRequest
 import xyz.fairportstudios.popularin.apis.popularin.post.AddCommentRequest
+import xyz.fairportstudios.popularin.apis.popularin.post.ReportCommentRequest
 import xyz.fairportstudios.popularin.databinding.FragmentReviewCommentBinding
 import xyz.fairportstudios.popularin.interfaces.AddCommentRequestCallback
 import xyz.fairportstudios.popularin.interfaces.CommentAdapterClickListener
 import xyz.fairportstudios.popularin.interfaces.CommentRequestCallback
 import xyz.fairportstudios.popularin.interfaces.DeleteCommentRequestCallback
+import xyz.fairportstudios.popularin.interfaces.ReportCommentRequestCallback
 import xyz.fairportstudios.popularin.models.Comment
 import xyz.fairportstudios.popularin.preferences.Auth
+import xyz.fairportstudios.popularin.services.LoadReportCategory.getAllReportCategory
 import xyz.fairportstudios.popularin.statics.Popularin
 
 class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdapterClickListener {
     // Primitive
+    private var mIsAuth = false
     private var mIsResumeFirstTime = true
     private var mIsLoading = true
     private var mIsLoadFirstTimeSuccess = false
@@ -55,14 +63,14 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
         mContext = requireActivity()
 
         // Auth
-        val isAuth = Auth(mContext).isAuth()
+        mIsAuth = Auth(mContext).isAuth()
 
         // Text watcher
         mBinding.inputComment.addTextChangedListener(mCommentWatcher)
 
         // Activity
         mBinding.sendImage.setOnClickListener {
-            when (isAuth && !mIsLoading) {
+            when (mIsAuth && !mIsLoading) {
                 true -> {
                     mIsLoading = true
                     addComment()
@@ -113,6 +121,18 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
     override fun onCommentProfileClick(position: Int) {
         val currentItem = mCommentList[position]
         gotoUserDetail(currentItem.userID)
+    }
+
+    override fun onCommentNSFWBannerClick(position: Int) {
+        hideNSFWBanner(position)
+    }
+
+    override fun onCommentReportClick(position: Int) {
+        gotoCommentReportedBy(mCommentList[position].id)
+    }
+
+    override fun onCommentMoreClick(position: Int, anchor: ImageView) {
+        showPopupMenu(mCommentList[position].id, anchor)
     }
 
     override fun onCommentDeleteClick(position: Int) {
@@ -252,6 +272,65 @@ class ReviewCommentFragment(private val reviewID: Int) : Fragment(), CommentAdap
 
         // Memberhentikan loading
         mIsLoading = false
+    }
+
+    private fun hideNSFWBanner(position: Int) {
+        mCommentList[position].isNSFW = false
+        mCommentAdapter.notifyItemChanged(position)
+    }
+
+    private fun showPopupMenu(commentId: Int, anchor: ImageView) {
+        val popupMenu = PopupMenu(mContext, anchor)
+        popupMenu.inflate(R.menu.comment_guest)
+        popupMenu.setOnMenuItemClickListener { item ->
+            return@setOnMenuItemClickListener when (item.itemId) {
+                R.id.menu_cg_report -> {
+                    when (mIsAuth) {
+                        true -> showPickReportCategoryDialog(commentId)
+                        false -> gotoEmptyAccount()
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
+        popupMenu.show()
+    }
+
+    private fun showPickReportCategoryDialog(commentId: Int) {
+        val reportCategories = getAllReportCategory(mContext)
+        var pickedReportCategory = 0
+
+        MaterialAlertDialogBuilder(mContext)
+            .setTitle(getString(R.string.pick_report_category_dialog_title))
+            .setNeutralButton(getString(R.string.cancel)) { _, _ ->
+            }
+            .setPositiveButton(getString(R.string.pick)) { _, _ ->
+                reportComment(commentId, pickedReportCategory + 1)
+            }
+            .setSingleChoiceItems(reportCategories, pickedReportCategory) { _, which ->
+                pickedReportCategory = which
+            }
+            .show()
+    }
+
+    private fun reportComment(commentId: Int, reportCategoryId: Int) {
+        val reportCommentRequest = ReportCommentRequest(mContext, commentId, reportCategoryId)
+        reportCommentRequest.sendRequest(object : ReportCommentRequestCallback {
+            override fun onSuccess() {
+                Toast.makeText(mContext, getString(R.string.comment_reported), Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onError(message: String) {
+                Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun gotoCommentReportedBy(id: Int) {
+        val intent = Intent(mContext, CommentReportedByActivity::class.java)
+        intent.putExtra(Popularin.COMMENT_ID, id)
+        startActivity(intent)
     }
 
     private fun gotoUserDetail(id: Int) {

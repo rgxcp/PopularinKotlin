@@ -109,6 +109,10 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapterClickListener {
         showFilmModal(currentItem.tmdbID, currentItem.title, year, currentItem.poster)
     }
 
+    override fun onUserReviewNSFWBannerClick(position: Int) {
+        hideNSFWBanner(position)
+    }
+
     override fun onUserReviewLikeClick(position: Int) {
         when (mIsAuth) {
             true -> {
@@ -129,6 +133,10 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapterClickListener {
     override fun onUserReviewCommentClick(position: Int) {
         val currentItem = mUserReviewList[position]
         gotoReviewComment(currentItem.id)
+    }
+
+    override fun onUserReviewReportClick(position: Int) {
+        gotoReviewReportedBy(mUserReviewList[position].id)
     }
 
     private fun getUserReview(page: Int, refreshPage: Boolean) {
@@ -249,6 +257,11 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapterClickListener {
         filmModal.show(supportFragmentManager, Popularin.FILM_MODAL)
     }
 
+    private fun hideNSFWBanner(position: Int) {
+        mUserReviewList[position].isNSFW = false
+        mUserReviewAdapter.notifyItemChanged(position)
+    }
+
     private fun gotoReviewDetail(id: Int) {
         val intent = Intent(mContext, ReviewActivity::class.java)
         intent.putExtra(Popularin.REVIEW_ID, id)
@@ -261,6 +274,12 @@ class UserReviewActivity : AppCompatActivity(), UserReviewAdapterClickListener {
         intent.putExtra(Popularin.REVIEW_ID, id)
         intent.putExtra(Popularin.IS_SELF, mIsSelf)
         intent.putExtra(Popularin.VIEW_PAGER_INDEX, 1)
+        startActivity(intent)
+    }
+
+    private fun gotoReviewReportedBy(id: Int) {
+        val intent = Intent(mContext, ReviewReportedByActivity::class.java)
+        intent.putExtra(Popularin.REVIEW_ID, id)
         startActivity(intent)
     }
 

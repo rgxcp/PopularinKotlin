@@ -15,6 +15,7 @@ import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.activities.EmptyAccountActivity
 import xyz.fairportstudios.popularin.activities.FilmDetailActivity
 import xyz.fairportstudios.popularin.activities.ReviewActivity
+import xyz.fairportstudios.popularin.activities.ReviewReportedByActivity
 import xyz.fairportstudios.popularin.activities.UserDetailActivity
 import xyz.fairportstudios.popularin.adapters.ReviewAdapter
 import xyz.fairportstudios.popularin.apis.popularin.delete.UnlikeReviewRequest
@@ -120,6 +121,10 @@ class ReviewFragment : Fragment(), ReviewAdapterClickListener {
         showFilmModal(currentItem.tmdbID, currentItem.title, year, currentItem.poster)
     }
 
+    override fun onReviewNSFWBannerClick(position: Int) {
+        hideNSFWBanner(position)
+    }
+
     override fun onReviewLikeClick(position: Int) {
         when (mIsAuth) {
             true -> {
@@ -141,6 +146,10 @@ class ReviewFragment : Fragment(), ReviewAdapterClickListener {
         val currentItem = mReviewList[position]
         val isSelf = mAuth.isSelf(currentItem.userID, mAuth.getAuthID())
         gotoReviewComment(currentItem.id, isSelf)
+    }
+
+    override fun onReviewReportClick(position: Int) {
+        gotoReviewReportedBy(mReviewList[position].id)
     }
 
     private fun getReview(page: Int, refreshPage: Boolean) {
@@ -260,6 +269,11 @@ class ReviewFragment : Fragment(), ReviewAdapterClickListener {
         filmModal.show(requireFragmentManager(), Popularin.FILM_MODAL)
     }
 
+    private fun hideNSFWBanner(position: Int) {
+        mReviewList[position].isNSFW = false
+        mReviewAdapter.notifyItemChanged(position)
+    }
+
     private fun gotoReviewDetail(id: Int, isSelf: Boolean) {
         val intent = Intent(mContext, ReviewActivity::class.java)
         intent.putExtra(Popularin.REVIEW_ID, id)
@@ -272,6 +286,12 @@ class ReviewFragment : Fragment(), ReviewAdapterClickListener {
         intent.putExtra(Popularin.REVIEW_ID, id)
         intent.putExtra(Popularin.IS_SELF, isSelf)
         intent.putExtra(Popularin.VIEW_PAGER_INDEX, 1)
+        startActivity(intent)
+    }
+
+    private fun gotoReviewReportedBy(id: Int) {
+        val intent = Intent(mContext, ReviewReportedByActivity::class.java)
+        intent.putExtra(Popularin.REVIEW_ID, id)
         startActivity(intent)
     }
 

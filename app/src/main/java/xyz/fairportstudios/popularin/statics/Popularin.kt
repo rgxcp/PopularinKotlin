@@ -5,6 +5,7 @@ class Popularin {
         const val AUTH = "AUTH"
         const val AUTH_ID = "AUTH_ID"
         const val AUTH_TOKEN = "AUTH_TOKEN"
+        const val COMMENT_ID = "COMMENT_ID"
         const val CREDIT_ID = "CREDIT_ID"
         const val DATE_PICKER = "DATE_PICKER"
         const val FILM_ID = "FILM_ID"

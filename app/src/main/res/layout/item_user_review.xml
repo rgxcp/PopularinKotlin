@@ -81,17 +81,49 @@
                     app:filmTitleVisibility="@{userReview.poster}" />
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/detail"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:ellipsize="end"
-                android:fontFamily="@font/jost_light"
-                android:maxLines="7"
-                android:text="@{userReview.reviewDetail}"
-                android:textColor="@color/colorOnBackground"
-                android:textSize="15sp" />
+                android:layout_marginStart="12dp">
+
+                <LinearLayout
+                    android:id="@+id/nsfw_banner"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:background="@color/colorSurface"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_fill_eye" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/jost_light"
+                        android:text="@string/nsfw_review"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorOnBackground"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/jost_light"
+                    android:maxLines="7"
+                    android:text="@{userReview.reviewDetail}"
+                    android:textColor="@color/colorOnBackground"
+                    android:textSize="15sp" />
+            </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -136,6 +168,25 @@
                 android:layout_marginStart="4dp"
                 android:fontFamily="@font/jost_extra_light"
                 android:text="@{String.valueOf(userReview.totalComment)}"
+                android:textColor="@color/colorOnBackground"
+                android:textSize="13sp" />
+
+            <ImageView
+                android:id="@+id/report_image"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_outline_report" />
+
+            <TextView
+                android:id="@+id/total_report"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:fontFamily="@font/jost_extra_light"
+                android:text="@{String.valueOf(userReview.totalReport)}"
                 android:textColor="@color/colorOnBackground"
                 android:textSize="13sp" />
 

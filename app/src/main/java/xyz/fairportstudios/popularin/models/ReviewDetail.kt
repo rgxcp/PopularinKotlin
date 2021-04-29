@@ -4,6 +4,7 @@ data class ReviewDetail(
     val tmdbID: Int,
     val userID: Int,
     var totalLike: Int,
+    val totalReport: Int,
     var isLiked: Boolean,
     val rating: Double,
     var reviewDetail: String,

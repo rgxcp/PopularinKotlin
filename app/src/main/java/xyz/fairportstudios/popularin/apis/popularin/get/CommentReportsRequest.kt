@@ -8,45 +8,39 @@ import com.android.volley.TimeoutError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import xyz.fairportstudios.popularin.R
-import xyz.fairportstudios.popularin.interfaces.FilmReviewFromFollowingRequestCallback
-import xyz.fairportstudios.popularin.models.FilmReview
-import xyz.fairportstudios.popularin.preferences.Auth
+import xyz.fairportstudios.popularin.interfaces.CommentReportsRequestCallback
+import xyz.fairportstudios.popularin.models.Report
 import xyz.fairportstudios.popularin.secrets.APIKey
 import xyz.fairportstudios.popularin.statics.PopularinAPI
 
-class FilmReviewFromFollowingRequest(private val context: Context, private val filmID: Int) {
-    fun sendRequest(page: Int, callback: FilmReviewFromFollowingRequestCallback) {
-        val requestURL = "${PopularinAPI.FILM}$filmID/reviews/from/following?page=$page"
+class CommentReportsRequest(private val context: Context, private val commentId: Int) {
+    fun sendRequest(page: Int, callback: CommentReportsRequestCallback) {
+        val requestURL = "${PopularinAPI.COMMENT}$commentId/reports?page=$page"
 
-        val filmReviewFromFollowing = object : JsonObjectRequest(Method.GET, requestURL, null, Response.Listener { response ->
+        val commentReports = object : JsonObjectRequest(Method.GET, requestURL, null, Response.Listener { response ->
             when (response.getInt("status")) {
                 101 -> {
-                    val filmReviewList = ArrayList<FilmReview>()
+                    val reports = mutableListOf<Report>()
                     val resultObject = response.getJSONObject("result")
                     val dataArray = resultObject.getJSONArray("data")
                     val totalPage = resultObject.getInt("last_page")
 
                     for (index in 0 until dataArray.length()) {
                         val indexObject = dataArray.getJSONObject(index)
+                        val reportCategoryObject = indexObject.getJSONObject("report_category")
                         val userObject = indexObject.getJSONObject("user")
-                        val filmReview = FilmReview(
+                        val report = Report(
                             indexObject.getInt("id"),
-                            userObject.getInt("id"),
-                            indexObject.getInt("total_like"),
-                            indexObject.getInt("total_comment"),
-                            indexObject.getInt("total_report"),
-                            indexObject.getBoolean("is_liked"),
-                            indexObject.getBoolean("is_nsfw"),
-                            indexObject.getDouble("rating"),
-                            indexObject.getString("review_detail"),
+                            indexObject.getInt("user_id"),
                             indexObject.getString("timestamp"),
-                            userObject.getString("username"),
+                            reportCategoryObject.getString("name"),
+                            userObject.getString("full_name"),
                             userObject.getString("profile_picture")
                         )
-                        filmReviewList.add(filmReview)
+                        reports.add(report)
                     }
 
-                    callback.onSuccess(totalPage, filmReviewList)
+                    callback.onSuccess(totalPage, reports)
                 }
                 606 -> callback.onNotFound()
                 else -> callback.onError(context.getString(R.string.general_error))
@@ -59,14 +53,13 @@ class FilmReviewFromFollowingRequest(private val context: Context, private val f
                 else -> callback.onError(context.getString(R.string.general_error))
             }
         }) {
-            override fun getHeaders(): MutableMap<String, String?> {
-                val headers = HashMap<String, String?>()
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
                 headers["API-Key"] = APIKey.POPULARIN_API_KEY
-                headers["Auth-Token"] = Auth(context).getAuthToken()
                 return headers
             }
         }
 
-        Volley.newRequestQueue(context).add(filmReviewFromFollowing)
+        Volley.newRequestQueue(context).add(commentReports)
     }
 }
