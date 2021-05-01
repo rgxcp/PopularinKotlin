@@ -9,7 +9,7 @@
     <string name="cancel">Batal</string>
     <string name="cast">Pemain</string>
     <string name="comment">Komen</string>
-    <string name="comment_reported">Komen Dilaporkan</string>
+    <string name="comment_reported">Komen di laporkan</string>
     <string name="comment_reporter">Pelapor Komen</string>
     <string name="confirm_password">Konfirmasi Sandi</string>
     <string name="credit">Kredit</string>
@@ -122,7 +122,7 @@
     <string name="review">Ulasan</string>
     <string name="review_added">Ulasan di buat</string>
     <string name="review_deleted">Ulasan di hapus</string>
-    <string name="review_reported">Ulasan Dilaporkan</string>
+    <string name="review_reported">Ulasan di laporkan</string>
     <string name="review_reporter">Pelapor Ulasan</string>
     <string name="review_updated">Ulasan di ubah</string>
     <string name="runtime">Durasi</string>
