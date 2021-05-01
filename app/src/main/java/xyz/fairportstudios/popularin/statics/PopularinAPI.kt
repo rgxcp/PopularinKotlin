@@ -2,6 +2,10 @@ package xyz.fairportstudios.popularin.statics
 
 class PopularinAPI {
     companion object {
+        // Development
+        // private const val BASE_URL = "http://10.0.2.2/popularin-api/index.php/api"
+
+        // Production
         private const val BASE_URL = "https://popularin.fairportstudios.xyz/api"
         const val ADD_COMMENT = "$BASE_URL/comment"
         const val ADD_REVIEW = "$BASE_URL/review"
