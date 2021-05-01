@@ -10,6 +10,7 @@ import com.android.volley.toolbox.Volley
 import xyz.fairportstudios.popularin.R
 import xyz.fairportstudios.popularin.interfaces.CommentRequestCallback
 import xyz.fairportstudios.popularin.models.Comment
+import xyz.fairportstudios.popularin.preferences.Auth
 import xyz.fairportstudios.popularin.secrets.APIKey
 import xyz.fairportstudios.popularin.statics.PopularinAPI
 
@@ -55,9 +56,10 @@ class CommentRequest(private val context: Context, private val reviewID: Int) {
                 else -> callback.onError(context.getString(R.string.general_error))
             }
         }) {
-            override fun getHeaders(): MutableMap<String, String> {
-                val headers = HashMap<String, String>()
+            override fun getHeaders(): MutableMap<String, String?> {
+                val headers = HashMap<String, String?>()
                 headers["API-Key"] = APIKey.POPULARIN_API_KEY
+                headers["Auth-Token"] = Auth(context).getAuthToken()
                 return headers
             }
         }
